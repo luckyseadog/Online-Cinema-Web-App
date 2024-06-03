@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  elastic:
+    extends:
+      file: compose-api.yml
+      service: elastic
+
+  redis:
+    extends:
+      file: compose-api.yml
+      service: redis
+
+  fastapi:
+    build: ../../.
+    image: fastapi-image
+    env_file:
+      - ../../../.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      elastic:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  tests:
+    image: fastapi-image
+    volumes:
+      - "../../tests:/tests"
+    entrypoint: >
+      sh -c "pip install -r /tests/functional/requirements.txt
+      && python3 /tests/functional/utils/wait_for_es.py
+      && python3 /tests/functional/utils/wait_for_redis.py
+      && pytest /tests/functional"
+
+    environment:
+      - "ES_HOST=elastic"
+      - "ES_PORT=9200"
+      - "REDIS_HOST=redis"
+      - "REDIS_PORT=6379"
+      - "SERVICE_HOST=fastapi"
+      - "SERVICE_PORT=8000"
+    depends_on:
+      elastic:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

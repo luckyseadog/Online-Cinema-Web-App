@@ -1,0 +1,13 @@
+aiohttp==3.9.5
+backoff==2.2.1
+elasticsearch==7.9.1
+# fastapi==0.61.1
+fastapi==0.103.2
+gunicorn==22.0.0
+orjson==3.10.3
+pydantic==2.1.1
+pydantic-settings==2.0.1
+# redis==4.4.2
+redis==5.0.4
+# uvicorn==0.12.2
+uvicorn==0.29.0
