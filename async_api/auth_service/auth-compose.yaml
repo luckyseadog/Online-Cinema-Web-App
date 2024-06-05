@@ -1,0 +1,58 @@
+version: '3'
+services: 
+  redis-auth:
+    image: redis/redis-stack-server:latest
+    command: redis-server --port ${REDIS_PORT}
+    expose:
+     - "6381"
+    volumes:
+     - redis-auth-data:/data
+#     - ./redis.conf:/usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -p ${REDIS_PORT} ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    
+  postgres-auth:
+    image: postgres:16
+    command: postgres -p ${POSTGRES_PORT}
+    expose:
+     - "5434"
+    volumes:
+     - postgres-auth-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p ${POSTGRES_PORT} -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 10s
+
+  fastapi-auth:
+    build: ./
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      redis-auth:
+        condition: service_healthy
+
+  nginx-auth:
+    image: nginx:1.25.3
+    volumes:
+      - ./src/core/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./data:/data:ro
+    depends_on:
+      - fastapi-auth
+    ports:
+      - "91:91"
+
+volumes:
+  redis-auth-data:
+    driver: local
+  postgres-auth-data:
+    driver: local
+
+
+
