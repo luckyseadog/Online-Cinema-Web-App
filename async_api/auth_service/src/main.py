@@ -46,15 +46,18 @@ async def get_history():
 
 #ADMIN
 
-class Method(str, Enum):
-    assign = "assign"
-    revoke = "revoke"
-    check = "check"
 
+@app.post('/api/v1/auth/admin/user_role/assign', tags=['admin'])
+async def assign_role():
+    return {"message": "assign role of a user"}
 
-@app.post('/api/v1/auth/admin/user_role/{method}', tags=['admin'])
-async def change_role(method: Method):
-    return {"message": "change role of a user"}
+@app.post('/api/v1/auth/admin/user_role/revoke', tags=['admin'])
+async def revoke_role():
+    return {"message": "revoke role of a user"}
+
+@app.post('/api/v1/auth/admin/user_role/check', tags=['admin'])
+async def check_role():
+    return {"message": "check role of a user"}
 
 
 @app.get('/api/v1/auth/admin/roles/all', tags=['admin'])
