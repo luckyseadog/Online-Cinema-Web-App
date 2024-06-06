@@ -60,7 +60,7 @@ async def check_role():
     return {"message": "check role of a user"}
 
 
-@app.get('/api/v1/auth/admin/roles/all', tags=['admin'])
+@app.get('/api/v1/auth/admin/roles', tags=['admin'])
 async def get_roles():
     return {"message": "roles get"}
 
