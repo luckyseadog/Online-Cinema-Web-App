@@ -4,6 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from core.logger import LOGGING
 from fastapi.responses import ORJSONResponse
+from enum import Enum
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,81 +23,88 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-@app.get('/api/v1/auth/me', tags=['me'])
-async def get_me():
-    return {"message": "me get"}
 
-@app.patch('/api/v1/auth/me', tags=['me'])
-async def get_me():
-    return {"message": "me patch"}
+# USER
 
-@app.delete('/api/v1/auth/me', tags=['me'])
-async def get_me():
-    return {"message": "me delete"}
+@app.get('/api/v1/auth/user/access', tags=['user'])
+async def get_access():
+    return {"message": "get new tokens"}
 
-@app.post('/api/v1/auth/admin/roles/assign', tags=['admin'])
-async def assign_roles():
-    return {"message": "roles assign"}
+@app.delete('/api/v1/auth/user', tags=['user'])
+async def delete_user():
+    return {"message": "delete user"}
 
 
-@app.post('/api/v1/auth/admin/roles/revoke', tags=['admin'])
-async def revoke_roles():
-    return {"message": "roles revoke"}
+@app.patch('/api/v1/auth/user', tags=['user'])
+async def change_user():
+    return {"message": "change user"}
 
-
-@app.post('/api/v1/auth/admin/roles/check', tags=['admin'])
-async def assign_permissions():
-    return {"message": "check role"}
-
-
-@app.get('/api/v1/auth/me/history', tags=['me'])
+@app.get('/api/v1/auth/user/history', tags=['user'])
 async def get_history():
-    return {"message": "history get"}
+    return {"message": "history of user"}
 
 
-@app.post('/api/v1/auth/signin', tags=['auth'])
-async def signin():
-    return {"message": "signin"}
+#ADMIN
+
+class Method(str, Enum):
+    assign = "assign"
+    revoke = "revoke"
+    check = "check"
 
 
-@app.post('/api/v1/auth/signout', tags=['auth'])
-async def signout():
-    return {"message": "signout"}
+@app.post('/api/v1/auth/admin/user_role/{method}', tags=['admin'])
+async def change_role(method: Method):
+    return {"message": "change role of a user"}
 
 
-@app.post('/api/v1/auth/signout_all', tags=['auth'])
-async def sugnout_all():
-    return {"message": "signout_all"}
+@app.get('/api/v1/auth/admin/roles/all', tags=['admin'])
+async def get_roles():
+    return {"message": "roles get"}
 
+
+@app.post('/api/v1/auth/admin/roles/role', tags=['admin'])
+async def add_role():
+    return {"message": "roles added"}
+
+
+@app.patch('/api/v1/auth/admin/roles/role', tags=['admin'])
+async def update_role():
+    return {"message": "roles update"}
+
+
+@app.delete('/api/v1/auth/admin/roles/role', tags=['admin'])
+async def delete_role():
+    return {"message": "roles delete"}
+
+
+#AUTH
 
 @app.post('/api/v1/auth/signup', tags=['auth'])
 async def signup():
     return {"message": "signup"}
+
+@app.post('/api/v1/auth/login', tags=['auth'])
+async def login():
+    return {"message": "login"}
+
+
+@app.post('/api/v1/auth/logout', tags=['auth'])
+async def logout():
+    return {"message": "logout"}
+
+
+@app.post('/api/v1/auth/logout_all', tags=['auth'])
+async def logout_all():
+    return {"message": "logout_all"}
 
 
 @app.post('/api/v1/auth/refresh', tags=['auth'])
 async def refresh():
     return {"message": "refresh"}
 
-
-@app.get('/api/v1/auth/admin/roles', tags=['admin'])
-async def get_roles():
-    return {"message": "roles get"}
-
-
-@app.post('/api/v1/auth/admin/roles', tags=['admin'])
-async def add_roles():
-    return {"message": "roles added"}
-
-
-@app.patch('/api/v1/auth/admin/roles', tags=['admin'])
-async def update_roles():
-    return {"message": "roles update"}
-
-
-@app.delete('/api/v1/auth/admin/roles', tags=['admin'])
-async def delete_roles():
-    return {"message": "roles delete"}
+@app.post('/api/v1/auth/signup_guest', tags=['auth'])
+async def signup_guest():
+    return {"message": "signup_guest"}
 
 
 if __name__ == "__main__":
