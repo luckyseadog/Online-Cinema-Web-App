@@ -26,20 +26,20 @@ app = FastAPI(
 
 # USER
 
-@app.get('/api/v1/auth/user/access', tags=['user'])
+@app.get('/api/v1/auth/users/access', tags=['user'])
 async def get_access():
     return {"message": "get new tokens"}
 
-@app.delete('/api/v1/auth/user', tags=['user'])
+@app.delete('/api/v1/auth/users', tags=['user'])
 async def delete_user():
     return {"message": "delete user"}
 
 
-@app.patch('/api/v1/auth/user', tags=['user'])
+@app.patch('/api/v1/auth/users', tags=['user'])
 async def change_user():
     return {"message": "change user"}
 
-@app.get('/api/v1/auth/user/history', tags=['user'])
+@app.get('/api/v1/auth/users/history', tags=['user'])
 async def get_history():
     return {"message": "history of user"}
 
@@ -65,17 +65,17 @@ async def get_roles():
     return {"message": "roles get"}
 
 
-@app.post('/api/v1/auth/admin/roles/role', tags=['admin'])
+@app.post('/api/v1/auth/admin/roles', tags=['admin'])
 async def add_role():
     return {"message": "roles added"}
 
 
-@app.patch('/api/v1/auth/admin/roles/role', tags=['admin'])
+@app.patch('/api/v1/auth/admin/roles', tags=['admin'])
 async def update_role():
     return {"message": "roles update"}
 
 
-@app.delete('/api/v1/auth/admin/roles/role', tags=['admin'])
+@app.delete('/api/v1/auth/admin/roles', tags=['admin'])
 async def delete_role():
     return {"message": "roles delete"}
 
