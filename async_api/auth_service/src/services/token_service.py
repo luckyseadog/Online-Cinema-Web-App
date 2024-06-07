@@ -4,22 +4,22 @@ import hmac
 import json
 import time
 import datetime
+import os
 
 
-SECRET_KEY = b"PRACTIX" # TODO: should be in ENV
-ACCESS_MIN = 15 # TODO: should be in ENV
-REFRESH_WEEKS = 2 # TODO: should be in ENV
-
+SECRET_KEY = os.environ.get('SECRET_KEY', "PRACTIX")
+ACCESS_TOKEN_MIN = os.environ.get('ACCESS_TOKEN_MIN', 15)
+REFRESH_TOKEN_WEEKS = os.environ.get('REFRESH_TOKEN_WEEKS', 2)
 
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = SECRET_KEY
+        self.secret_key = SECRET_KEY.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)
         signature = hmac_obj.digest()
-        signature_b64 = urlsafe_b64encode(signature).rstrip(b'=')
+        signature_b64 = urlsafe_b64encode(signature)
 
         return signature_b64.decode('utf-8')
     
@@ -30,12 +30,12 @@ class TokenService:
 class AccessTokenService(TokenService):
     def generate_token(self, iss, sub, role):
         header = json.dumps({"alg": "HS256", "typ": "JWT"})
-        header_b64 = urlsafe_b64encode(header.encode('utf-8')).rstrip(b'=').decode('utf-8')
+        header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8')
 
         iat = int(time.time())
-        exp = int(time.time() + datetime.timedelta(minutes=ACCESS_MIN).total_seconds())
+        exp = int(time.time() + datetime.timedelta(minutes=ACCESS_TOKEN_MIN).total_seconds())
         payload = json.dumps({"iss": iss, "sub": sub, "iat": iat, "exp": exp, "role": role})
-        payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).rstrip(b'=').decode('utf-8')
+        payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).decode('utf-8')
 
         for_sign = header_b64 + "." + payload_b64
         sign = self._sign_data(for_sign)
@@ -48,12 +48,12 @@ class AccessTokenService(TokenService):
 class RefreshTokenService(TokenService):
     def generate_token(self, iss, sub):
         header = json.dumps({"alg": "HS256", "typ": "JWT"})
-        header_b64 = urlsafe_b64encode(header.encode('utf-8')).rstrip(b'=').decode('utf-8')
+        header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8')
 
         iat = int(time.time())
-        exp = int(time.time() + datetime.timedelta(weeks=REFRESH_WEEKS).total_seconds())
+        exp = int(time.time() + datetime.timedelta(weeks=REFRESH_TOKEN_WEEKS).total_seconds())
         payload = json.dumps({"iss": iss, "sub": sub, "iat": iat, "exp": exp})
-        payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).rstrip(b'=').decode('utf-8')
+        payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).decode('utf-8')
 
         for_sign = header_b64 + "." + payload_b64
         sign = self._sign_data(for_sign)
