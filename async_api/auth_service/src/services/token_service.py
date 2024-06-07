@@ -28,13 +28,13 @@ class TokenService:
 
 
 class AccessTokenService(TokenService):
-    def generate_token(self, iss, sub, role):
+    def generate_token(self, iss: str, sub: str, roles: list[str]):
         header = json.dumps({"alg": "HS256", "typ": "JWT"})
         header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8')
 
         iat = int(time.time())
         exp = int(time.time() + datetime.timedelta(minutes=ACCESS_TOKEN_MIN).total_seconds())
-        payload = json.dumps({"iss": iss, "sub": sub, "iat": iat, "exp": exp, "role": role})
+        payload = json.dumps({"iss": iss, "sub": sub, "iat": iat, "exp": exp, "roles": roles})
         payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).decode('utf-8')
 
         for_sign = header_b64 + "." + payload_b64
@@ -46,7 +46,7 @@ class AccessTokenService(TokenService):
 
 
 class RefreshTokenService(TokenService):
-    def generate_token(self, iss, sub):
+    def generate_token(self, iss: str, sub: str):
         header = json.dumps({"alg": "HS256", "typ": "JWT"})
         header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8')
 

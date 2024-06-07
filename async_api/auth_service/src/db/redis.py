@@ -64,8 +64,6 @@ class RedisTokenStorage:
     async def get_user_last_logout_all(self, user_id):
         last_logouts = await self._redis.hgetall(LAST_LOGOUT_ALL_LIST)
         return last_logouts[user_id]
-    
 
-
-
-
+    async def bgsave(self):
+        return await self._redis.bgsave()
