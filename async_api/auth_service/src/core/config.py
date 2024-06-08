@@ -18,5 +18,11 @@ class Settings(BaseSettings):
     elastic_host: str = Field('127.0.0.1', alias='ELASTIC_HOST')
     elastic_port: int = Field(9200, alias='ELASTIC_PORT')
 
+    pg_user: str = Field('app', alias='DB_USER')
+    pg_host: str = Field('127.0.0.1', alias='DB_HOST')
+    pg_port: int = Field(5432, alias='DB_PORT')
+    pg_password: str = Field('123qwe', alias='DB_PASSWORD')
+    pg_name: str = Field('auth_database', alias='DB_NAME')
+
 
 settings = Settings()
