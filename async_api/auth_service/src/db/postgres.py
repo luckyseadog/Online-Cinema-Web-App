@@ -1,6 +1,7 @@
 from core.config import settings
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+
 Base = declarative_base()
 
 dsn = f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_password}@{settings.pg_host}:{settings.pg_port}/{settings.pg_name}'

@@ -2,13 +2,16 @@ import uuid
 from datetime import datetime
 
 from typing import Annotated
-from sqlalchemy import Boolean, Column, DateTime, String, Table, ForeignKey
+from sqlalchemy import Boolean, Column, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 from db.postgres import Base
 
-# uuid_pk = Annotated[uuid, ]
+
+class Base(DeclarativeBase):
+    pass
+
 
 class UserRole(Base):
     __tablename__ = 'users_roles'
@@ -27,10 +30,11 @@ class User(Base):
     password = Column(String(255), nullable=False)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
+    email = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
-    is_active = Column(Boolean, default=True)
-    roles = relationship("Role", secondary='users_roles', back_populates='users')
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    deleted_at = Column(Boolean, default=True)
+    roles = relationship("Role", secondary='users_roles', back_populates='users', lazy='selectin')
     # history = relationship("History", secondary=)
 
     def __init__(self, login: str, password: str, first_name: str, last_name: str) -> None:
@@ -55,7 +59,7 @@ class Role(Base):
     description = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow())
     updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
-    users = relationship("User", secondary='users_roles', back_populates='roles')
+    users = relationship("User", secondary='users_roles', back_populates='roles', lazy='selectin')
 
     def __init__(self, title: str, description: str = None) -> None:
         self.title = title
@@ -63,3 +67,15 @@ class Role(Base):
 
     def __repr__(self):
         return f'<Role {self.title}>'
+
+class UserHistory(Base):
+    __tablename__ = 'user_history'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    occured_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    action = Column(String(255), nullable=False)
+    fingreprint = Column(String(255), nullable=False)
+
+    def __init__(self):
+        pass

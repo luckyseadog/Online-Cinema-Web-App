@@ -16,10 +16,8 @@ from db.postgres import create_database, purge_database
 async def lifespan(app: FastAPI):
     logging.info('start')
     pg_session = postgres.get_session()
-    await create_database()
     redis_db.redis = Redis(host=settings.redis_host, port=settings.redis_port)
     yield
-    await purge_database()
     await pg_session.aclose()
     await redis_db.redis.close()
     logging.info('end')
