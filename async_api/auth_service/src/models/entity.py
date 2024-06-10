@@ -34,7 +34,9 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = Column(Boolean, default=True)
+    # is_superadmin = Column(Boolean, default=False)
     roles = relationship("Role", secondary='users_roles', back_populates='users', lazy='selectin')
+
     # history = relationship("History", secondary=)
 
     def __init__(self, login: str, password: str, first_name: str, last_name: str) -> None:

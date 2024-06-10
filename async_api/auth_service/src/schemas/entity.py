@@ -15,13 +15,14 @@ class UserCreate(BaseModel):
     password: str
     first_name: str
     last_name: str
+    email: str
 
 
 class UserInDB(BaseModel):
     id: UUID
     first_name: str
     last_name: str
-    roles: list[RoleInDB]
+    roles: list[RoleInDB] | None = []
 
     class Config:
         orm_mode = True

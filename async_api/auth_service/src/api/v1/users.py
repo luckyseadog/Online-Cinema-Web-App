@@ -49,3 +49,8 @@ async def get_access(db: AsyncSession = Depends(get_session)):
 @router.get('/history')
 async def get_history(db: AsyncSession = Depends(get_session)):
     return {"message": "history of user"}
+
+@router.get('/users')
+async def get_users(db: AsyncSession = Depends(get_session)) -> list[UserInDB]:
+    users = await user_service.get_users(db)
+    return users
