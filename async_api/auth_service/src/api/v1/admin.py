@@ -1,25 +1,25 @@
 from fastapi import APIRouter
 from services.role import role_service
 from services.user import user_service
-from schemas.entity import RoleInDB, RoleCreate
+from schemas.entity import Role
 from db.postgres import get_session
 from db.postgres import AsyncSession
 from fastapi import Depends
-from schemas.entity import UserInDB
+from schemas.entity import User
 from uuid import UUID
 
 
 router = APIRouter()
 
 
-@router.post('/user_role/assign', response_model=UserInDB )
-async def assign_role(user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)) -> UserInDB:
+@router.post('/user_role/assign', response_model=User)
+async def assign_role(user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)) -> User:
     updated_user = await user_service.assing_user_role(user_id, role_id, db)
     return updated_user
 
 
-@router.post('/user_role/revoke', response_model=UserInDB)
-async def revoke_role(user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)) -> UserInDB:
+@router.post('/user_role/revoke', response_model=User)
+async def revoke_role(user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)) -> User:
     updated_user = await user_service.revoke_user_role(user_id, role_id, db)
     return updated_user
 
@@ -30,13 +30,13 @@ async def check_role(user_id: UUID, role_id: UUID, db: AsyncSession = Depends((g
     return {"result": "YES" if res else "NO"}
 
 
-@router.get('/roles', response_model=list[RoleInDB])
-async def get_roles(db: AsyncSession = Depends(get_session)) -> list[RoleInDB]:
+@router.get('/roles', response_model=list[Role])
+async def get_roles(db: AsyncSession = Depends(get_session)) -> list[Role]:
     return await role_service.get_roles(db=db)
 
 
 @router.post('/roles')
-async def add_role(role_create: RoleCreate, db: AsyncSession = Depends(get_session)):
+async def add_role(role_create: Role, db: AsyncSession = Depends(get_session)):
     return await role_service.create_role(db=db, role_create=role_create)
 
 

@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class UserRole(Base):
+class UserRoleModel(Base):
     __tablename__ = 'users_roles'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -21,7 +21,7 @@ class UserRole(Base):
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = 'users'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -43,7 +43,7 @@ class User(Base):
         return f'<User {self.login}>'
 
 
-class Role(Base):
+class RoleModel(Base):
     __tablename__ = 'roles'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -56,7 +56,7 @@ class Role(Base):
     def __repr__(self):
         return f'<Role {self.title}>'
 
-class UserHistory(Base):
+class UserHistoryModel(Base):
     __tablename__ = 'user_history'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
