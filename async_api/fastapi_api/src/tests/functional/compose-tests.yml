@@ -12,7 +12,7 @@ services:
       service: redis
 
   fastapi:
-    build: ../../.
+    build: ../../..
     image: fastapi-image
     env_file:
       - ../../../.env
