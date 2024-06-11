@@ -1,5 +1,5 @@
 import uuid
-import time
+from datetime import datetime
 
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import Boolean, DateTime, String, ForeignKey
@@ -18,7 +18,7 @@ class UserRole(Base):
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id= mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     role_id = mapped_column(UUID(as_uuid=True), ForeignKey("roles.id"))
-    updated_at = mapped_column(DateTime, default=time.time(), onupdate=time.time())
+    updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class User(Base):
@@ -30,8 +30,8 @@ class User(Base):
     first_name = mapped_column(String(50), nullable=False)
     last_name = mapped_column(String(50), nullable=False)
     email = mapped_column(String(255), nullable=False)
-    created_at = mapped_column(DateTime, default=time.time)
-    updated_at = mapped_column(DateTime, default=time.time, onupdate=time.time)
+    created_at = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = mapped_column(Boolean, default=True) #TODO: rename to is_deleted
     # is_superadmin = Column(Boolean, default=False)
     roles = relationship("Role", secondary='users_roles', back_populates='users', lazy='selectin')
@@ -49,8 +49,8 @@ class Role(Base):
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = mapped_column(String(255), unique=True, nullable=False)
     description = mapped_column(String(255), nullable=True)
-    created_at = mapped_column(DateTime, default=time.time)
-    updated_at = mapped_column(DateTime, default=time.time, onupdate=time.time)
+    created_at = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     users = relationship("User", secondary='users_roles', back_populates='roles', lazy='selectin')
 
     def __repr__(self):
@@ -61,7 +61,7 @@ class UserHistory(Base):
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
-    occured_at = mapped_column(DateTime, default=time.time, onupdate=time.time)
+    occured_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     action = mapped_column(String(255), nullable=False)
     fingreprint = mapped_column(String(255), nullable=False)
 
