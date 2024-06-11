@@ -32,11 +32,11 @@ class RoleService():
             description=result.description,
         )
 
-    async def update_role(self, role_id: UUID, db: AsyncSession = Depends(get_session), **kwargs):
+    async def update_role(self, role_create: RoleCreate, db: AsyncSession = Depends(get_session)):
         query = (
             update(Role)
-            .where(Role.id == role_id)
-            .values(kwargs)
+            .where(Role.id == role_create.role_id)
+            .values(role_create)
             .returning(Role.id)
         )
         result = await db.execute(query)

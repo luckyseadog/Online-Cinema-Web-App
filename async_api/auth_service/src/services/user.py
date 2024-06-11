@@ -6,6 +6,7 @@ from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from models.entity import User, Role
+from schemas.entity import UserRoleUUID
 from uuid import UUID
 
 
@@ -67,10 +68,10 @@ class UserService:
             return deleted_user[0]
 
 
-    async def assing_user_role(self, user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)):
+    async def assing_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
 
-        query_user = select(User).filter(User.id == user_id)
-        query_role = select(Role).filter(Role.id == role_id)
+        query_user = select(User).filter(User.id == user_role_uuid.usder_id)
+        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -86,9 +87,9 @@ class UserService:
             roles=[RoleInDB(id=role.id, title=role.title, description=role.description)]
         )
 
-    async def revoke_user_role(self, user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)):
-        query_user = select(User).filter(User.id == user_id)
-        query_role = select(Role).filter(Role.id == role_id)
+    async def revoke_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
+        query_user = select(User).filter(User.id == user_role_uuid.user_id)
+        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -111,9 +112,9 @@ class UserService:
             ) for role in user.roles]
         )
 
-    async def check_user_role(self, user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)):
-        query_user = select(User).filter(User.id == user_id)
-        query_role = select(Role).filter(Role.id == role_id)
+    async def check_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
+        query_user = select(User).filter(User.id == user_role_uuid.user_id)
+        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)

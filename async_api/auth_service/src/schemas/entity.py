@@ -37,5 +37,8 @@ class RoleCreate(BaseModel):
         orm_mode = True
 
 
+class UserRoleUUID(BaseModel):
+    user_id: UUID
+    role_id: UUID
 
 
