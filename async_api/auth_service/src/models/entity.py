@@ -34,13 +34,13 @@ class UserModel(Base):
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = mapped_column(Boolean, default=True) #TODO: rename to is_deleted
     # is_superadmin = Column(Boolean, default=False)
-    roles = relationship("Role", secondary='users_roles', back_populates='users', lazy='selectin')
+    roles = relationship("RoleModel", secondary='users_roles', back_populates='users', lazy='selectin')
 
     # history = relationship("History", secondary=)
 
 
     def __repr__(self) -> str:
-        return f'<User {self.login}>'
+        return f'<UserModel {self.login}>'
 
 
 class RoleModel(Base):
@@ -51,10 +51,10 @@ class RoleModel(Base):
     description = mapped_column(String(255), nullable=True)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    users = relationship("User", secondary='users_roles', back_populates='roles', lazy='selectin')
+    users = relationship("UserModel", secondary='users_roles', back_populates='roles', lazy='selectin')
 
     def __repr__(self):
-        return f'<Role {self.title}>'
+        return f'<RoleModel {self.title}>'
 
 class UserHistoryModel(Base):
     __tablename__ = 'user_history'
@@ -66,4 +66,4 @@ class UserHistoryModel(Base):
     fingreprint = mapped_column(String(255), nullable=False)
 
     def __repr__(self):
-        return f'<UserHistory {self.user_id} - {self.action}>'
+        return f'<UserHistoryModel {self.user_id} - {self.action}>'
