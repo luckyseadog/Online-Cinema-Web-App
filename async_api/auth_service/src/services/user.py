@@ -1,43 +1,50 @@
 
 from fastapi import APIRouter, Depends, status, HTTPException, Query
-from schemas.entity import UserCreate, UserInDB, RoleInDB
+from schemas.entity import User, Role
 from sqlalchemy import select, update
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
-from models.entity import User, Role
-from schemas.entity import UserRoleUUID
+from models.entity import UserModel, RoleModel
 from uuid import UUID
+from schemas.entity import UserRoleUUID
+from datetime import timedelta, datetime, timezone
+from typing import Annotated
+from schemas.entity import TokenData, Token
+
+
 
 
 class UserService:
-    async def get_user(self, user_id: int, db: AsyncSession = Depends(get_session)) -> UserInDB:
-        user = await db.execute(select(User).where(User.id == user_id))
-        return UserInDB(id=user.id, first_name=user.first_name, last_name=user.last_name)
 
-    async def get_user_by_email(self, user_email, db: AsyncSession = Depends(get_session)) -> UserInDB:
-        user = await db.execute(select(User).filter(User.email == user_email)).fetchone()
-        return UserInDB(id=user.id, first_name=user.first_name, last_name=user.last_name)
 
-    async def get_user_by_login(self, user_login, db: AsyncSession = Depends(get_session)) -> UserInDB:
-        user = await db.execute(select(User).filter(User.login == user_login))
-        return UserInDB(id=user.id, first_name=user.first_name, last_name=user.last_name)
+    async def get_user(self, user_id: int, db: AsyncSession = Depends(get_session)) -> User:
+        user = await db.execute(select(UserModel).where(UserModel.id == user_id))
+        return User(id=user.id, first_name=user.first_name, last_name=user.last_name)
 
-    async def get_users(self, db: AsyncSession = Depends(get_session), skip: int = 0, limit: int = 100) -> list[UserInDB]:
-        result = await db.execute(select(User).offset(skip).limit(limit))
-        return [UserInDB(
+    async def get_user_by_email(self, user_email, db: AsyncSession = Depends(get_session)) -> User:
+        user = await db.execute(select(UserModel).filter(UserModel.email == user_email)).fetchone()
+        return User(id=user.id, first_name=user.first_name, last_name=user.last_name)
+
+    async def get_user_by_login(self, user_login, db: AsyncSession = Depends(get_session)) -> User:
+        user = await db.execute(select(UserModel).filter(UserModel.login == user_login))
+        return User(id=user.id, first_name=user.first_name, last_name=user.last_name)
+
+    async def get_users(self, db: AsyncSession = Depends(get_session), skip: int = 0, limit: int = 100) -> list[User]:
+        result = await db.execute(select(UserModel).offset(skip).limit(limit))
+        return [User(
             id=user.id,
             first_name=user.first_name,
             last_name=user.last_name,
-            roles=[RoleInDB(
+            roles=[Role(
                 id=role.id,
                 title=role.title,
                 description=role.description) for role in user.roles]
         ) for user in result.scalars().all()]
 
-    async def create_user(self, user_create: UserCreate, db: AsyncSession = Depends(get_session)) -> UserInDB:
+    async def create_user(self, user_create: User, db: AsyncSession = Depends(get_session)) -> User:
         user_dto = jsonable_encoder(user_create)
-        user = User(**user_dto)
+        user = UserModel(**user_dto)
         db.add(user)
         await db.commit()
         await db.refresh(user)
@@ -45,10 +52,10 @@ class UserService:
 
     async def update_user(self, user_id: int, db: AsyncSession = Depends(get_session), **kwargs):
         query = (
-            update(User)
-            .where(User.id == user_id, User.is_active == True)
+            update(UserModel)
+            .where(UserModel.id == user_id, UserModel.is_active == True)
             .values(kwargs)
-            .returning(User.id)
+            .returning(UserModel.id)
         )
         result = await db.execute(query)
         update_user = result.fetchone()
@@ -57,10 +64,10 @@ class UserService:
 
     async def delete_user(self, user_id: int, db: AsyncSession = Depends(get_session)):
         query = (
-            update(User)
-            .where(User.id == user_id)
+            update(UserModel)
+            .where(UserModel.id == user_id)
             .values(is_active=False)
-            .returning(User.id)
+            .returning(UserModel.id)
         )
         result = await db.execute(query)
         deleted_user = result.fetchone()
@@ -70,8 +77,8 @@ class UserService:
 
     async def assing_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
 
-        query_user = select(User).filter(User.id == user_role_uuid.usder_id)
-        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
+        query_user = select(UserModel).filter(UserModel.id == user_id)
+        query_role = select(RoleModel).filter(RoleModel.id == role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -80,16 +87,16 @@ class UserService:
 
         user.roles.append(role)
         await db.commit()
-        return UserInDB(
+        return User(
             id=user.id,
             first_name=user.first_name,
             last_name=user.last_name,
-            roles=[RoleInDB(id=role.id, title=role.title, description=role.description)]
+            roles=[Role(id=role.id, title=role.title, description=role.description)]
         )
 
-    async def revoke_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
-        query_user = select(User).filter(User.id == user_role_uuid.user_id)
-        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
+    async def revoke_user_role(self, user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)):
+        query_user = select(UserModel).filter(UserModel.id == user_id)
+        query_role = select(RoleModel).filter(RoleModel.id == role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -101,20 +108,20 @@ class UserService:
 
         user.roles.remove(role)
         await db.commit()
-        return UserInDB(
+        return User(
             id=user.id,
             first_name=user.first_name,
             last_name=user.last_name,
-            roles=[RoleInDB(
+            roles=[Role(
                 id=role.id,
                 title=role.title,
                 description=role.description
             ) for role in user.roles]
         )
 
-    async def check_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
-        query_user = select(User).filter(User.id == user_role_uuid.user_id)
-        query_role = select(Role).filter(Role.id == user_role_uuid.role_id)
+    async def check_user_role(self, user_id: UUID, role_id: UUID, db: AsyncSession = Depends(get_session)):
+        query_user = select(UserModel).filter(UserModel.id == user_id)
+        query_role = select(RoleModel).filter(RoleModel.id == role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -122,6 +129,26 @@ class UserService:
         role = res_role.scalars().one()
 
         return role in user.roles
+
+    async def get_user(self, user_name, db: AsyncSession = Depends(get_session)):
+        user = await db.execute(select(UserModel).filter(UserModel.name == user_name))
+        if user:
+            return User(
+                id=user.id,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                password=user.password_hash,
+                roles=[Role(
+                    id=role.id,
+                    title=role.title,
+                    description=role.description
+                ) for role in user.roles]
+            )
+
+
+
+
+
 
 
 user_service = UserService()

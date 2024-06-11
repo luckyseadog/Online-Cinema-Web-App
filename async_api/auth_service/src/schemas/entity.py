@@ -1,37 +1,28 @@
 from uuid import UUID
 
-from pydantic import BaseModel
-from datetime import datetime
+from pydantic import BaseModel, Field
+import uuid
 
 
-class RoleInDB(BaseModel):
-    id: UUID
+class Role(BaseModel):
+    id: UUID = Field(default_factory=uuid.uuid4)
     title: str
     description: str | None = None
-
-
-class UserCreate(BaseModel):
-    login: str
-    password: str
-    first_name: str
-    last_name: str
-    email: str
-
-
-class UserInDB(BaseModel):
-    id: UUID
-    first_name: str
-    last_name: str
-    roles: list[RoleInDB] | None = []
 
     class Config:
         orm_mode = True
 
 
-
-class RoleCreate(BaseModel):
-    title: str
-    description: str | None = None
+class User(BaseModel):
+    id: UUID = Field(default_factory=uuid.uuid4)
+    login: str
+    password: str
+    first_name: str
+    last_name: str
+    email: str
+    first_name: str
+    last_name: str
+    roles: list[Role] = Field(default_factory=[])
 
     class Config:
         orm_mode = True
@@ -40,5 +31,17 @@ class RoleCreate(BaseModel):
 class UserRoleUUID(BaseModel):
     user_id: UUID
     role_id: UUID
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
 
 

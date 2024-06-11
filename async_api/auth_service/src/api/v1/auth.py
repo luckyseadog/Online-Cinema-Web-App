@@ -1,7 +1,11 @@
 
 from fastapi import APIRouter
 from fastapi import status
-
+from services.auth import auth_service
+from db.postgres import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends
+from schemas.entity import UserLogin
 router = APIRouter()
 
 
@@ -30,9 +34,9 @@ async def signup():
     - Если пользователь с таким логином и паролем существует, то он
     '''
 )
-async def login():
-    return {"message": "login"}
-
+async def login(userlogin: UserLogin, db: AsyncSession = Depends(get_session)):
+    res = auth_service.authenticate_user(userlogin, db)
+    return res
 
 @router.post(
     '/logout',
@@ -64,7 +68,7 @@ async def logout_all():
     description=''
 )
 async def refresh():
-    return {"message": "refresh"}
+    auth_service
 
 @router.post(
     '/signup_guest',
