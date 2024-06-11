@@ -6,7 +6,9 @@ from db.postgres import get_session
 from db.postgres import AsyncSession
 from fastapi import Depends
 from schemas.entity import User
+from schemas.updates import RolePatch
 from uuid import UUID
+from pydantic import BaseModel
 
 
 router = APIRouter()
@@ -41,8 +43,8 @@ async def add_role(role_create: Role, db: AsyncSession = Depends(get_session)):
 
 
 @router.patch('/roles')
-async def update_role(db: AsyncSession = Depends(get_session), **kwargs):
-    return await role_service.update_role(db=db, **kwargs)
+async def update_role(role_id: UUID, role_patch: RolePatch, db: AsyncSession = Depends(get_session)):
+    return await role_service.update_role(role_id, role_patch, db=db)
 
 
 @router.delete('/roles')
