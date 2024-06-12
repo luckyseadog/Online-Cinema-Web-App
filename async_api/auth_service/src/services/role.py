@@ -11,7 +11,7 @@ from fastapi.encoders import jsonable_encoder
 
 class RoleService():
     async def create_role(self, role_create: Role, db: AsyncSession = Depends(get_session)) -> Role:
-        role_dto = jsonable_encoder(role_create)
+        role_dto = jsonable_encoder(role_create, exclude_none=True)
         role = RoleModel(**role_dto)
         db.add(role)
         await db.commit()
