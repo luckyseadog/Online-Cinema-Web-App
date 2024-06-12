@@ -63,7 +63,7 @@ class UserHistoryModel(Base):
     user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     occured_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     action = mapped_column(String(255), nullable=False)
-    fingreprint = mapped_column(String(255), nullable=False)
+    fingerprint = mapped_column(String(255), nullable=False)
 
     def __repr__(self):
         return f'<UserHistoryModel {self.user_id} - {self.action}>'

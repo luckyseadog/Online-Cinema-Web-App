@@ -1,4 +1,5 @@
 from uuid import UUID
+import datetime
 
 from pydantic import BaseModel, Field
 import uuid
@@ -25,8 +26,12 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
-
-
+class History(BaseModel):
+    id: UUID = Field(default_factory=uuid.uuid4)
+    user_id: UUID
+    occured_at: datetime.datetime
+    action: str
+    fingerprint: str | None = None
 
 
 
