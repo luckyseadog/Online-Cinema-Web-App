@@ -34,4 +34,16 @@ class History(BaseModel):
     fingerprint: str | None = None
 
 
+class UserCreate(BaseModel):
+    login: str
+    email: str
+    first_name: str
+    last_name: str
+    password: str
+
+
+class UserRoleUUID(BaseModel):
+    user_id: UUID
+
+
 
