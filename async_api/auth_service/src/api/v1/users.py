@@ -7,7 +7,7 @@ from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel
-from services.user import user_service
+from services.user_service import user_service
 from uuid import UUID
 
 router = APIRouter()
