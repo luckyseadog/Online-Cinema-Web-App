@@ -6,67 +6,85 @@ from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel, RoleModel
+from schemas.updates import UserPatch
 from uuid import UUID
-from schemas.entity import UserRoleUUID, UserCreate, TokenData
-# from services.utils import get_password_hash
+
 
 class UserService:
-
-
     async def get_user(self, user_id: int, db: AsyncSession = Depends(get_session)) -> User:
-        user = await db.execute(select(UserModel).where(UserModel.id == user_id))
-        return User(id=user.id, first_name=user.first_name, last_name=user.last_name)
+        stmt = await db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = stmt.scalars().one()
 
-    async def get_user_by_email(self, user_email, db: AsyncSession = Depends(get_session)) -> User:
-        user = await db.execute(select(UserModel).filter(UserModel.email == user_email)).fetchone()
-        return User(id=user.id, first_name=user.first_name, last_name=user.last_name)
-
-    async def get_user_by_login(self, user_login: str, db: AsyncSession = Depends(get_session)) -> User:
-        stmt = await db.execute(select(UserModel).filter(UserModel.login == user_login))
-        user = stmt.scalars().one_or_none()
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        return User(
-            id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
+        return User(id=user.id,
             login=user.login,
             password=user.password,
+            first_name=user.first_name,
+            last_name=user.last_name,
             email=user.email,
-            roles=[Role(
-                id=role.id,
-                title=role.title,
-                description=role.description) for role in user.roles]
-        )
+            roles=[Role(id=role.id,
+                        title=role.title,
+                        description=role.description) for role in user.roles])
+
+    async def get_user_by_email(self, user_email: str, db: AsyncSession = Depends(get_session)) -> User:
+        stmt = await db.execute(select(UserModel).where(UserModel.email == user_email))
+        user = stmt.scalars().one()
+
+        return User(id=user.id,
+            login=user.login,
+            password=user.password,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            roles=[Role(id=role.id,
+                        title=role.title,
+                        description=role.description) for role in user.roles])
+
+    async def get_user_by_login(self, user_login, db: AsyncSession = Depends(get_session)) -> User:
+        stmt = await db.execute(select(UserModel).where(UserModel.login == user_login))
+        user = stmt.scalars().one()
+
+        return User(id=user.id,
+            login=user.login,
+            password=user.password,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            roles=[Role(id=role.id,
+                        title=role.title,
+                        description=role.description) for role in user.roles])
+
 
     async def get_users(self, db: AsyncSession = Depends(get_session), skip: int = 0, limit: int = 100) -> list[User]:
         result = await db.execute(select(UserModel).offset(skip).limit(limit))
         return [User(
             id=user.id,
             login=user.login,
+            password=user.password,
             first_name=user.first_name,
             last_name=user.last_name,
             email=user.email,
-            password=user.password,
             roles=[Role(
                 id=role.id,
                 title=role.title,
-                description=role.description) for role in user.roles],
-        ) for user in result.scalars().all()]
+                description=role.description) for role in user.roles]
+        ) for user in result.scalars()]
 
-    async def create_user(self, user_create: UserCreate, db: AsyncSession = Depends(get_session)) -> User:
-        user_create.password = get_password_hash(user_create.password)
-        user_dto = jsonable_encoder(user_create)
+    async def create_user(self, user_create: User, db: AsyncSession = Depends(get_session)) -> User:
+        user_dto = jsonable_encoder(user_create, exclude_none=True)
         user = UserModel(**user_dto)
         db.add(user)
         await db.commit()
         await db.refresh(user)
-        return user.id
+        return User(
+            id=user.id,
+            login=user.login,
+            password=user.password,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            roles=[Role(id=role.id,
+                        title=role.title,
+                        description=role.description) for role in user.roles])
 
     async def update_user(self, user_id: int, db: AsyncSession = Depends(get_session), **kwargs):
         query = (
@@ -93,10 +111,19 @@ class UserService:
             return deleted_user[0]
 
 
-    async def assing_user_role(self, user_role_uuid: UserRoleUUID, db: AsyncSession = Depends(get_session)):
+        return User(
+            id=deleted_user.id,
+            login=deleted_user.login,
+            password=deleted_user.password,
+            first_name=deleted_user.first_name,
+            last_name=deleted_user.last_name,
+            email=deleted_user.email,
+            roles=[Role(id=role.id,
+                        title=role.title,
+                        description=role.description) for role in deleted_user.roles])
 
-        query_user = select(UserModel).filter(UserModel.id == user_role_uuid.user_id)
-        query_role = select(RoleModel).filter(RoleModel.id == user_role_uuid.role_id)
+        query_user = select(UserModel).filter(UserModel.id == user_id)
+        query_role = select(RoleModel).filter(RoleModel.id == role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
