@@ -9,6 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel
 from services.user import user_service
 from uuid import UUID
+from services.depends import get_current_user
 
 router = APIRouter()
 
@@ -54,3 +55,7 @@ async def get_history(db: AsyncSession = Depends(get_session)):
 async def get_users(db: AsyncSession = Depends(get_session)) -> list[User]:
     users = await user_service.get_users(db)
     return users
+
+@router.get('/me')
+async def get_me(user: User = Depends(get_current_user)):
+    return user

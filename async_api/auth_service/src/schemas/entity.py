@@ -27,6 +27,13 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+class UserCreate(BaseModel):
+    login: str
+    email: str
+    first_name: str
+    last_name: str
+    password: str
+
 
 class UserRoleUUID(BaseModel):
     user_id: UUID
