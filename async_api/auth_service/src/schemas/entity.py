@@ -18,15 +18,12 @@ class User(BaseModel):
     login: str
     password: str
     first_name: str
-    last_name: str
-    email: str
-    first_name: str
-    last_name: str
-    roles: list[Role] = Field(default_factory=[])
+    last_name: str = Field(default_factory=str)
+    email: str = Field(default_factory=str)
+    roles: list[Role] | None = None
 
     class Config:
         orm_mode = True
-
 
 
 
