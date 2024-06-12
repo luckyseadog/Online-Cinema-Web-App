@@ -1,8 +1,8 @@
-from uuid import UUID
 import datetime
+import uuid
+from uuid import UUID
 
 from pydantic import BaseModel, Field
-import uuid
 
 
 class Role(BaseModel):

@@ -1,12 +1,9 @@
-from uuid import UUID
-from db.postgres import AsyncSession
-from sqlalchemy import select, update, delete
-from models.entity import UserHistoryModel
+from db.postgres import AsyncSession, get_session
 from fastapi import Depends
-from db.postgres import get_session
-from schemas.entity import History
-from schemas.updates import RolePatch
 from fastapi.encoders import jsonable_encoder
+from models.entity import UserHistoryModel
+from schemas.entity import History
+from sqlalchemy import select
 
 
 class HistoryService():

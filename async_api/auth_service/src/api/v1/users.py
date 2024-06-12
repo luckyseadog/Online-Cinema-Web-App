@@ -1,14 +1,12 @@
 
 
-from fastapi import APIRouter, Depends, status, HTTPException, Query
-from schemas.entity import User
-from sqlalchemy import select
-from db.postgres import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.encoders import jsonable_encoder
-from models.entity import UserModel
-from services.user_service import user_service
 from uuid import UUID
+
+from db.postgres import get_session
+from fastapi import APIRouter, Depends, HTTPException, status
+from schemas.entity import User
+from services.user_service import user_service
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

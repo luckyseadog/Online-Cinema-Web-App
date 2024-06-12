@@ -1,11 +1,10 @@
-from base64 import urlsafe_b64encode, urlsafe_b64decode
+import datetime
 import hashlib
 import hmac
 import json
-import time
-import datetime
 import os
-
+import time
+from base64 import urlsafe_b64encode
 
 SECRET_KEY = os.environ.get('SECRET_KEY', "PRACTIX")
 ACCESS_TOKEN_MIN = os.environ.get('ACCESS_TOKEN_MIN', 15)
