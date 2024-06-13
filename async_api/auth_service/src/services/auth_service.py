@@ -7,13 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from datetime import timedelta, datetime
 from typing import Annotated
-from schemas.entity import Token, TokenData, UserLogin
+from schemas.entity import Token, TokenData, UserLogin, UserCredentials, TokenPair
+from services.password_service import password_service
+from services.token_service import access_token_service, refresh_token_service
 from datetime import timezone
 from fastapi import status
-from services.user import user_service
+from services.user_service import user_service
 from fastapi import HTTPException
 from services.utils import pwd_context, oauth2_scheme, get_password_hash
-from fastapi.security import OAuth2PasswordRequestForm
+# from fastapi.security import OAuth2PasswordRequestForm
 from services.utils import create_access_token, create_refresh_token, verify_password, get_password_hash
 
 
@@ -72,26 +74,23 @@ class AuthService:
         )
         return {"access_token": access_token, "token_type": "bearer"}
 
-    async def login(self, form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)) -> Token:
-        user = await user_service.get_user_by_login(form_data.username, db)
+    async def login(self, user_creds: UserCredentials, db: AsyncSession = Depends(get_session)) -> bool:
+        user = await user_service.get_user_by_login(user_creds.login, db)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Incorrect username or password",
             )
 
-        hash_password = user.password
-        if not verify_password(form_data.password, hash_password):
+        hash_password = password_service.compute_hash(user_creds.password)
+        target_password = user.password
+        if not password_service.check_password(hash_password, target_password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Incorrect username or password",
             )
 
-        return {
-            'access_token': create_access_token(user.id),
-            'refresh_token': create_refresh_token(user.id)
-        }
-
+        return True
 
 
 

@@ -1,13 +1,18 @@
 from fastapi import APIRouter
-from services.role import role_service
-from services.user import user_service
+from services.role_service import role_service
+from services.user_service import user_service
 from schemas.entity import Role
 from db.postgres import get_session
 from db.postgres import AsyncSession
 from fastapi import Depends
 from schemas.entity import User, UserRoleUUID
 from fastapi import status
-
+from db.postgres import AsyncSession, get_session
+from fastapi import APIRouter, Depends
+from schemas.entity import Role, User
+from schemas.updates import RolePatch
+from services.role_service import role_service
+from services.user_service import user_service
 
 router = APIRouter()
 

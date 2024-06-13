@@ -1,12 +1,12 @@
 from uuid import UUID
-from db.postgres import AsyncSession
-from sqlalchemy import select, update, delete
-from models.entity import RoleModel
+
+from db.postgres import AsyncSession, get_session
 from fastapi import Depends
-from db.postgres import get_session
+from fastapi.encoders import jsonable_encoder
+from models.entity import RoleModel
 from schemas.entity import Role
 from schemas.updates import RolePatch
-from fastapi.encoders import jsonable_encoder
+from sqlalchemy import delete, select, update
 
 
 class RoleService():

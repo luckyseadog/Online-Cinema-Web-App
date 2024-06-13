@@ -1,14 +1,16 @@
 
 from fastapi import APIRouter
 from fastapi import status, HTTPException
-from services.auth import auth_service
-from services.user import user_service
+from services.auth_service import auth_service
+from services.user_service import user_service
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
-from schemas.entity import UserLogin, UserCreate, User
+from schemas.entity import UserLogin, UserCreate, User, UserCredentials
 from typing import Annotated
-from fastapi.security import OAuth2PasswordRequestForm
+# from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Response, Header
+from services.token_service import access_token_service, refresh_token_service
 
 
 router = APIRouter()
@@ -32,15 +34,31 @@ router = APIRouter()
     Если пользователь с таким логином и почтой уже существует возвращается ошибка 409 с описанием, что такой пользователь уже существует.\n
     '''
 )
-async def signup(user_create: UserCreate, db: AsyncSession = Depends(get_session)):
+async def signup(
+    user_create: UserCreate, 
+    response: Response, 
+    origin: Annotated[str | None, Header()] = None,  
+    db: AsyncSession = Depends(get_session)
+    ):
+    if origin is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Origin header is required'
+        )
     user = await user_service.get_user_by_email(user_create.email)
     if user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='email already exists')
-    user = await user_service.get_user_by_login(usesr_create.login)
+    user = await user_service.get_user_by_login(user_create.login)
     if user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
-    return await user_service.create_user(user_create, db)
+    user = await user_service.create_user(user_create, db)
+    access_token = access_token_service.generate_token(origin, user.id, []) # TODO: add default role?
+    refresh_token = refresh_token_service.generate_token(origin, user.id)
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+
+    return {"message": "User created successfully"}
 
 
 
@@ -55,11 +73,25 @@ async def signup(user_create: UserCreate, db: AsyncSession = Depends(get_session
     '''
 )
 async def login(
-        db: AsyncSession = Depends(get_session),
-        form_data: OAuth2PasswordRequestForm = Depends()
+    user_creds: UserCredentials,
+    response: Response, 
+    origin: Annotated[str | None, Header()] = None,  
+    db: AsyncSession = Depends(get_session),
 ):
-    res = await auth_service.login(form_data, db)
-    return res
+    if origin is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Origin header is required'
+        )
+    res = await auth_service.login(user_creds, db)
+    if res == True:
+        user = user_service.get_user_by_login(user_creds.login)
+        access_token = access_token_service.generate_token(origin, user.id, []) # TODO: add default role?
+        refresh_token = refresh_token_service.generate_token(origin, user.id)
+        response.set_cookie(key="access_token", value=access_token, httponly=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+
+    return {"message": "Success"}
 
 @router.post(
     '/logout',
