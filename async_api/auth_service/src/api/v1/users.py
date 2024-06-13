@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from schemas.entity import User
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.user import user_service
+from services.user_service import user_service
 from uuid import UUID
 from services.depends import get_current_user
 

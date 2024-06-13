@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 from schemas.entity import Token, UserLogin
 from datetime import timezone
 from fastapi import status
-from services.user import user_service
+from services.user_service import user_service
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from services.utils import create_access_token, create_refresh_token, verify_password

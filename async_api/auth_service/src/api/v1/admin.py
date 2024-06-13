@@ -1,7 +1,7 @@
 from fastapi import status
-from db.postgres import AsyncSession, get_session, UserRoleUUID
+from db.postgres import AsyncSession, get_session
 from fastapi import APIRouter, Depends
-from schemas.entity import Role, User
+from schemas.entity import Role, User, UserRoleUUID
 from services.role_service import role_service
 from services.user_service import user_service
 
