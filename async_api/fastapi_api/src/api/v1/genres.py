@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from models.genre import Genre
 from services.genre_service import GenreService, get_genre_service
 from api.v1.commons import page_data
@@ -21,7 +21,7 @@ async def genre_list(
         page_data: Annotated[dict, Depends(page_data)],
         genre_service: GenreService = Depends(get_genre_service),
 ) -> list[Genre]:
-    genres = await genre_service.get_all(page_data["page_size"], page_data["page_number"])
+    genres = await genre_service.get_all(page_data['page_size'], page_data['page_number'])
     if not genres:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='not found genres')
     return [Genre(id=genre.id, name=genre.name, description=genre.description) for genre in genres]

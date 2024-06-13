@@ -1,15 +1,19 @@
 from core.config import settings
 from sqlalchemy.orm import declarative_base, sessionmaker
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 Base = declarative_base()
 
-dsn = f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_password}@{settings.pg_host}:{settings.pg_port}/{settings.pg_name}'
+dsn = (
+    f'postgresql+asyncpg://{settings.pg_user}'
+    f':{settings.pg_password}@{settings.pg_host}'
+    f':{settings.pg_port}/{settings.pg_name}'
+)
 engine = create_async_engine(dsn, echo=True, future=True)
 
 async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
+    engine, class_=AsyncSession, expire_on_commit=False,
 )
 
 

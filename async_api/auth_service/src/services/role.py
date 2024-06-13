@@ -20,11 +20,13 @@ class RoleService():
 
     async def get_roles(self, skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_session)) -> list[Role]:
         result = await db.execute(select(RoleModel))
-        return [Role(
-            id=role.id,
-            title=role.title,
-            description=role.description,
-        ) for role in result.scalars()]
+        return [
+            Role(
+                id=role.id,
+                title=role.title,
+                description=role.description,
+            ) for role in result.scalars()
+        ]
 
     async def get_role_by_id(self, role_id: UUID, db: AsyncSession = Depends(get_session)) -> Role:
         result = await db.execute(select(RoleModel).filter(RoleModel.id == role_id))
@@ -47,7 +49,7 @@ class RoleService():
         await db.commit()
 
         resp = Role(id=updated_role.id, title=updated_role.title, description=updated_role.description)
-    
+
         return resp
 
     async def delete_role(self, role_id: UUID, db: AsyncSession = Depends(get_session)):

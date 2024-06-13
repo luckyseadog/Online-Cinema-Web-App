@@ -20,16 +20,15 @@ class UUIDMixin(models.Model):
         abstract = True
 
 
-
 class Genre(UUIDMixin, TimeStampedMixin):
     name = models.CharField(verbose_name=_('name'), max_length=255)
     description = models.TextField(verbose_name=_('description'), null=True)
 
     def __str__(self):
-        return self.name 
+        return self.name
 
     class Meta:
-        db_table =  "content\".\"genre"
+        db_table = "content\".\"genre"
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
 
@@ -37,34 +36,38 @@ class Person(UUIDMixin, TimeStampedMixin):
     full_name = models.CharField(verbose_name=_('full name'), max_length=255, null=True)
 
     def __str__(self):
-        return self.full_name 
-    
+        return self.full_name
+
     class Meta:
-        db_table =  "content\".\"person"
+        db_table = "content\".\"person"
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
 
 
 class Filmwork(UUIDMixin, TimeStampedMixin):
     class Type(models.TextChoices):
-        MOVIE = "movie", _("Movie")
-        SOPHOMORE = "tv_show", _("TV Show")
+        MOVIE = 'movie', _('Movie')
+        SOPHOMORE = 'tv_show', _('TV Show')
 
     title = models.CharField(verbose_name=_('title'), max_length=255)
     description = models.TextField(verbose_name=_('description'), null=True)
     creation_date = models.DateField(verbose_name=_('creation date'), null=True)
-    rating = models.FloatField(verbose_name=_('rating'), null=True, 
-                               validators=[MinValueValidator(0),
-                                           MaxValueValidator(100)])
+    rating = models.FloatField(
+        verbose_name=_('rating'), null=True,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ],
+    )
     type = models.CharField(verbose_name=_('type'), max_length=255, choices=Type.choices, null=True)
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
     persons = models.ManyToManyField(Person, through='PersonFilmwork')
 
     def __str__(self):
-        return self.title 
+        return self.title
 
     class Meta:
-        db_table =  "content\".\"film_work"
+        db_table = "content\".\"film_work"
         verbose_name = _('Filmwork')
         verbose_name_plural = _('Filmworks')
 
@@ -75,9 +78,8 @@ class GenreFilmwork(UUIDMixin):
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     class Meta:
-        db_table = "content\".\"genre_film_work" 
+        db_table = "content\".\"genre_film_work"
         unique_together = [['film_work', 'genre']]
-
 
 
 class PersonFilmwork(UUIDMixin):
@@ -92,5 +94,5 @@ class PersonFilmwork(UUIDMixin):
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     class Meta:
-        db_table = "content\".\"person_film_work" 
+        db_table = "content\".\"person_film_work"
         unique_together = [['film_work', 'person', 'role']]

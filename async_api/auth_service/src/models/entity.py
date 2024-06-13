@@ -5,7 +5,6 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy import Boolean, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, DeclarativeBase
-from db.postgres import Base
 
 
 class Base(DeclarativeBase):
@@ -16,8 +15,8 @@ class UserRoleModel(Base):
     __tablename__ = 'users_roles'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id= mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
-    role_id = mapped_column(UUID(as_uuid=True), ForeignKey("roles.id"))
+    user_id = mapped_column(UUID(as_uuid=True), ForeignKey('users.id'))
+    role_id = mapped_column(UUID(as_uuid=True), ForeignKey('roles.id'))
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
@@ -32,12 +31,11 @@ class UserModel(Base):
     email = mapped_column(String(255), nullable=False)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    deleted_at = mapped_column(Boolean, default=True) #TODO: rename to is_deleted
+    deleted_at = mapped_column(Boolean, default=True)  # TODO: rename to is_deleted
     # is_superadmin = Column(Boolean, default=False)
-    roles = relationship("RoleModel", secondary='users_roles', back_populates='users', lazy='selectin')
+    roles = relationship('RoleModel', secondary='users_roles', back_populates='users', lazy='selectin')
 
     # history = relationship("History", secondary=)
-
 
     def __repr__(self) -> str:
         return f'<UserModel {self.login}>'
@@ -51,7 +49,7 @@ class RoleModel(Base):
     description = mapped_column(String(255), nullable=True)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    users = relationship("UserModel", secondary='users_roles', back_populates='roles', lazy='selectin')
+    users = relationship('UserModel', secondary='users_roles', back_populates='roles', lazy='selectin')
 
     def __repr__(self):
         return f'<RoleModel {self.title}>'
@@ -60,7 +58,7 @@ class UserHistoryModel(Base):
     __tablename__ = 'user_history'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
+    user_id = mapped_column(UUID(as_uuid=True), ForeignKey('users.id'))
     occured_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     action = mapped_column(String(255), nullable=False)
     fingreprint = mapped_column(String(255), nullable=False)
