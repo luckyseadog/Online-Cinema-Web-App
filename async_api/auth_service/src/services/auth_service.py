@@ -10,7 +10,7 @@ from typing import Annotated
 from schemas.entity import Token, TokenData, UserLogin
 from datetime import timezone
 from fastapi import status
-from services.user import user_service
+from services.user_service import user_service
 from fastapi import HTTPException
 from services.utils import pwd_context, oauth2_scheme, get_password_hash
 from fastapi.security import OAuth2PasswordRequestForm

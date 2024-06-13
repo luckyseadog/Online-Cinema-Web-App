@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter
 from fastapi import status, HTTPException
-from services.auth import auth_service
+from services.auth_service import auth_service
 from services.user_service import user_service
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession

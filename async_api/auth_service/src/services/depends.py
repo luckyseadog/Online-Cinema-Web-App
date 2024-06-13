@@ -12,7 +12,7 @@ from schemas.entity import TokenData
 
 import jwt
 from jwt.exceptions import InvalidTokenError
-from services.user import user_service
+from services.user_service import user_service
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
