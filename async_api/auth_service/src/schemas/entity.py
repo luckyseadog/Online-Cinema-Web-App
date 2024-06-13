@@ -44,6 +44,17 @@ class UserCreate(BaseModel):
 
 class UserRoleUUID(BaseModel):
     user_id: UUID
+    role_id: UUID
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 

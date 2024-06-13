@@ -58,4 +58,7 @@
 
 - Создать миграции: alembic revision --autogenerate -m "message"
 - Накатить миграции: alembic upgrade head
-- Просмотр истории: alembic history --verbose 
+- Просмотр истории: alembic history --verbose
+
+## Generate a secure random secret key
+- openssl rand -hex 32

@@ -9,12 +9,24 @@ from services.user_service import user_service
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel
-from services.user import user_service
+from services.user_service import user_service
 from uuid import UUID
 from services.depends import get_current_user
 
 router = APIRouter()
 
+
+@router.post('/signup', response_model=User, status_code=status.HTTP_201_CREATED)
+async def create_user(user_create: User, db: AsyncSession = Depends(get_session)) -> User | None:
+    return await user_service.create_user(user_create, db)
+
+
+@router.get('/signin', response_model=User, status_code=status.HTTP_200_OK)
+async def login_user(user_login: str, db: AsyncSession = Depends(get_session)):
+    db_user = await user_service.get_user_by_login(user_login, db)
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
+    return db_user
 
 
 @router.delete('/')
@@ -41,8 +53,6 @@ async def get_access(db: AsyncSession = Depends(get_session)):
 async def get_history(db: AsyncSession = Depends(get_session)):
     return {"message": "history of user"}
 
-#=====================================
-
 @router.get('/users')
 async def get_users(db: AsyncSession = Depends(get_session)) -> list[User]:
     users = await user_service.get_users(db)
@@ -51,3 +61,4 @@ async def get_users(db: AsyncSession = Depends(get_session)) -> list[User]:
 @router.get('/me')
 async def get_me(user: User = Depends(get_current_user)):
     return user
+

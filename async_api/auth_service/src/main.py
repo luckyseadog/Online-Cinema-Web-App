@@ -8,6 +8,8 @@ from core.logger import LOGGING
 from db import postgres, redis_db
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from api.v1 import admin, auth, users
+from db import redis_db, postgres
 from redis.asyncio import Redis
 
 
@@ -31,6 +33,7 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
+
 
 app.include_router(admin.router, prefix='/api/v1/auth/admin', tags=['admin'])
 app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])
