@@ -61,3 +61,7 @@ class RefreshTokenService(TokenService):
         token = header_b64 + '.' + payload_b64 + '.' + sign
 
         return token
+
+
+access_token_service = AccessTokenService()
+refresh_token_service = RefreshTokenService()

@@ -1,3 +1,4 @@
+import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -25,11 +26,23 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+class History(BaseModel):
+    id: UUID = Field(default_factory=uuid.uuid4)
+    user_id: UUID
+    occured_at: datetime.datetime
+    action: str
+    fingerprint: str | None = None
+
+
 class UserCreate(BaseModel):
     login: str
     email: str
     first_name: str
     last_name: str
+    password: str
+
+class UserCredentials(BaseModel):
+    login: str
     password: str
 
 
@@ -47,3 +60,7 @@ class TokenData(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class TokenPair(BaseModel):
+    access_token: str
+    refresh_token: str

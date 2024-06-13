@@ -1,11 +1,11 @@
-from fastapi import Depends
 from schemas.entity import User, Role
 from sqlalchemy import select, update
 from db.postgres import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel, RoleModel
 from uuid import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserService:
