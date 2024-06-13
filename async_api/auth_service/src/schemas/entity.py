@@ -41,6 +41,10 @@ class UserCreate(BaseModel):
     last_name: str
     password: str
 
+class UserCredentials(BaseModel):
+    login: str
+    password: str
+
 
 class UserRoleUUID(BaseModel):
     user_id: UUID
@@ -56,5 +60,9 @@ class TokenData(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class TokenPair(BaseModel):
+    access_token: str
+    refresh_token: str
 
 
