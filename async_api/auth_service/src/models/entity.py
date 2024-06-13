@@ -24,18 +24,16 @@ class UserModel(Base):
     __tablename__ = 'users'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    login = mapped_column(String(255), unique=True, nullable=False)
+    login = mapped_column(String(255), unique=True, nullable=False, index=True)
     password = mapped_column(String(255), nullable=False)
     first_name = mapped_column(String(50), nullable=False)
     last_name = mapped_column(String(50), nullable=False)
-    email = mapped_column(String(255), nullable=False)
+    email = mapped_column(String(255), nullable=False, unique=True, index=True)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    deleted_at = mapped_column(Boolean, default=True)  # TODO: rename to is_deleted
-    # is_superadmin = Column(Boolean, default=False)
+    deleted_at = mapped_column(DateTime, default=datetime.utcnow)  # TODO: rename to is_deleted
+    is_superadmin = mapped_column(Boolean, default=False)
     roles = relationship('RoleModel', secondary='users_roles', back_populates='users', lazy='selectin')
-
-    # history = relationship("History", secondary=)
 
     def __repr__(self) -> str:
         return f'<UserModel {self.login}>'
@@ -45,7 +43,7 @@ class RoleModel(Base):
     __tablename__ = 'roles'
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = mapped_column(String(255), unique=True, nullable=False)
+    title = mapped_column(String(255), unique=True, nullable=False, index=True)
     description = mapped_column(String(255), nullable=True)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
