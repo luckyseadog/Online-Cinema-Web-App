@@ -3,6 +3,7 @@ import time
 from base64 import urlsafe_b64decode
 
 from redis.asyncio import Redis
+from typing import Optional
 
 ACCESS_TOKEN_BANNED = "banned_tokens"
 REFRESH_TOKENS_VALID = "valid_refresh"
@@ -67,3 +68,10 @@ class RedisTokenStorage:
 
     async def bgsave(self):
         return await self._redis.bgsave()
+
+
+redis_instanse: Optional[RedisTokenStorage] = None
+
+
+async def get_redis() -> Redis:
+    return redis_instanse

@@ -28,6 +28,10 @@ class TokenService:
         length = len(data) + (4 - (len(data) % 4))
         data_padded = data.ljust(length, "=")
         return urlsafe_b64decode(data_padded).decode('utf-8')
+    
+    def validate_token(self, token: str):
+        header, payload, sign = token.split(".")
+        return self._validate_data(f"{header}.{payload}", sign)
 
 
 class AccessTokenService(TokenService):
