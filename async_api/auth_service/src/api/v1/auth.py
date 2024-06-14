@@ -5,7 +5,7 @@ from services.user_service import user_service
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
-from schemas.entity import UserCreate, UserCredentials, User
+from schemas.entity import UserCreate, UserCredentials, User, History
 from fastapi.responses import Response
 from typing import Annotated
 from fastapi import Header
@@ -16,6 +16,8 @@ from fastapi import Cookie
 import json
 import time
 from uuid import uuid4
+import datetime
+from services.history_service import history_service
 
 
 router = APIRouter()
@@ -43,7 +45,7 @@ router = APIRouter()
 async def signup(
     user_create: UserCreate, 
     response: Response, 
-    origin: Annotated[str | None, Header()] = None,  
+    origin: Annotated[str | None, Header()] = None, 
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
     ):
@@ -85,6 +87,7 @@ async def login(
     user_creds: UserCredentials,
     response: Response,
     origin: Annotated[str | None, Header()] = None,
+    user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
@@ -95,11 +98,17 @@ async def login(
         )
     res = await auth_service.login(user_creds, db)
     if res is True:
-        user = user_service.get_user_by_login(user_creds.login)
+        user = await user_service.get_user_by_login(user_creds.login)
         access_token = access_token_service.generate_token(origin, user.id, ["user"]) # TODO: add default role?
         refresh_token = refresh_token_service.generate_token(origin, user.id)
         response.set_cookie(key='access_token', value=access_token, httponly=True)
         response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
+
+        note = History(user_id=user.id,
+                   occured_at=datetime.datetime.now(),
+                   action="/login",
+                   fingerprint=user_agent)
+        await history_service.make_note(note)
 
         await redis.add_valid_rtoken(user.id, refresh_token)
 
@@ -125,6 +134,7 @@ async def login(
 async def logout(
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    user_agent: Annotated[str | None, Header()] = None,
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     if access_token is None and refresh_token is None:
@@ -143,6 +153,12 @@ async def logout(
 
     user_id = payload.get("sub")
 
+    note = History(user_id=user_id,
+        occured_at=datetime.datetime.now(),
+        action="/logout",
+        fingerprint=user_agent)
+    await history_service.make_note(note)
+
     await redis.add_banned_atoken(user_id, access_token)
     await redis.delete_refresh(user_id, refresh_token)
 
@@ -160,6 +176,7 @@ async def logout(
 async def logout_all(
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    user_agent: Annotated[str | None, Header()] = None,
     redis: RedisTokenStorage = Depends(get_redis),
 ):
     if access_token is None:
@@ -179,8 +196,14 @@ async def logout_all(
 
     user_id = payload.get("sub")
 
-    redis.set_user_last_logout_all(user_id)
-    redis.delete_refresh_all(user_id)
+    note = History(user_id=user_id,
+        occured_at=datetime.datetime.now(),
+        action="/logout_all",
+        fingerprint=user_agent)
+    await history_service.make_note(note)
+
+    await redis.set_user_last_logout_all(user_id)
+    await redis.delete_refresh_all(user_id)
 
     return {"message": "logout_all"}
 
@@ -196,6 +219,7 @@ async def refresh(
     response: Response,
     origin: Annotated[str | None, Header()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    user_agent: Annotated[str | None, Header()] = None,
     redis: RedisTokenStorage = Depends(get_redis)
 ):
     if origin is None:
@@ -219,6 +243,13 @@ async def refresh(
         return {"message": "Invalid refresh token"}
     
     user_id = payload.get("sub")
+
+    note = History(user_id=user_id,
+        occured_at=datetime.datetime.now(),
+        action="/refresh",
+        fingerprint=user_agent)
+    await history_service.make_note(note)
+
     access_token = access_token_service.generate_token(origin, user_id, ["user"]) # TODO: add default role?
     refresh_token = refresh_token_service.generate_token(origin, user_id)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
@@ -243,6 +274,7 @@ async def refresh(
 async def signup_guest(
     response: Response, 
     origin: Annotated[str | None, Header()] = None,  
+    user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
@@ -255,6 +287,13 @@ async def signup_guest(
     guest_create = User(login="", passwod="", first_name=f"guest_{uuid4()}")
 
     user = await user_service.create_user(guest_create, db)
+
+    note = History(user_id=user.id,
+        occured_at=datetime.datetime.now(),
+        action="/signup_guest",
+        fingerprint=user_agent)
+    await history_service.make_note(note)
+
     access_token = access_token_service.generate_token(origin, user.id, ["guest"]) # TODO: add default role?
     refresh_token = refresh_token_service.generate_token(origin, user.id)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
