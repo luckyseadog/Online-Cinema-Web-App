@@ -9,13 +9,14 @@ from fastapi.responses import ORJSONResponse
 from api.v1 import admin, auth, users
 from db import redis_db, postgres
 from redis.asyncio import Redis
+from db import redis_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
     pg_session = postgres.get_session()
-    redis_db.redis = Redis(host=settings.redis_host, port=settings.redis_port)
+    redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
     yield
     await pg_session.aclose()
     await redis_db.redis.close()

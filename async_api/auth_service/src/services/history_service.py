@@ -41,3 +41,6 @@ class HistoryService():
             action=hist.action,
             fingerprint=hist.fingerprint,
         ) for hist in result.scalars()]
+
+
+history_service = HistoryService()
