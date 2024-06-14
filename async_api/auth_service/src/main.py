@@ -2,10 +2,8 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
-from api.v1 import admin, auth, users
 from core.config import settings
 from core.logger import LOGGING
-from db import postgres, redis_db
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from api.v1 import admin, auth, users
@@ -41,7 +39,7 @@ app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])
 app.include_router(users.router, prefix='/api/v1/auth/users', tags=['users'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     uvicorn.run(
         'main:app',
         host='0.0.0.0',

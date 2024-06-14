@@ -24,5 +24,18 @@ class Settings(BaseSettings):
     pg_password: str = Field('123qwe', alias='DB_PASSWORD')
     pg_name: str = Field('auth_database', alias='DB_NAME')
 
+    secret_key: str = Field('secret', alias='SECRET_KEY')
+    algorithm: str = Field('HS256', alias='ALGORITHM')
+    access_token_expire: int = Field(30, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
+
+    sa_login: str = Field('superadmin', alias='SUPER_USER_LOGIN')
+    sa_password: str = Field('admin', alias='SUPER_USER_PASSWORD')
+    sa_firstname: str = Field('admin', alias='SUPER_USER_FIRST_NAME')
+    sa_lastname: str = Field('admin', alias='SUPER_USER_LAST_NAME')
+    sa_email: str = Field('superadmin@admin.com', alias='SUPER_USER_EMAIL')
+
+    sec_salt: str = Field('<salt>', alias='SALT')
+    sec_app_iters: int = Field(100_000, alias='APP_ITERS')
+
 
 settings = Settings()

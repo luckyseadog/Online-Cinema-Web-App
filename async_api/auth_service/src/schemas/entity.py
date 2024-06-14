@@ -1,8 +1,8 @@
 import datetime
-import uuid
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+import uuid
 
 
 class Role(BaseModel):
@@ -64,5 +64,3 @@ class UserLogin(BaseModel):
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
-
-

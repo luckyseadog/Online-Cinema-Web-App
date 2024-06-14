@@ -8,7 +8,7 @@ class GenreFilmworkInline(admin.TabularInline):
 
 
 class PersonFilmworkInline(admin.TabularInline):
-    model = PersonFilmwork   
+    model = PersonFilmwork
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
@@ -16,11 +16,11 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Filmwork)
 class FilmworkAdmin(admin.ModelAdmin):
-    inlines = (GenreFilmworkInline, PersonFilmworkInline)  
+    inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
-    list_display = ('title', 'type', 'creation_date', 'rating') 
+    list_display = ('title', 'type', 'creation_date', 'rating')
     list_filter = ('type', 'rating')
-    search_fields = ('title', 'description', 'id')  
+    search_fields = ('title', 'description', 'id')
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):

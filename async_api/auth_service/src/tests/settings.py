@@ -14,4 +14,5 @@ class TestSettings(BaseSettings):
     pg_password: str = '123qwe'
     pg_name: str = 'auth_database'
 
+
 test_settings = TestSettings()

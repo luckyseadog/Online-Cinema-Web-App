@@ -1,5 +1,5 @@
 version: '3'
-services: 
+services:
   redis-auth:
     image: redis/redis-stack-server:latest
     volumes:
@@ -55,6 +55,3 @@ volumes:
     driver: local
   postgres-auth-data:
     driver: local
-
-
-

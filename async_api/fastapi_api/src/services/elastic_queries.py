@@ -93,7 +93,7 @@ PERSON_SEARCH = '''{
   "query": {
     "match": {
       "name": {
-        "query": "%s", 
+        "query": "%s",
         "fuzziness": "auto"
       }
     }
