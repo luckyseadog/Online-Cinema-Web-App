@@ -1,4 +1,4 @@
-from base64 import urlsafe_b64encode
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 import hashlib
 import hmac
 import json
@@ -25,6 +25,15 @@ class TokenService:
 
     def _validate_data(self, data: str, sign: str) -> bool:
         return self._sign_data(data) == sign
+    
+    def decode_b64(self, data: str):
+        length = len(data) + (4 - (len(data) % 4))
+        data_padded = data.ljust(length, "=")
+        return urlsafe_b64decode(data_padded).decode('utf-8')
+    
+    def validate_token(self, token: str):
+        header, payload, sign = token.split(".")
+        return self._validate_data(f"{header}.{payload}", sign)
 
 
 class AccessTokenService(TokenService):
