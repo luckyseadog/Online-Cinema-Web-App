@@ -1,0 +1,5186 @@
+[
+  {
+    "id": "e6fe4206-e7fa-4562-a1a1-10c3ab2129d5",
+    "login": "Morgan Wright",
+    "email": "frankschmidt@example.org",
+    "password": "C#n1Pgyf@4",
+    "first_name": "Monica",
+    "last_name": "Johnson",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "68d9649c-1ba4-4d66-ad40-102ca9283dfc",
+    "login": "Benjamin Kramer",
+    "email": "patriciathomas@example.org",
+    "password": ")999)Bf(y#",
+    "first_name": "Kim",
+    "last_name": "Sanders",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "a1fcc1e6-b239-4222-b6a7-bfb64e2b86d3",
+        "occured_at": "1992-01-07T19:32:05.189411",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "eeedd740-9b43-46e7-8c52-1e13fbb903dc",
+        "occured_at": "1988-11-28T14:37:15.363943",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "94ff0948-0425-4fac-b0d7-a3dfb154b79d",
+        "occured_at": "1998-09-19T15:20:02.469786",
+        "action": "login",
+        "fingerprint": "/dev/sdi"
+      },
+      {
+        "id": "890ba509-3880-4123-90b2-91e647f68cbf",
+        "occured_at": "1972-11-02T16:55:23.272122",
+        "action": "logout",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "4640e580-75a2-43df-9fe7-bc43ee02efa4",
+        "occured_at": "1975-02-20T21:03:42.517735",
+        "action": "logout",
+        "fingerprint": "/dev/vdq"
+      }
+    ]
+  },
+  {
+    "id": "198d724a-bab7-4e62-b652-00eded43baa8",
+    "login": "Tyler Jones",
+    "email": "jill55@example.com",
+    "password": "X$iB0EXwcQ",
+    "first_name": "Erin",
+    "last_name": "Estrada",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "356c2974-c099-46a7-bb0d-1e11f4d03a4c",
+        "occured_at": "1972-02-13T03:51:34.127801",
+        "action": "logout",
+        "fingerprint": "/dev/sdj"
+      },
+      {
+        "id": "2e07dd8a-f71f-43ca-914b-86f4a9542cff",
+        "occured_at": "2000-10-24T23:31:55.658111",
+        "action": "login",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "c9616a8c-860e-4f31-8e6a-8b86dad104c5",
+        "occured_at": "1981-02-10T10:42:02.035543",
+        "action": "logout",
+        "fingerprint": "/dev/xvdi"
+      },
+      {
+        "id": "a15696c5-02c3-4c4b-9c22-69b2a0f1bc3a",
+        "occured_at": "1992-05-08T07:11:19.246682",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "9e68cff8-c6e5-4996-bbe6-2ee0a98f6a41",
+        "occured_at": "2009-02-12T07:28:24.741460",
+        "action": "logout",
+        "fingerprint": "/dev/vds"
+      }
+    ]
+  },
+  {
+    "id": "c068ba50-49ab-402f-be4a-19454161728c",
+    "login": "Pamela Thompson",
+    "email": "linda43@example.net",
+    "password": "%U%7JmnxOd",
+    "first_name": "Taylor",
+    "last_name": "Lopez",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "779ccdda-ca0c-4ff6-82e5-dd0e90d8e7b6",
+        "occured_at": "2014-06-16T19:17:35.023477",
+        "action": "logout",
+        "fingerprint": "/dev/xvdx"
+      }
+    ]
+  },
+  {
+    "id": "9a9f3568-44a2-4d92-93c9-3913d836dab0",
+    "login": "Paul Conrad",
+    "email": "zacharyowens@example.com",
+    "password": "x8$Pet6y(Z",
+    "first_name": "Holly",
+    "last_name": "Johnson",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "50b153a0-7a0e-4f0a-99d8-44e8d3750268",
+    "login": "Angela Wu",
+    "email": "james48@example.net",
+    "password": "m3%G8dec)w",
+    "first_name": "Christine",
+    "last_name": "Sanders",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "313cd4ca-fb36-41cf-b905-55609c0e0901",
+    "login": "Amber Lopez",
+    "email": "huynhdaniel@example.org",
+    "password": "ZGf)9I#wt@",
+    "first_name": "Hannah",
+    "last_name": "Donaldson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "3cb9e4dc-fb43-4fc0-a991-e846392499d8",
+        "occured_at": "1986-03-31T17:40:38.939575",
+        "action": "login",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "1a23b129-ee09-43c3-ba41-df071aaa2cc2",
+        "occured_at": "1978-06-19T18:14:19.955838",
+        "action": "login",
+        "fingerprint": "/dev/sdu"
+      },
+      {
+        "id": "564baefd-d89e-47ef-8f41-7b78ae197ab9",
+        "occured_at": "2007-05-26T04:05:27.926499",
+        "action": "logout",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "0d4bca83-5b37-4369-8c1b-95a72a8b4d66",
+        "occured_at": "2011-08-30T03:14:40.217932",
+        "action": "login",
+        "fingerprint": "/dev/xvdp"
+      },
+      {
+        "id": "73179b51-d5f3-49a2-9cdb-b82a879899ff",
+        "occured_at": "1997-12-01T12:12:41.258992",
+        "action": "logout",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "9e714154-9fdf-4be8-b268-7f0e8186abf8",
+        "occured_at": "1983-04-18T01:59:39.841498",
+        "action": "logout",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "f9d7a991-e67f-4748-8d79-b0c0445f7827",
+        "occured_at": "2010-11-06T06:19:47.100064",
+        "action": "logout",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "338e80e0-802f-401f-91f2-bc00326e6030",
+        "occured_at": "1994-12-26T04:38:57.153099",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      }
+    ]
+  },
+  {
+    "id": "ece96dc6-2d91-452a-a85e-88ed64f40787",
+    "login": "Valerie Munoz",
+    "email": "julieshah@example.com",
+    "password": "9(LlSYD4$+",
+    "first_name": "Edward",
+    "last_name": "Flynn",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "95dba128-ea7b-4b5a-9cc2-0c2e767579ef",
+        "occured_at": "2000-07-09T17:40:19.894810",
+        "action": "login",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "92539cb3-e30d-483e-bd88-0bd506dcc956",
+        "occured_at": "2014-09-23T00:05:30.491496",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      },
+      {
+        "id": "9b61ed13-05d6-45f3-9e8e-6f4618695376",
+        "occured_at": "1986-08-28T04:35:05.065611",
+        "action": "login",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "e9f0d50a-00f6-4be2-8b50-a62722c58836",
+        "occured_at": "2004-01-13T23:20:18.826970",
+        "action": "logout",
+        "fingerprint": "/dev/sdu"
+      },
+      {
+        "id": "4355da2f-db54-497c-a943-39e60cd06579",
+        "occured_at": "1981-09-26T06:31:32.170061",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      }
+    ]
+  },
+  {
+    "id": "d6d29bd5-ed45-427d-9048-00136814b478",
+    "login": "Amanda Salazar",
+    "email": "cyork@example.org",
+    "password": ")yoX8UaaX3",
+    "first_name": "Chad",
+    "last_name": "Hall",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "46fba395-dbd8-4a4a-a14d-413fc0a974f3",
+        "occured_at": "1995-03-11T06:20:03.469885",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      }
+    ]
+  },
+  {
+    "id": "beac3122-c560-4763-b45d-b68b5ea94dea",
+    "login": "John Browning",
+    "email": "beckerrobin@example.org",
+    "password": "u3+tBjPx%8",
+    "first_name": "Michael",
+    "last_name": "Jones",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "52ea04b0-6c3b-47b7-913f-01559503298e",
+        "occured_at": "1980-03-21T03:39:15.273327",
+        "action": "logout",
+        "fingerprint": "/dev/sdc"
+      }
+    ]
+  },
+  {
+    "id": "bee2e834-2d36-47e0-8d72-a3470705c382",
+    "login": "Stefanie Brown",
+    "email": "boyerjack@example.org",
+    "password": "!+RUVfwd!7",
+    "first_name": "Mark",
+    "last_name": "Banks",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "57f3d728-e3dd-4e61-a0ea-eddd7117a78f",
+        "occured_at": "1995-03-19T15:31:44.085665",
+        "action": "login",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "82826f61-50f4-4967-b3c6-2abde4878688",
+        "occured_at": "2003-03-31T01:01:33.201803",
+        "action": "logout",
+        "fingerprint": "/dev/xvdo"
+      },
+      {
+        "id": "72bcabf8-e5a8-4326-bdeb-115461a0b65c",
+        "occured_at": "2013-12-31T01:31:32.643147",
+        "action": "login",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "7bd5bf1b-240b-4402-a34f-108598023de1",
+        "occured_at": "1974-03-18T21:57:06.519335",
+        "action": "logout",
+        "fingerprint": "/dev/xvdu"
+      },
+      {
+        "id": "0ac1e5cb-73a7-45bb-b382-12dd246a68aa",
+        "occured_at": "1975-04-14T22:29:11.724343",
+        "action": "logout",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "d7e89ca4-6788-4353-8bde-40fbeac8c630",
+        "occured_at": "2005-01-29T04:56:48.148175",
+        "action": "login",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "492ba63f-b92d-44ac-963b-6adb2d38e7b6",
+        "occured_at": "2018-12-20T23:07:04.461554",
+        "action": "logout",
+        "fingerprint": "/dev/vdl"
+      },
+      {
+        "id": "c62702a5-132c-4d27-84a4-a10e14bd2adc",
+        "occured_at": "1979-07-27T00:15:11.106710",
+        "action": "logout",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "c9c35fa4-fbbf-466d-b46c-9d0bb49ec718",
+        "occured_at": "2001-03-23T15:59:54.187953",
+        "action": "login",
+        "fingerprint": "/dev/sdk"
+      }
+    ]
+  },
+  {
+    "id": "e5fc44f1-1c4a-4b80-aee7-997048909294",
+    "login": "James Mcconnell",
+    "email": "millerrandy@example.com",
+    "password": "27ZZelE4^F",
+    "first_name": "Daniel",
+    "last_name": "Bates",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "8fb06acc-881b-4e57-b8b3-2f9a801fa16a",
+        "occured_at": "2022-02-28T09:50:37.425256",
+        "action": "login",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "0ae057d7-4f67-4b18-9dd8-dbe62f98d607",
+        "occured_at": "2002-09-30T02:46:09.880242",
+        "action": "logout",
+        "fingerprint": "/dev/vdr"
+      }
+    ]
+  },
+  {
+    "id": "ef15b719-9109-4ff0-b304-9acbfad3a1d4",
+    "login": "Susan Lee",
+    "email": "bradfordcrystal@example.net",
+    "password": "RcNz5I_vB&",
+    "first_name": "John",
+    "last_name": "Kaiser",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "4660ed37-9ec6-47dc-b726-0f13b1fcbeb4",
+        "occured_at": "1977-07-05T20:56:00.137346",
+        "action": "login",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "9d2bd56f-401b-40a0-ba33-4639dee3d6ad",
+        "occured_at": "1974-10-30T11:33:32.649094",
+        "action": "login",
+        "fingerprint": "/dev/xvdu"
+      },
+      {
+        "id": "0232dde4-51ed-4c56-8033-fb00449e33bb",
+        "occured_at": "2003-01-05T19:21:10.230335",
+        "action": "logout",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "02984a91-a4c8-459d-b9b8-5e32275fb2ab",
+        "occured_at": "1972-12-16T09:24:08.307712",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "00016cbd-b945-4bc1-8036-73f57620e76e",
+        "occured_at": "1997-10-24T02:27:24.217876",
+        "action": "logout",
+        "fingerprint": "/dev/vdl"
+      },
+      {
+        "id": "df66fde4-0e2f-46ec-8021-266d31ca604e",
+        "occured_at": "2006-08-25T15:17:52.948672",
+        "action": "logout",
+        "fingerprint": "/dev/vdq"
+      },
+      {
+        "id": "d1a87540-3a8f-465c-8531-fa0cd4a5e5ee",
+        "occured_at": "1988-07-04T21:27:50.010024",
+        "action": "logout",
+        "fingerprint": "/dev/vdj"
+      }
+    ]
+  },
+  {
+    "id": "3fd55ea6-d7ff-4547-af81-2c11eed5cf9b",
+    "login": "Ryan Cain",
+    "email": "ubennett@example.com",
+    "password": "B8TreXMo+p",
+    "first_name": "Jose",
+    "last_name": "Krause",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "4a95eb02-69e4-4850-afcc-de29e16a0423",
+        "occured_at": "2012-08-16T09:41:16.541886",
+        "action": "login",
+        "fingerprint": "/dev/xvdw"
+      },
+      {
+        "id": "8b38ae19-8d78-46af-8ade-e6704ff8aa2d",
+        "occured_at": "1975-11-24T17:40:46.582661",
+        "action": "logout",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "3d192e45-c5b6-4487-b9dd-44de65c05ee8",
+        "occured_at": "2008-09-04T12:18:21.243643",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      },
+      {
+        "id": "4f5a349d-349c-4787-bb16-ec37696b9a70",
+        "occured_at": "2002-06-02T11:07:34.216517",
+        "action": "login",
+        "fingerprint": "/dev/vdz"
+      }
+    ]
+  },
+  {
+    "id": "5d35d117-dc91-42b8-aba4-3a033a4915e5",
+    "login": "Brenda Walter",
+    "email": "pgreen@example.net",
+    "password": "O5d5Tneq!j",
+    "first_name": "James",
+    "last_name": "Hogan",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "eaad76a7-8edb-4114-9129-a0c838558f8f",
+        "occured_at": "1983-06-01T14:43:41.288100",
+        "action": "login",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "c17d3be3-2f3d-43d2-a371-e9a699dbf361",
+        "occured_at": "2003-02-05T08:10:50.264346",
+        "action": "logout",
+        "fingerprint": "/dev/sdn"
+      },
+      {
+        "id": "0e0b6433-30b1-4828-bd1d-67017edfae31",
+        "occured_at": "2024-02-02T11:50:49.426494",
+        "action": "login",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "1f41143d-0476-41a8-afc6-946a22ef2f42",
+        "occured_at": "1984-08-06T00:45:46.732052",
+        "action": "login",
+        "fingerprint": "/dev/sdj"
+      },
+      {
+        "id": "29f5936c-516b-4183-985e-a443959e7335",
+        "occured_at": "2023-02-26T06:05:53.669407",
+        "action": "login",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "81e52b3a-6c59-4ece-9cf1-4db31390ecf9",
+        "occured_at": "2004-06-05T01:56:20.335661",
+        "action": "logout",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "ffb6f99b-bec5-453f-a9b9-d53c7abb8d5a",
+        "occured_at": "1974-11-18T15:31:28.955891",
+        "action": "login",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "e1a00b2c-fd73-4423-a091-3b039b5282d4",
+        "occured_at": "1999-11-12T12:55:01.693240",
+        "action": "logout",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "ccbde836-c1aa-4385-9a1f-f3fff8c55ecd",
+        "occured_at": "1977-11-26T18:45:57.298221",
+        "action": "login",
+        "fingerprint": "/dev/vdg"
+      }
+    ]
+  },
+  {
+    "id": "b45d8cbb-7aeb-4cb1-abb6-a736be11589d",
+    "login": "Lisa Flores",
+    "email": "burnettkeith@example.com",
+    "password": "kOc*0Rs(0%",
+    "first_name": "Matthew",
+    "last_name": "Barton",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "abfd8614-a08c-4c28-ad65-2830c839b470",
+        "occured_at": "2002-10-23T07:44:00.595540",
+        "action": "login",
+        "fingerprint": "/dev/vdj"
+      },
+      {
+        "id": "e5edaa48-26df-497e-b7ae-696faa6fbfc4",
+        "occured_at": "2019-04-02T00:02:36.132845",
+        "action": "login",
+        "fingerprint": "/dev/vdx"
+      },
+      {
+        "id": "fbb08c92-a50c-4996-b8a1-9e8b88d34b7c",
+        "occured_at": "1974-05-20T02:09:29.749609",
+        "action": "logout",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "4db3f288-fe85-4b8a-b0f9-b2f30fb5c2fe",
+        "occured_at": "1994-11-05T20:23:28.869306",
+        "action": "login",
+        "fingerprint": "/dev/vdl"
+      }
+    ]
+  },
+  {
+    "id": "c850711c-02ca-4597-ae0f-05c1b8dfc711",
+    "login": "Courtney Young",
+    "email": "heather60@example.org",
+    "password": "*wk1XAfowg",
+    "first_name": "Denise",
+    "last_name": "Ray",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "4479f5a2-6480-4574-b423-6744812cf2dc",
+        "occured_at": "2015-02-20T08:27:48.140790",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      },
+      {
+        "id": "0f517e96-419a-44dc-be45-154c13db6dce",
+        "occured_at": "2021-11-10T15:18:56.427114",
+        "action": "login",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "4c1eda1b-d58f-425f-839b-7bda0c8a827a",
+        "occured_at": "1996-02-25T08:29:50.213410",
+        "action": "login",
+        "fingerprint": "/dev/sdy"
+      }
+    ]
+  },
+  {
+    "id": "b1b265a2-42fe-45c1-af3b-2c5b25e43a48",
+    "login": "Jason Phillips",
+    "email": "atkinsonchristina@example.com",
+    "password": "(lLvgonp8n",
+    "first_name": "Ruben",
+    "last_name": "Powers",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "a2b347ea-7e3e-4802-8d3d-746e43176dab",
+        "occured_at": "1995-07-27T17:11:17.823013",
+        "action": "logout",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "653272c5-b253-4ddb-b320-ffa31898a816",
+        "occured_at": "1980-08-04T07:34:31.919822",
+        "action": "logout",
+        "fingerprint": "/dev/sdr"
+      },
+      {
+        "id": "20582f0b-bdf0-4fd0-a245-d3f75602d685",
+        "occured_at": "1993-10-06T15:44:39.647273",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "affc0bc2-5d02-43e9-b75b-7a9c30864e9a",
+        "occured_at": "1979-10-19T17:14:50.543261",
+        "action": "logout",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "5ee2d0b7-7ca0-453f-8a49-aee0a00240bd",
+        "occured_at": "1978-07-05T20:49:39.223247",
+        "action": "logout",
+        "fingerprint": "/dev/sdm"
+      },
+      {
+        "id": "9d455b40-d0f3-4a4d-ad05-2089c28c088a",
+        "occured_at": "1984-06-08T12:24:27.871803",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      },
+      {
+        "id": "11a1b0b0-a072-4ca7-9e19-f9cebc231e17",
+        "occured_at": "1993-09-02T00:00:06.374151",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "0806a47c-946e-46a6-82ea-8726daa0c133",
+        "occured_at": "1972-07-20T03:14:49.482273",
+        "action": "logout",
+        "fingerprint": "/dev/vdj"
+      }
+    ]
+  },
+  {
+    "id": "132f380d-9bdb-4c7f-8b30-50a05817bc7a",
+    "login": "Julian James",
+    "email": "changjessica@example.org",
+    "password": "Tc!EJdXs^1",
+    "first_name": "Jackson",
+    "last_name": "Singleton",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "83207c92-d6eb-4e23-bcce-d4b3c4971c04",
+        "occured_at": "1990-02-10T08:23:31.236678",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      }
+    ]
+  },
+  {
+    "id": "9082147a-7c79-40bc-99cc-17490e764ee1",
+    "login": "Charles Chan",
+    "email": "william73@example.com",
+    "password": "mk!7MKqn%0",
+    "first_name": "Regina",
+    "last_name": "Alvarez",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "bbaca321-2ce9-419b-8a1e-9fb2c8a2b6d2",
+        "occured_at": "1997-05-22T19:46:30.020034",
+        "action": "login",
+        "fingerprint": "/dev/vdz"
+      }
+    ]
+  },
+  {
+    "id": "0ea26ad3-052e-4674-a1fa-66397a33b16c",
+    "login": "Timothy Chang",
+    "email": "debra97@example.com",
+    "password": "Bk0wYyaT^#",
+    "first_name": "Justin",
+    "last_name": "Miller",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "1026a7fd-8b4d-495e-84e9-ecf4c0fd86dd",
+        "occured_at": "1986-10-21T08:24:06.909329",
+        "action": "logout",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "3180bdc2-47dd-4e5f-a63e-833bd4000dc9",
+        "occured_at": "1988-01-22T00:30:29.928331",
+        "action": "logout",
+        "fingerprint": "/dev/xvdo"
+      },
+      {
+        "id": "3dc325bf-1a52-4dad-9cb2-6230839a21c9",
+        "occured_at": "2005-03-09T06:00:24.672089",
+        "action": "logout",
+        "fingerprint": "/dev/xvdg"
+      },
+      {
+        "id": "9ba2e637-1a4f-4b3a-aede-00b810d971cb",
+        "occured_at": "1996-09-15T12:36:15.116933",
+        "action": "logout",
+        "fingerprint": "/dev/vdi"
+      }
+    ]
+  },
+  {
+    "id": "2f967176-058a-4bef-955c-5627335d6258",
+    "login": "Jeffery Chandler DDS",
+    "email": "edwardsmatthew@example.com",
+    "password": "^usB#vLF2x",
+    "first_name": "Bernard",
+    "last_name": "Garza",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "7d6ee289-6180-4dee-8582-4ad7bd9fc995",
+    "login": "James Johnson",
+    "email": "irodriguez@example.org",
+    "password": "o!5@Xmsg5!",
+    "first_name": "Raymond",
+    "last_name": "Baker",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "bed42421-a130-4ea4-a89a-6c86f5fea0bc",
+        "occured_at": "2019-12-08T04:31:55.882944",
+        "action": "login",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "7c9f02eb-27c0-4e37-a3a4-c50083cdecd6",
+        "occured_at": "2017-07-26T14:04:44.525689",
+        "action": "logout",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "a0a8c4ba-b27c-44d1-a92b-d583aae4da92",
+        "occured_at": "2005-04-07T13:33:20.216429",
+        "action": "login",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "5d1f04c8-2dbf-4fbf-9d4b-c3d05fe567aa",
+        "occured_at": "1996-12-28T10:42:26.693848",
+        "action": "logout",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "9b9a344d-fee4-4a91-a726-15e41f3155c7",
+        "occured_at": "2014-02-03T19:04:41.964499",
+        "action": "login",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "006f3562-0338-4139-9eb7-45579e3e818b",
+        "occured_at": "2006-09-18T07:07:00.103582",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "4ae0cf92-2392-4d38-aed6-4c5924188a79",
+        "occured_at": "2024-05-29T07:45:02.505514",
+        "action": "logout",
+        "fingerprint": "/dev/xvdq"
+      },
+      {
+        "id": "9b323c48-0a9d-44cc-aa58-18a9380e25b9",
+        "occured_at": "1998-04-14T14:05:42.743965",
+        "action": "login",
+        "fingerprint": "/dev/sdt"
+      }
+    ]
+  },
+  {
+    "id": "9fa7157c-e4fa-4ff9-aab3-c59735962752",
+    "login": "Hannah Sanders",
+    "email": "harrisjennifer@example.org",
+    "password": "t2&MnhxG$7",
+    "first_name": "Marie",
+    "last_name": "Galvan",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "f7d24fb3-6fe5-4b58-9487-44feb785e45d",
+        "occured_at": "1996-03-01T07:24:37.490059",
+        "action": "login",
+        "fingerprint": "/dev/xvdd"
+      }
+    ]
+  },
+  {
+    "id": "09b8bf1a-1bcf-4161-8f44-b24d590c1f1c",
+    "login": "Abigail Mendez DDS",
+    "email": "glen84@example.net",
+    "password": "vZ^9I5d5rj",
+    "first_name": "William",
+    "last_name": "Bell",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "05ec218c-911a-4bba-bca2-e8e30f481daf",
+        "occured_at": "1974-07-27T00:34:07.757164",
+        "action": "logout",
+        "fingerprint": "/dev/vdd"
+      },
+      {
+        "id": "bf724e27-e06e-4a5c-b432-192f993fcfbd",
+        "occured_at": "1985-10-05T13:03:27.401970",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      },
+      {
+        "id": "903e67a8-a816-4bd6-ad9e-b2fa566c0d5b",
+        "occured_at": "2007-02-14T07:08:43.606070",
+        "action": "login",
+        "fingerprint": "/dev/xvdf"
+      },
+      {
+        "id": "c37bfa42-4704-4571-a9d6-2d6b976b7cfd",
+        "occured_at": "1971-01-29T00:46:35.215008",
+        "action": "login",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "377ee851-5db0-4d16-b407-8f44e5a895a0",
+        "occured_at": "1989-02-03T15:28:00.194723",
+        "action": "login",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "8c850d89-bbfc-4d8e-a104-2a047a046d90",
+        "occured_at": "1972-10-25T04:36:08.884938",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      }
+    ]
+  },
+  {
+    "id": "95b1e7fa-0cd7-4bb8-a15b-feb821eb0d83",
+    "login": "Heather Chang",
+    "email": "gonzalezjames@example.org",
+    "password": "+5Ii9SjUP%",
+    "first_name": "Thomas",
+    "last_name": "Rodriguez",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "4f74c6ca-3161-4577-a2f9-67aecced0931",
+        "occured_at": "1975-04-15T18:00:28.496222",
+        "action": "login",
+        "fingerprint": "/dev/xvdr"
+      }
+    ]
+  },
+  {
+    "id": "222ab4d5-cef4-44e9-8692-4e93986bf9b9",
+    "login": "Joseph Hale",
+    "email": "jaredwilliams@example.com",
+    "password": "!PiBFofoH7",
+    "first_name": "Samantha",
+    "last_name": "Cochran",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "71a785fc-2cf2-4d83-a258-88ee1063a9b0",
+        "occured_at": "2014-09-11T22:00:08.843027",
+        "action": "logout",
+        "fingerprint": "/dev/xvda"
+      },
+      {
+        "id": "5762dc30-0801-4caf-b1ca-9b2dd769eb36",
+        "occured_at": "2020-09-20T11:49:51.310412",
+        "action": "login",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "a6fae36a-c248-4a43-bd70-b76504844f68",
+        "occured_at": "1991-01-10T03:28:43.491094",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "223d85fa-278a-43ce-b6fb-52d01d3666e4",
+        "occured_at": "1978-07-02T13:05:28.289750",
+        "action": "login",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "123d3ae7-31e5-4a76-b274-6b46f5628d42",
+        "occured_at": "2010-12-13T17:56:06.784922",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "09ab4c1f-cd73-41d9-a7b2-7b375879f984",
+        "occured_at": "1994-10-06T13:43:47.933291",
+        "action": "login",
+        "fingerprint": "/dev/vdq"
+      }
+    ]
+  },
+  {
+    "id": "e781a908-950c-47d2-bc4c-befd883721a2",
+    "login": "Ann Thomas",
+    "email": "jonathanjackson@example.org",
+    "password": "+)463Ur@46",
+    "first_name": "Tiffany",
+    "last_name": "Baker",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "63969a33-3018-436f-a971-193e5a8012a1",
+        "occured_at": "1976-12-18T20:37:43.010363",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "fa0f1642-252b-4415-a0bd-6f5899e62e07",
+        "occured_at": "1971-10-05T17:07:23.909820",
+        "action": "logout",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "5f110737-936f-4a79-ae50-3e640e14e4fd",
+        "occured_at": "1971-06-13T19:05:09.601452",
+        "action": "logout",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "44b8e7da-05d0-403b-9508-2ebba07a7173",
+        "occured_at": "2007-08-03T12:58:43.594565",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "5387928e-1d1d-47d0-9906-1147d3e0c1f5",
+        "occured_at": "1987-09-14T10:44:47.428170",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      },
+      {
+        "id": "7e274e42-b5e6-44b5-9798-7eaa325c59b6",
+        "occured_at": "2011-08-22T16:36:46.423495",
+        "action": "login",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "d2d77ddf-1231-47cc-bdfa-0198998c48f9",
+        "occured_at": "2008-03-06T12:02:43.426248",
+        "action": "login",
+        "fingerprint": "/dev/sdr"
+      }
+    ]
+  },
+  {
+    "id": "27dd01a0-95f4-4ad1-b928-d0d782f1f321",
+    "login": "Aaron Alexander",
+    "email": "caseygina@example.com",
+    "password": "tda+2kJe)c",
+    "first_name": "Scott",
+    "last_name": "Palmer",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "2bf3e7ff-b68b-476a-8927-b17a6630c886",
+        "occured_at": "2020-04-16T02:06:45.899665",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      }
+    ]
+  },
+  {
+    "id": "e2b2cd11-e009-468a-b5f8-8a9b0c09de53",
+    "login": "Sarah Terrell",
+    "email": "peggylloyd@example.com",
+    "password": "ES+J8Ce^j(",
+    "first_name": "Mary",
+    "last_name": "Thompson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "27262538-a1b7-4498-aac2-c22aa61da27a",
+        "occured_at": "2009-10-11T20:53:38.001590",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      },
+      {
+        "id": "75002d48-e0aa-4ad7-93d7-f7acdae1f292",
+        "occured_at": "1984-03-17T20:12:39.184676",
+        "action": "logout",
+        "fingerprint": "/dev/xvdz"
+      }
+    ]
+  },
+  {
+    "id": "198423e6-a14d-4e64-9f65-f104e1a4ba71",
+    "login": "Sheena Hansen",
+    "email": "stephaniestout@example.net",
+    "password": "&@9R7pQlcH",
+    "first_name": "Matthew",
+    "last_name": "Johnson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "083b8b5c-c0e8-4e34-81e2-491e242fb189",
+        "occured_at": "2006-01-04T22:52:35.006935",
+        "action": "logout",
+        "fingerprint": "/dev/vdk"
+      },
+      {
+        "id": "1896369c-927c-47ec-9c40-4b7790d5a85a",
+        "occured_at": "1988-03-28T18:17:10.706738",
+        "action": "login",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "07d81eda-774b-41c4-b953-2d8a6f9c23eb",
+        "occured_at": "1984-01-18T15:03:35.833652",
+        "action": "login",
+        "fingerprint": "/dev/xvdk"
+      },
+      {
+        "id": "080ee5a3-b7f2-4aa5-b6d1-2454559dfe26",
+        "occured_at": "2003-12-11T00:00:00.384643",
+        "action": "login",
+        "fingerprint": "/dev/vdu"
+      },
+      {
+        "id": "e4d99b54-9dad-43ac-8a6d-219bb73ada5c",
+        "occured_at": "1980-12-22T00:02:13.414397",
+        "action": "logout",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "552678fe-f8b0-49d6-a60a-87ddb7ed17fd",
+        "occured_at": "1970-12-22T00:07:16.273835",
+        "action": "login",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "4ca4af52-a4f3-470d-9cde-25690b61e165",
+        "occured_at": "1993-12-28T07:47:32.967251",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      },
+      {
+        "id": "6933fef0-12f3-4d1e-93df-469376e1212a",
+        "occured_at": "2009-05-10T10:09:49.617844",
+        "action": "logout",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "db77563f-4b43-407c-a44a-a977976264b3",
+        "occured_at": "2000-04-11T11:59:29.895620",
+        "action": "login",
+        "fingerprint": "/dev/vdx"
+      }
+    ]
+  },
+  {
+    "id": "3e670146-fccd-4897-b4e5-f1489babb016",
+    "login": "Austin Fuller",
+    "email": "john92@example.net",
+    "password": "U!i6EwuPd#",
+    "first_name": "Alexis",
+    "last_name": "Harris",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "287fbaff-4eb3-4139-b87b-6931d037bd18",
+        "occured_at": "2013-09-11T10:08:38.034645",
+        "action": "login",
+        "fingerprint": "/dev/sda"
+      },
+      {
+        "id": "8bdd46ad-cf06-453d-a75f-a4e3c3b94600",
+        "occured_at": "2001-01-31T21:19:04.644554",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "63fa8639-a019-4fc3-bdea-402b24215d99",
+        "occured_at": "1981-01-20T04:41:10.472285",
+        "action": "logout",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "d9e21afb-4718-421c-b57a-30077f4ace97",
+        "occured_at": "2000-10-26T18:17:12.150608",
+        "action": "logout",
+        "fingerprint": "/dev/xvdk"
+      },
+      {
+        "id": "0bf1f97f-98a1-4d5c-9fa8-dbd6614ecb4e",
+        "occured_at": "1970-09-25T08:34:22.481483",
+        "action": "logout",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "70d4eeb1-e71f-422e-8f35-39c5cdfe81ff",
+        "occured_at": "1991-03-24T01:20:54.486178",
+        "action": "login",
+        "fingerprint": "/dev/vdo"
+      }
+    ]
+  },
+  {
+    "id": "29ee2dd4-7c3d-42ab-b116-56503f124c0c",
+    "login": "Kimberly Davis",
+    "email": "robertjimenez@example.org",
+    "password": "&av4Jz$Wie",
+    "first_name": "Mark",
+    "last_name": "Spencer",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "e46021c0-9341-4e97-8bcb-24e275f4c337",
+        "occured_at": "2020-07-04T20:17:48.244575",
+        "action": "login",
+        "fingerprint": "/dev/vda"
+      }
+    ]
+  },
+  {
+    "id": "983565b8-6072-42bd-b75d-ad22a2b929cb",
+    "login": "Miranda Sanchez",
+    "email": "michellefox@example.net",
+    "password": "&AF2$7Ow^2",
+    "first_name": "Joseph",
+    "last_name": "Pierce",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "5a5e67e9-6ffb-4a9a-bfb1-e681c38db816",
+        "occured_at": "1998-09-16T16:11:43.493066",
+        "action": "logout",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "bbe1812a-79f8-43db-8ab5-ee0c7cbfac18",
+        "occured_at": "2011-08-16T19:28:36.072717",
+        "action": "logout",
+        "fingerprint": "/dev/vds"
+      },
+      {
+        "id": "e78cffe0-60de-4425-91dd-8b491938d270",
+        "occured_at": "2021-10-05T03:26:27.802125",
+        "action": "login",
+        "fingerprint": "/dev/vdq"
+      },
+      {
+        "id": "a43aced9-e600-4287-aee6-815bbce7a023",
+        "occured_at": "2013-01-10T15:39:19.911849",
+        "action": "login",
+        "fingerprint": "/dev/xvde"
+      },
+      {
+        "id": "73c3d833-dd9b-443e-bfbe-817e70de5e1f",
+        "occured_at": "2015-11-13T16:15:09.898559",
+        "action": "logout",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "d68b58e9-1436-46c4-8a8c-0a8a6345fa12",
+        "occured_at": "1991-12-10T15:53:37.336879",
+        "action": "login",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "8bf2fd7c-232f-4530-8b10-4b6c4e64ff4e",
+        "occured_at": "2012-07-14T06:48:11.765285",
+        "action": "logout",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "37d440f6-34f3-4cb9-8f43-3a906afa613b",
+        "occured_at": "1995-07-01T14:31:21.198673",
+        "action": "login",
+        "fingerprint": "/dev/xvdh"
+      },
+      {
+        "id": "55bf493c-bb16-44e1-991f-f4f02596e6d8",
+        "occured_at": "2016-10-04T06:47:15.237281",
+        "action": "login",
+        "fingerprint": "/dev/vdk"
+      },
+      {
+        "id": "446f5564-73c8-4d72-88cc-c8e93cae252e",
+        "occured_at": "2006-11-13T19:57:56.327278",
+        "action": "logout",
+        "fingerprint": "/dev/vdi"
+      }
+    ]
+  },
+  {
+    "id": "30e6d2b4-6f8b-404f-84c0-f75df44fe915",
+    "login": "Gerald Mitchell",
+    "email": "burnsdawn@example.net",
+    "password": "pOx+8OGh8P",
+    "first_name": "Maria",
+    "last_name": "Villegas",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "59325e82-c4fb-448a-8ec0-0591e09ee0e5",
+    "login": "Gwendolyn Howard",
+    "email": "wanda35@example.com",
+    "password": "Us&u5Ne0(%",
+    "first_name": "Tanya",
+    "last_name": "Waller",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "dc921c24-f248-468b-b00d-808ca47245fc",
+        "occured_at": "2020-06-13T09:52:16.816149",
+        "action": "logout",
+        "fingerprint": "/dev/xvdu"
+      },
+      {
+        "id": "e7ad8861-7487-4bee-8621-bd94297fe54d",
+        "occured_at": "1971-10-11T04:53:15.239354",
+        "action": "logout",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "233d8c2a-058b-4550-add8-9b2c5210d6bd",
+        "occured_at": "1994-02-13T19:16:51.392129",
+        "action": "logout",
+        "fingerprint": "/dev/vdv"
+      }
+    ]
+  },
+  {
+    "id": "04481772-f33e-4ba1-a793-5f81711beca6",
+    "login": "Lori Dorsey",
+    "email": "christopherlewis@example.net",
+    "password": "%7@S5E7H+s",
+    "first_name": "Jorge",
+    "last_name": "Pacheco",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "2f973d09-490f-4d26-9dd6-1b12e0a033d2",
+        "occured_at": "1984-02-13T11:42:03.594025",
+        "action": "login",
+        "fingerprint": "/dev/xvdz"
+      },
+      {
+        "id": "ac7e70ad-253c-4f32-af84-365a79c09d65",
+        "occured_at": "1987-12-30T03:30:16.720581",
+        "action": "logout",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "dae6f44f-13ed-43cb-8309-c63db14e36ec",
+        "occured_at": "1998-06-29T00:09:36.188291",
+        "action": "login",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "7af641c5-0a9a-46d3-b151-d75551657f9c",
+        "occured_at": "1976-05-01T12:21:05.585042",
+        "action": "login",
+        "fingerprint": "/dev/xvdf"
+      },
+      {
+        "id": "de43e0de-24be-4a24-b843-514a159d18e7",
+        "occured_at": "1971-01-11T18:47:48.176644",
+        "action": "login",
+        "fingerprint": "/dev/vdg"
+      },
+      {
+        "id": "09181e4f-bc31-408c-a31e-baf98173f646",
+        "occured_at": "2010-12-01T10:26:54.979797",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "ad8d9e90-0c01-4084-bea9-6755a2e8d295",
+        "occured_at": "2016-08-03T20:39:11.205923",
+        "action": "logout",
+        "fingerprint": "/dev/sdy"
+      },
+      {
+        "id": "8052f252-b89d-4b08-bbac-1129fbdda129",
+        "occured_at": "2007-10-04T10:24:03.601121",
+        "action": "login",
+        "fingerprint": "/dev/sdl"
+      }
+    ]
+  },
+  {
+    "id": "d1c12e03-b307-4ad3-98ca-0363e7b76309",
+    "login": "Faith Bennett",
+    "email": "jenniferolson@example.org",
+    "password": "h*FJB6Ka4#",
+    "first_name": "Dustin",
+    "last_name": "Brown",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "fe1ed3bb-51ec-4c33-a703-0f4e214677a9",
+        "occured_at": "2009-11-20T19:38:43.326627",
+        "action": "login",
+        "fingerprint": "/dev/sdn"
+      },
+      {
+        "id": "83d34167-50f3-4cf6-ab87-a10dcf3876ef",
+        "occured_at": "1987-03-07T13:19:18.135873",
+        "action": "logout",
+        "fingerprint": "/dev/vdr"
+      },
+      {
+        "id": "403d956e-bf16-4f04-aaef-8c49c1ea791e",
+        "occured_at": "1991-05-27T03:02:43.328768",
+        "action": "login",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "bd2a3821-7538-4367-8261-f0816d04d5eb",
+        "occured_at": "2008-07-29T00:42:46.626258",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "fb86ae18-94e8-4f46-8dfb-751eaa349b6a",
+        "occured_at": "2008-04-18T19:46:01.886147",
+        "action": "login",
+        "fingerprint": "/dev/sdi"
+      },
+      {
+        "id": "05cb5792-b34a-4d71-b3d4-d47af762847b",
+        "occured_at": "1988-11-19T11:00:56.008611",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      },
+      {
+        "id": "4d5c2d86-d47d-4fa2-8581-91e9ce51c710",
+        "occured_at": "2006-02-04T22:36:30.999501",
+        "action": "login",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "4f198b64-66db-46e9-833e-c15cd9472f1b",
+        "occured_at": "1986-01-23T10:31:29.521582",
+        "action": "logout",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "519a5269-0326-4b4c-8787-effd2a5981f7",
+        "occured_at": "1980-01-15T15:49:27.776639",
+        "action": "logout",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "0bbbfdaf-e22d-48e9-bb4d-5ce72eae5c92",
+        "occured_at": "2014-05-06T15:30:37.402386",
+        "action": "login",
+        "fingerprint": "/dev/xvdj"
+      }
+    ]
+  },
+  {
+    "id": "6c449937-aaa5-42e6-8668-ef527afdd8a7",
+    "login": "Christopher Robinson MD",
+    "email": "kristen78@example.net",
+    "password": "&70Fr5lc4o",
+    "first_name": "Teresa",
+    "last_name": "Rivera",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "74321d0f-ac46-4f56-88d6-d28c1012cecd",
+        "occured_at": "1993-01-09T05:01:24.443819",
+        "action": "login",
+        "fingerprint": "/dev/vdr"
+      }
+    ]
+  },
+  {
+    "id": "c9fc840b-f283-44ec-b202-d41b0bbdad87",
+    "login": "Katelyn Smith",
+    "email": "iroberts@example.org",
+    "password": "#y1Zmhq#^3",
+    "first_name": "Julie",
+    "last_name": "Chung",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "9386c80e-293b-4443-9b65-0c1d76111503",
+        "occured_at": "1978-08-20T12:57:22.594749",
+        "action": "logout",
+        "fingerprint": "/dev/vdd"
+      },
+      {
+        "id": "37fc3743-7ad0-42bc-bfd3-fb6f7f92d837",
+        "occured_at": "1983-01-05T07:11:39.623725",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      }
+    ]
+  },
+  {
+    "id": "3d1ee509-79dc-4bbb-b6df-485e3ee66115",
+    "login": "Laura Nguyen",
+    "email": "morgancampbell@example.org",
+    "password": "(YDGlw#s04",
+    "first_name": "Dana",
+    "last_name": "Dawson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "39ccb255-8341-42e0-81fa-2ef122af0f05",
+        "occured_at": "1993-02-21T13:29:24.410974",
+        "action": "login",
+        "fingerprint": "/dev/vdl"
+      },
+      {
+        "id": "0a2aa159-0ce0-4f98-8234-d3d77d204c25",
+        "occured_at": "2011-02-20T09:59:27.353880",
+        "action": "login",
+        "fingerprint": "/dev/xvdz"
+      },
+      {
+        "id": "6388db7c-3323-44d8-ae4d-d6332a12686f",
+        "occured_at": "1992-01-14T20:22:44.250448",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "f7fd0c1f-a4be-4ebf-a5ca-648003f489e1",
+        "occured_at": "2013-08-10T18:48:49.549861",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      }
+    ]
+  },
+  {
+    "id": "8843c4d3-bf17-439a-bb1f-d5f4e0f8d08c",
+    "login": "Mary Lyons",
+    "email": "jenniferbrown@example.org",
+    "password": "oD7&ApSi$!",
+    "first_name": "William",
+    "last_name": "Singh",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "6e9a55dd-ae48-45bf-993b-ab7080127e5d",
+        "occured_at": "2007-03-29T00:42:10.427330",
+        "action": "logout",
+        "fingerprint": "/dev/sdm"
+      },
+      {
+        "id": "523fd975-a7f8-493c-924c-3252d2aba7c8",
+        "occured_at": "1974-11-22T10:43:30.346219",
+        "action": "login",
+        "fingerprint": "/dev/sdc"
+      },
+      {
+        "id": "50f38afc-7d71-4a40-901b-d8b8ad896301",
+        "occured_at": "1970-03-15T16:15:26.310421",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      }
+    ]
+  },
+  {
+    "id": "4d3fa2de-9ea0-4862-b8cc-e7df09adc4bf",
+    "login": "Katherine Gonzales",
+    "email": "agarcia@example.net",
+    "password": "7fD1Mr1wz+",
+    "first_name": "Leah",
+    "last_name": "Harris",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "7a27e9a2-7609-4562-9c36-0d16d04f8596",
+        "occured_at": "1987-06-23T03:37:54.905826",
+        "action": "logout",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "e45cd343-1b01-482f-9692-512585152bc8",
+        "occured_at": "2012-01-30T03:42:13.052838",
+        "action": "login",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "34d4cf71-e7b0-44b3-a750-98dc2654a7e5",
+        "occured_at": "1990-03-26T13:52:01.139555",
+        "action": "login",
+        "fingerprint": "/dev/vdr"
+      },
+      {
+        "id": "152dfec5-ce5e-4ea9-b75a-ed07a1223f5a",
+        "occured_at": "1987-02-06T03:47:37.401076",
+        "action": "logout",
+        "fingerprint": "/dev/sdw"
+      },
+      {
+        "id": "9fcf0a3b-01f7-4ba2-b734-bbea6fbbd3fd",
+        "occured_at": "1989-12-26T01:57:04.341824",
+        "action": "login",
+        "fingerprint": "/dev/xvdp"
+      }
+    ]
+  },
+  {
+    "id": "436e7d28-74c0-4888-9d11-a91cb57976f3",
+    "login": "Ryan Powell",
+    "email": "lamcheryl@example.com",
+    "password": "E0D5DU!M+e",
+    "first_name": "Steven",
+    "last_name": "Thompson",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "24cf9c0c-16a6-4f73-8c59-8f82d07103a6",
+        "occured_at": "1978-01-23T08:09:49.519852",
+        "action": "login",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "0363dc92-d338-4d7e-80c0-3a48753191ff",
+        "occured_at": "2018-08-21T01:19:09.300913",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      }
+    ]
+  },
+  {
+    "id": "5d974781-85f7-4dae-bba9-02d4a7dc4245",
+    "login": "Sydney Cooper",
+    "email": "vherrera@example.com",
+    "password": "^8vWTsD0Ql",
+    "first_name": "Jacob",
+    "last_name": "Roach",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "ded7efb7-146f-4c10-a6d6-a987aeaf57ad",
+        "occured_at": "1970-04-15T01:56:05.291351",
+        "action": "login",
+        "fingerprint": "/dev/xvdk"
+      },
+      {
+        "id": "a73b694d-9c0c-47d0-b861-7bdba9c8441d",
+        "occured_at": "2004-12-08T04:10:06.548121",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "ca2f0186-19b9-4707-9fa6-4acdcc18f541",
+        "occured_at": "2003-09-21T22:52:11.071108",
+        "action": "logout",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "251e247d-6396-42d8-a48c-4c462ac485ec",
+        "occured_at": "2005-01-21T06:20:16.345451",
+        "action": "login",
+        "fingerprint": "/dev/sdy"
+      }
+    ]
+  },
+  {
+    "id": "f9ac512e-b89c-43a2-8258-78da65f392e8",
+    "login": "Jacqueline Fernandez",
+    "email": "nicoleibarra@example.net",
+    "password": "5#tDy#4f@r",
+    "first_name": "Tina",
+    "last_name": "Duncan",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "3f133dd2-28c5-4575-abcd-48c51cdd211f",
+        "occured_at": "2005-12-08T18:17:27.977734",
+        "action": "login",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "f16c8f5e-357d-4421-a208-0681ff3774f7",
+        "occured_at": "1987-06-06T20:26:04.428998",
+        "action": "login",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "234cd0ad-0846-423e-b513-c5f9865c425e",
+        "occured_at": "1988-03-16T17:37:59.774152",
+        "action": "login",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "1ade45f4-2cd5-45d6-a2c7-a44540a57c96",
+        "occured_at": "1988-04-22T17:01:24.012033",
+        "action": "login",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "93060215-7999-40fe-b003-cc9681343009",
+        "occured_at": "2013-12-07T21:30:26.870222",
+        "action": "login",
+        "fingerprint": "/dev/vdk"
+      },
+      {
+        "id": "6a9fddab-0e9c-46d8-abb3-db34b62db6e6",
+        "occured_at": "2010-08-18T20:39:49.611972",
+        "action": "logout",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "a1da1e9b-fbd0-42f8-bad3-462c313feac1",
+        "occured_at": "2007-10-27T03:37:05.796928",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "7a7517ac-d1cc-4d1e-abac-048298efabfc",
+        "occured_at": "2021-04-10T13:34:22.818531",
+        "action": "logout",
+        "fingerprint": "/dev/xvdu"
+      }
+    ]
+  },
+  {
+    "id": "0c0de025-761e-4d9c-9e5b-6843441b1c14",
+    "login": "Monica Tran",
+    "email": "lopezmark@example.org",
+    "password": "%#5Aj@Tuqz",
+    "first_name": "Jason",
+    "last_name": "Davis",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "d76a9dc2-ade2-4519-980b-2f948ca8b57a",
+        "occured_at": "1977-07-16T16:22:57.871608",
+        "action": "logout",
+        "fingerprint": "/dev/xvda"
+      },
+      {
+        "id": "f5ee6124-1820-4075-9ae4-6ff158355d85",
+        "occured_at": "1990-07-12T18:22:11.498719",
+        "action": "logout",
+        "fingerprint": "/dev/vdg"
+      },
+      {
+        "id": "982d0385-53eb-4bec-adb3-f689de4a5249",
+        "occured_at": "1990-01-18T22:49:19.162746",
+        "action": "login",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "81304c30-dcbf-4b06-80ed-5dbf8dd43f18",
+        "occured_at": "2002-06-06T21:42:33.784885",
+        "action": "login",
+        "fingerprint": "/dev/vdq"
+      },
+      {
+        "id": "30fd2d5a-3e27-4aae-a9dd-de1a2d0201fb",
+        "occured_at": "2008-02-28T06:07:03.443484",
+        "action": "logout",
+        "fingerprint": "/dev/sdb"
+      }
+    ]
+  },
+  {
+    "id": "bdea5a6c-e448-4f4a-b557-3c584b4e5df4",
+    "login": "Amanda Frost",
+    "email": "knightheather@example.net",
+    "password": ")1t6We#SdR",
+    "first_name": "Shawn",
+    "last_name": "Cruz",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "b57f68c9-6f16-4c06-bef2-c4d90a6fda44",
+        "occured_at": "1976-01-01T07:01:42.535654",
+        "action": "login",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "3149c145-dc7e-4896-8f45-e0cd03316d2e",
+        "occured_at": "2006-12-07T04:58:22.057627",
+        "action": "logout",
+        "fingerprint": "/dev/vdj"
+      },
+      {
+        "id": "42e09651-51ae-48e6-8f9e-09bddeda695b",
+        "occured_at": "1981-06-09T08:30:06.639101",
+        "action": "logout",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "d7fe0997-a51e-42e2-a8c8-8f8db18d5ff4",
+        "occured_at": "1987-05-30T10:24:16.656133",
+        "action": "logout",
+        "fingerprint": "/dev/xvda"
+      },
+      {
+        "id": "c84b8ff6-0965-4c4a-9a9f-55bb324fb0f2",
+        "occured_at": "2001-12-28T08:47:15.902726",
+        "action": "login",
+        "fingerprint": "/dev/xvdf"
+      },
+      {
+        "id": "3568285f-cb76-4f13-852f-7f98a2a00875",
+        "occured_at": "1983-11-10T22:30:03.758485",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      }
+    ]
+  },
+  {
+    "id": "7138b6d9-bf43-4fbf-b889-e600237373be",
+    "login": "Frank Baldwin",
+    "email": "zthompson@example.org",
+    "password": "#9@JMnCOgv",
+    "first_name": "Antonio",
+    "last_name": "Nunez",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "e2bc66fa-b647-4dc7-9717-81be1af3aa6d",
+        "occured_at": "2017-04-03T00:29:15.013262",
+        "action": "logout",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "89b0b935-fe9c-45af-bee7-4b03e601f72c",
+        "occured_at": "1985-10-04T18:55:34.185938",
+        "action": "logout",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "05d14807-3cc8-4c36-86cf-b44b846a3a95",
+        "occured_at": "2014-09-12T02:28:10.059410",
+        "action": "login",
+        "fingerprint": "/dev/sdc"
+      },
+      {
+        "id": "b81956ea-f936-4953-a083-d7edd360cffc",
+        "occured_at": "2001-03-31T17:31:58.946520",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "22e2fed3-ed75-4109-97b7-5e41469e6eca",
+        "occured_at": "1971-10-29T10:08:39.543614",
+        "action": "login",
+        "fingerprint": "/dev/vdk"
+      }
+    ]
+  },
+  {
+    "id": "e4d1bcf4-7f37-4145-a053-f3384314fc71",
+    "login": "Pamela Hernandez",
+    "email": "lcampbell@example.org",
+    "password": ")1IL0EBupc",
+    "first_name": "Laura",
+    "last_name": "Lopez",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "a7263170-118c-458f-90be-d277f9d1c917",
+    "login": "Jason Pace",
+    "email": "ericagonzalez@example.org",
+    "password": "E@44VAVreA",
+    "first_name": "Steven",
+    "last_name": "Richardson",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "2ce2b82a-08e5-47c1-8cea-0710d9cf41b2",
+        "occured_at": "1983-11-29T02:01:19.017570",
+        "action": "logout",
+        "fingerprint": "/dev/sdy"
+      },
+      {
+        "id": "53628926-b847-40ab-a1a4-fc82de0c373c",
+        "occured_at": "2018-12-02T20:19:43.162321",
+        "action": "logout",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "e26a6f08-aeb4-4f4e-bf0b-25fc1bd6e69a",
+        "occured_at": "1995-01-23T13:57:21.983736",
+        "action": "login",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "744cddbc-bdbf-4687-9220-69ba5afe8958",
+        "occured_at": "1972-08-08T12:17:05.634973",
+        "action": "login",
+        "fingerprint": "/dev/vdg"
+      },
+      {
+        "id": "477dd35d-77ce-4810-8cbe-1752eb580fd6",
+        "occured_at": "1994-11-28T04:12:54.685038",
+        "action": "logout",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "3905c848-c7b0-4f57-b061-fc490e8d4e9b",
+        "occured_at": "2015-05-02T05:10:26.172282",
+        "action": "login",
+        "fingerprint": "/dev/sdw"
+      },
+      {
+        "id": "223c5776-ba45-4cff-8368-790eaaa157a2",
+        "occured_at": "1985-12-27T12:40:17.202776",
+        "action": "logout",
+        "fingerprint": "/dev/vdg"
+      },
+      {
+        "id": "522aa1d1-83bd-4cdf-b720-7fcc2afa165e",
+        "occured_at": "2017-02-12T08:25:20.312671",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "25e70e27-3b11-4016-877a-512fb6ba08eb",
+        "occured_at": "2000-10-21T12:17:45.863104",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      }
+    ]
+  },
+  {
+    "id": "c25d11da-238b-4e3f-adc1-a0bd8c357284",
+    "login": "Christopher Hoffman",
+    "email": "victorrussell@example.com",
+    "password": "o4(jGFsl@(",
+    "first_name": "Thomas",
+    "last_name": "Tate",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "f6e71180-90b3-486c-b98e-78019546e8fe",
+        "occured_at": "1990-06-26T10:08:32.274070",
+        "action": "login",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "b94b03bd-ba08-46a8-ade4-6bfa5a3aeb03",
+        "occured_at": "2016-08-27T20:19:52.066895",
+        "action": "logout",
+        "fingerprint": "/dev/sdx"
+      }
+    ]
+  },
+  {
+    "id": "294a008d-477c-44b7-8cf3-3ab0d3a0df32",
+    "login": "April Jimenez",
+    "email": "michael42@example.org",
+    "password": "y+5@WSKweC",
+    "first_name": "Tracey",
+    "last_name": "Mason",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "a1d35b36-54e4-4267-9d60-6257c4602377",
+        "occured_at": "1982-08-31T07:57:04.834069",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "64398fb6-ceac-41c6-975b-ade0c9a6ded5",
+        "occured_at": "1976-01-11T00:34:57.228848",
+        "action": "login",
+        "fingerprint": "/dev/sdi"
+      },
+      {
+        "id": "e9df698d-60f3-461f-b737-9468ab91ee5b",
+        "occured_at": "1982-04-17T17:14:04.803911",
+        "action": "login",
+        "fingerprint": "/dev/sda"
+      },
+      {
+        "id": "637ad422-d0b4-4c3b-a13f-c3a754bc56e2",
+        "occured_at": "1991-07-24T00:28:10.033869",
+        "action": "logout",
+        "fingerprint": "/dev/vdx"
+      },
+      {
+        "id": "b6159c70-0fc9-47a1-90dd-c12c00c11d1e",
+        "occured_at": "2017-06-13T07:40:35.554333",
+        "action": "logout",
+        "fingerprint": "/dev/xvdm"
+      },
+      {
+        "id": "4e0027ed-e8ea-4904-b68c-573d03b809a0",
+        "occured_at": "2006-12-10T09:13:17.384953",
+        "action": "login",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "65b61a99-b31d-46e6-ae7f-fe53812f68da",
+        "occured_at": "2016-11-20T00:08:56.476533",
+        "action": "login",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "fe8927fb-4d60-4a5d-a8d9-93b66689795b",
+        "occured_at": "1990-01-20T23:59:59.108081",
+        "action": "logout",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "3f86a589-59df-4379-a4fb-064c8125d4a1",
+        "occured_at": "1996-05-24T19:15:17.300246",
+        "action": "login",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "532dadaa-f7f3-4158-8c0a-a631680afedb",
+        "occured_at": "1985-02-11T17:07:37.085013",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      }
+    ]
+  },
+  {
+    "id": "118639b5-9eb6-4522-b5da-10db17cdbe03",
+    "login": "Sandra Stevens",
+    "email": "william67@example.com",
+    "password": "j#PVQ2gqQY",
+    "first_name": "Erica",
+    "last_name": "Stevens",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "302ddc3d-bd1d-4344-9ecd-1694be06b0d4",
+        "occured_at": "2016-08-21T00:53:51.902898",
+        "action": "login",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "9753068b-6082-4b93-aae3-230cfc3cba83",
+        "occured_at": "1975-05-11T20:42:14.548295",
+        "action": "logout",
+        "fingerprint": "/dev/vdq"
+      },
+      {
+        "id": "b61b287d-5192-489c-841a-6ecb512a7e93",
+        "occured_at": "1983-12-06T06:50:24.511262",
+        "action": "logout",
+        "fingerprint": "/dev/vdi"
+      },
+      {
+        "id": "8989bb48-6e51-4209-8c0b-199d291b5ffb",
+        "occured_at": "2002-06-16T00:17:28.023718",
+        "action": "logout",
+        "fingerprint": "/dev/sdi"
+      }
+    ]
+  },
+  {
+    "id": "c48d58c5-37ed-4c7b-be56-99aad50e58a5",
+    "login": "Lori Donovan",
+    "email": "gibsontyler@example.net",
+    "password": "_9b@cM0sI$",
+    "first_name": "Mary",
+    "last_name": "Rodgers",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "631c4cad-e84d-49d1-903e-76429bff425c",
+        "occured_at": "2012-05-22T15:28:02.252671",
+        "action": "logout",
+        "fingerprint": "/dev/xvdq"
+      },
+      {
+        "id": "24f8462a-f126-4996-8897-3eadaae172ea",
+        "occured_at": "1995-03-19T05:11:13.274312",
+        "action": "logout",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "4b29bc5e-1644-4990-85e3-98c6e61fe4ea",
+        "occured_at": "2011-04-18T23:15:04.223937",
+        "action": "login",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "be265bee-107d-47eb-90ba-cf387ad860d4",
+        "occured_at": "2017-01-28T17:11:00.230596",
+        "action": "login",
+        "fingerprint": "/dev/vdu"
+      },
+      {
+        "id": "9008576d-17e6-4280-b738-c91ef724b579",
+        "occured_at": "2021-04-09T14:12:33.342293",
+        "action": "login",
+        "fingerprint": "/dev/sdj"
+      },
+      {
+        "id": "46fe91d6-3cff-43d7-8cfc-09432ffd2bbf",
+        "occured_at": "1993-03-03T19:08:48.653736",
+        "action": "logout",
+        "fingerprint": "/dev/sdj"
+      },
+      {
+        "id": "9fbb453c-6fa9-4e0c-9239-d91faca02026",
+        "occured_at": "1977-09-16T21:15:09.279984",
+        "action": "login",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "20fd9779-8683-4a11-aa2a-72d12ba59f2e",
+        "occured_at": "1978-11-02T11:25:02.151989",
+        "action": "logout",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "c9b643b1-62d4-4e39-886c-bcf006420bb1",
+        "occured_at": "1982-04-02T16:33:52.265171",
+        "action": "logout",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "de246126-5e67-4316-a70a-5081b90244ed",
+        "occured_at": "1976-04-08T07:07:45.581830",
+        "action": "login",
+        "fingerprint": "/dev/vdq"
+      }
+    ]
+  },
+  {
+    "id": "52fe51c2-dc2f-46eb-b54e-a6c1dcce67f8",
+    "login": "Emily Murphy",
+    "email": "cookjody@example.com",
+    "password": "5%1OIP2mq!",
+    "first_name": "Deborah",
+    "last_name": "Smith",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "d0d4e273-02d7-4747-9063-f94976ebd01c",
+        "occured_at": "2011-03-09T03:15:41.322300",
+        "action": "logout",
+        "fingerprint": "/dev/vdl"
+      },
+      {
+        "id": "f5239672-b686-440e-ab61-a59e6b74122c",
+        "occured_at": "2007-12-22T19:55:54.173862",
+        "action": "logout",
+        "fingerprint": "/dev/vds"
+      },
+      {
+        "id": "0e0c96c4-f055-4fea-a5e5-b09c9870c7d9",
+        "occured_at": "2015-10-16T07:38:03.337439",
+        "action": "logout",
+        "fingerprint": "/dev/sdc"
+      },
+      {
+        "id": "a6abb854-69eb-43d5-9584-eb89508df0b2",
+        "occured_at": "1997-03-07T16:21:51.697094",
+        "action": "logout",
+        "fingerprint": "/dev/xvdw"
+      },
+      {
+        "id": "13314785-97bc-4aa5-9f08-19fce36a47a0",
+        "occured_at": "1997-05-31T04:42:24.773569",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      }
+    ]
+  },
+  {
+    "id": "c618c2f0-d6c7-499b-b5e2-9a3a4b5ba387",
+    "login": "James Shaffer",
+    "email": "tsantos@example.net",
+    "password": "1O5fLFv4&V",
+    "first_name": "Jessica",
+    "last_name": "Foster",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "bc50106b-8aa9-412b-a15c-4865d355f658",
+        "occured_at": "1976-11-22T06:28:39.518027",
+        "action": "login",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "3430f382-03d2-4fb4-a2fa-116a2f72c524",
+        "occured_at": "1970-11-20T19:37:56.936593",
+        "action": "login",
+        "fingerprint": "/dev/vdg"
+      },
+      {
+        "id": "f04c64e6-9224-487c-a7ec-84c200824845",
+        "occured_at": "1986-02-12T00:46:09.688376",
+        "action": "login",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "f7a0e0c1-a20b-4b7c-ae0b-9991bdd6636d",
+        "occured_at": "2020-03-03T14:19:42.695084",
+        "action": "logout",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "32e81400-1473-474c-8010-422274bef941",
+        "occured_at": "1999-12-25T14:45:08.891115",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "dd70d919-6408-4763-86b3-bda49d1b08ab",
+        "occured_at": "1977-07-28T01:30:04.134220",
+        "action": "login",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "5fe32046-c9a4-4abf-b056-d35f457ae1a8",
+        "occured_at": "2015-03-08T03:22:04.556976",
+        "action": "login",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "5e3239e3-470b-43ef-9502-1c3fcca01262",
+        "occured_at": "2002-01-14T09:32:45.330218",
+        "action": "logout",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "217a86d6-43c5-47a2-976f-19c704fc4e5d",
+        "occured_at": "2005-01-09T23:05:43.129486",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "dd1375ee-f670-4481-852a-a30483c975ef",
+        "occured_at": "1980-08-28T09:00:00.598880",
+        "action": "login",
+        "fingerprint": "/dev/sdh"
+      }
+    ]
+  },
+  {
+    "id": "0549f224-8b50-450a-8c50-9230b15c64ec",
+    "login": "Kimberly Livingston",
+    "email": "katherine50@example.net",
+    "password": "dl3MZVm0#2",
+    "first_name": "Patricia",
+    "last_name": "Jimenez",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "466c8b13-96db-4e57-8fcf-98703ae185d0",
+        "occured_at": "2020-11-28T03:00:03.997361",
+        "action": "login",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "dc6395be-482e-4a4e-9b1c-9e1769b1ea22",
+        "occured_at": "1997-04-01T21:21:21.766072",
+        "action": "login",
+        "fingerprint": "/dev/sdv"
+      },
+      {
+        "id": "c9a33dea-1415-4539-908c-bb9e28aaceb8",
+        "occured_at": "2022-02-03T09:43:22.232471",
+        "action": "login",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "85032207-0a78-46c4-95ef-f5509decf945",
+        "occured_at": "1984-06-13T04:33:39.626199",
+        "action": "login",
+        "fingerprint": "/dev/xvdg"
+      },
+      {
+        "id": "a5b921a9-15b2-4e17-9acb-3c24d0217f83",
+        "occured_at": "1975-11-03T02:18:56.338795",
+        "action": "logout",
+        "fingerprint": "/dev/vdy"
+      }
+    ]
+  },
+  {
+    "id": "bf6528ef-6e53-4e68-8a73-5b918d2bfa8b",
+    "login": "Kristin Torres",
+    "email": "rodneypark@example.com",
+    "password": "(o8YehTj2K",
+    "first_name": "Aaron",
+    "last_name": "Shepherd",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "376a625a-d09b-42fe-b3a1-7a11f7388d7e",
+        "occured_at": "2020-12-27T13:42:34.841791",
+        "action": "logout",
+        "fingerprint": "/dev/sda"
+      },
+      {
+        "id": "39d526c9-4279-4664-bfdd-82b364ec5e01",
+        "occured_at": "2002-12-16T13:58:15.051128",
+        "action": "logout",
+        "fingerprint": "/dev/xvdg"
+      },
+      {
+        "id": "c3ba1f3d-0641-4ee8-86ed-dbdcdbb70978",
+        "occured_at": "1978-05-20T04:49:48.102075",
+        "action": "login",
+        "fingerprint": "/dev/xvdr"
+      },
+      {
+        "id": "0a55956b-e78b-49e5-93e8-1e10fe7ec2a0",
+        "occured_at": "1986-02-06T02:04:46.655548",
+        "action": "login",
+        "fingerprint": "/dev/sdp"
+      },
+      {
+        "id": "2f4ddba1-5941-472b-876d-c4768e98daa3",
+        "occured_at": "1994-11-30T11:31:40.779787",
+        "action": "logout",
+        "fingerprint": "/dev/vdd"
+      },
+      {
+        "id": "56403c0d-bcf9-4463-8cd7-de1cdafa24cc",
+        "occured_at": "2015-12-22T03:31:54.858601",
+        "action": "logout",
+        "fingerprint": "/dev/vdx"
+      }
+    ]
+  },
+  {
+    "id": "c7306b0c-6bcb-4eea-bf8a-cf17f9164f4b",
+    "login": "Jose Jones",
+    "email": "pittsrobert@example.com",
+    "password": "#*GFWOqb81",
+    "first_name": "Patrick",
+    "last_name": "Wang",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "fa32eba1-21dd-44bb-b905-c84e01a4f4f3",
+        "occured_at": "1992-07-12T03:07:22.556014",
+        "action": "login",
+        "fingerprint": "/dev/vdk"
+      },
+      {
+        "id": "257e4542-a512-4233-857f-bdacb8d1a170",
+        "occured_at": "1989-11-05T10:24:34.145486",
+        "action": "logout",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "9e44fdd4-353b-4cdb-ace8-d60108ba1522",
+        "occured_at": "1997-07-13T13:41:27.361942",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "2391ec92-9d14-43de-8d5f-c42650485eb2",
+        "occured_at": "2013-01-07T11:44:01.412427",
+        "action": "logout",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "41a9574a-33e9-457b-a213-dc3b394eb0a5",
+        "occured_at": "2002-06-01T17:56:58.297084",
+        "action": "logout",
+        "fingerprint": "/dev/sdm"
+      },
+      {
+        "id": "7b255b63-96f6-4d5c-9036-f748fd243a20",
+        "occured_at": "2016-02-26T13:35:29.249540",
+        "action": "logout",
+        "fingerprint": "/dev/sdc"
+      }
+    ]
+  },
+  {
+    "id": "04da038c-2495-4713-b31c-4b41ec623e14",
+    "login": "Kevin Contreras",
+    "email": "mortonheather@example.org",
+    "password": "W5gSR)ri+x",
+    "first_name": "James",
+    "last_name": "Robinson",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "ff03e995-5687-4ff9-9b0b-6687420683e7",
+        "occured_at": "1986-02-27T18:52:55.561257",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "9d746b00-3f54-4e5f-b3f4-d0f35dc72605",
+        "occured_at": "1988-12-27T19:03:18.371889",
+        "action": "logout",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "2842ed68-6772-434b-a0d0-58cb5839d762",
+        "occured_at": "2002-06-05T09:14:45.946541",
+        "action": "login",
+        "fingerprint": "/dev/sdm"
+      },
+      {
+        "id": "9a52503d-5b36-463a-a78e-4d6e316e7f36",
+        "occured_at": "2012-08-16T10:32:02.791795",
+        "action": "login",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "0b50db93-e0fa-4f50-bc76-8c7f5a11a3d9",
+        "occured_at": "1991-06-03T04:38:59.196689",
+        "action": "login",
+        "fingerprint": "/dev/sdk"
+      },
+      {
+        "id": "44552d12-dc9d-4e0b-95dc-c7e1f61f61ed",
+        "occured_at": "1982-08-26T23:55:20.635391",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "42c13949-6e18-41b2-867e-3bffb817c951",
+        "occured_at": "1997-01-08T15:34:35.762254",
+        "action": "login",
+        "fingerprint": "/dev/sdu"
+      },
+      {
+        "id": "2c517f34-5cea-47b5-9021-2d7ef84f6da2",
+        "occured_at": "1994-01-02T14:48:58.880903",
+        "action": "logout",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "167a17f5-7c94-4a48-8d0f-005ef7d9aad2",
+        "occured_at": "1981-07-15T12:38:31.260070",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      }
+    ]
+  },
+  {
+    "id": "499965a9-87f1-469a-92b6-1123e184c354",
+    "login": "Monica Stevens",
+    "email": "wgeorge@example.com",
+    "password": "XO0SFfp#W@",
+    "first_name": "Samantha",
+    "last_name": "Johnson",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "85ae7872-1960-4d81-815b-7e60b9b204cf",
+        "occured_at": "1980-02-01T20:36:09.110590",
+        "action": "logout",
+        "fingerprint": "/dev/xvdf"
+      },
+      {
+        "id": "5ee5c33f-846a-4da4-8383-e73ad3f93ebc",
+        "occured_at": "1999-09-23T04:57:03.062992",
+        "action": "logout",
+        "fingerprint": "/dev/sdn"
+      },
+      {
+        "id": "901d598b-7232-4392-8802-44bd02ef4f57",
+        "occured_at": "2021-08-06T03:34:53.708836",
+        "action": "login",
+        "fingerprint": "/dev/sda"
+      },
+      {
+        "id": "21750a11-49d9-424b-a52a-5cc1560a4c8b",
+        "occured_at": "2008-06-27T17:24:55.259485",
+        "action": "logout",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "805e10ca-5e3e-465d-bbe2-cbbae55fecd4",
+        "occured_at": "1976-02-25T15:51:23.848988",
+        "action": "login",
+        "fingerprint": "/dev/sdy"
+      }
+    ]
+  },
+  {
+    "id": "660b0228-b790-4dd9-b0d9-cd0f09ad12bb",
+    "login": "Karl Edwards",
+    "email": "kelly60@example.com",
+    "password": "!Jb1FWbegt",
+    "first_name": "Tammy",
+    "last_name": "Green",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "b99e15d3-3380-4afa-b6b4-8b9bf1b4a3ec",
+        "occured_at": "2015-01-13T22:54:54.652692",
+        "action": "login",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "f01586c6-224e-4fb5-9aca-246b414efd5d",
+        "occured_at": "1985-11-05T14:16:07.179852",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "8cc7d219-af29-4940-ae3b-210331b0ca74",
+        "occured_at": "1978-01-15T15:01:31.825012",
+        "action": "logout",
+        "fingerprint": "/dev/sdi"
+      },
+      {
+        "id": "b360374e-12ce-4085-9d1e-ef650fb59b03",
+        "occured_at": "1973-02-23T13:06:18.130165",
+        "action": "logout",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "927271b1-8687-4006-a039-c477711e0aab",
+        "occured_at": "2019-07-15T17:52:22.104520",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "1c570032-f271-4848-be9e-420cc6f5bce5",
+        "occured_at": "1976-09-03T04:14:56.225060",
+        "action": "logout",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "0241fcd7-d493-4626-b46a-ec8976177ed8",
+        "occured_at": "1980-12-29T09:02:53.630930",
+        "action": "login",
+        "fingerprint": "/dev/xvdq"
+      },
+      {
+        "id": "6dfd4d59-9902-4722-96c0-13fafda00b59",
+        "occured_at": "1980-08-07T22:02:44.285161",
+        "action": "logout",
+        "fingerprint": "/dev/sdz"
+      }
+    ]
+  },
+  {
+    "id": "f00f38ef-665f-4155-bd66-93fa812a2819",
+    "login": "James Waters",
+    "email": "hernandezcynthia@example.org",
+    "password": "$1%Sx#B#9E",
+    "first_name": "Sandy",
+    "last_name": "Riddle",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "86812e0f-1a5a-4cf8-b921-3fa1564f62ac",
+        "occured_at": "2007-11-29T08:50:11.591053",
+        "action": "logout",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "3f1ee42b-1775-4ad5-88ae-43fb75a320fe",
+        "occured_at": "1998-11-12T03:25:17.488813",
+        "action": "login",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "3782cd5e-71a7-436e-b3a4-d7d3cb8f7a86",
+        "occured_at": "2024-05-18T18:38:20.011966",
+        "action": "logout",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "f8e34b2e-2800-4cbc-a0d0-584278f88b37",
+        "occured_at": "2001-12-27T14:52:06.500520",
+        "action": "logout",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "9738a671-1d5d-42ed-98f2-3dcdc9da5ba4",
+        "occured_at": "2013-02-12T09:10:20.072622",
+        "action": "login",
+        "fingerprint": "/dev/vdo"
+      },
+      {
+        "id": "e3352990-5ccf-48cc-abb1-977485892a3d",
+        "occured_at": "1971-03-06T14:22:51.536784",
+        "action": "login",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "b343d826-ce29-4164-b293-9d14de8efbb4",
+        "occured_at": "2020-07-12T15:27:13.103042",
+        "action": "login",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "90c6ce64-f741-4903-ba70-d689978f908a",
+        "occured_at": "2020-04-04T09:13:09.535242",
+        "action": "logout",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "647cd33f-56d3-4965-9278-ce966fc0afec",
+        "occured_at": "2011-03-11T20:24:28.230957",
+        "action": "logout",
+        "fingerprint": "/dev/sdl"
+      },
+      {
+        "id": "7cc20e90-181e-427a-90a1-49822057f58e",
+        "occured_at": "2015-01-02T14:06:36.649112",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      }
+    ]
+  },
+  {
+    "id": "de82ddef-c63d-456d-8865-c4e77a9a5f53",
+    "login": "Alexander Paul",
+    "email": "tom93@example.org",
+    "password": "huR4+lT)$3",
+    "first_name": "Daryl",
+    "last_name": "Simon",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "30f9cfa4-f6ba-444f-beef-2b0c9eb1fcaf",
+        "occured_at": "2015-07-23T13:52:21.851057",
+        "action": "logout",
+        "fingerprint": "/dev/vdr"
+      }
+    ]
+  },
+  {
+    "id": "7929fb46-65a9-414c-ac96-45edda183fb1",
+    "login": "Diana Burke",
+    "email": "fordnicole@example.org",
+    "password": "!yd8@lHn#&",
+    "first_name": "Cynthia",
+    "last_name": "West",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "369fad6f-1ab7-4297-8bdd-f750d341ae1a",
+        "occured_at": "2015-11-19T23:21:47.187990",
+        "action": "logout",
+        "fingerprint": "/dev/sda"
+      },
+      {
+        "id": "1621589e-fa2b-4d88-8901-9e7198443139",
+        "occured_at": "2013-03-26T21:13:59.942437",
+        "action": "logout",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "87a61b4d-1a77-417e-b9c7-e8cea6859096",
+        "occured_at": "2004-02-26T01:53:45.872220",
+        "action": "login",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "242fb7f8-6cf1-44d8-afbf-a9ad9b441e5b",
+        "occured_at": "2007-02-23T17:48:54.143628",
+        "action": "logout",
+        "fingerprint": "/dev/xvdz"
+      },
+      {
+        "id": "666588ad-49c2-4590-a4fc-68c8c7ead1a8",
+        "occured_at": "2007-05-01T02:54:21.248184",
+        "action": "logout",
+        "fingerprint": "/dev/sdp"
+      },
+      {
+        "id": "0642f693-019e-4027-a672-58114cd97746",
+        "occured_at": "1992-11-06T10:58:43.076105",
+        "action": "logout",
+        "fingerprint": "/dev/xvdo"
+      },
+      {
+        "id": "7ea909db-5537-40c3-ace2-cc9b69e3a5d3",
+        "occured_at": "1984-04-01T19:06:22.306294",
+        "action": "login",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "a28a132e-3543-47a6-874f-a3cbb2299272",
+        "occured_at": "2018-12-30T23:09:19.404475",
+        "action": "login",
+        "fingerprint": "/dev/sdc"
+      },
+      {
+        "id": "1cee8aaf-b1e9-44d6-a7f4-eb419f090b03",
+        "occured_at": "1993-03-26T06:30:49.835362",
+        "action": "logout",
+        "fingerprint": "/dev/sdj"
+      }
+    ]
+  },
+  {
+    "id": "5b0f7461-cdbe-4e36-ba2d-b6bd3241d3b5",
+    "login": "Jeffrey Chambers",
+    "email": "jose04@example.com",
+    "password": "i96xxPWg&6",
+    "first_name": "Angela",
+    "last_name": "Soto",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "d3065bbc-4714-4dbf-8396-4fb90e6278cc",
+        "occured_at": "2013-10-05T14:17:33.859827",
+        "action": "logout",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "af68925b-3c65-4d7d-bfe1-1a8cd4ae429c",
+        "occured_at": "2018-06-15T01:19:21.614639",
+        "action": "logout",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "d79b6aec-a858-4d51-aa65-5d644870d1fe",
+        "occured_at": "1977-06-14T05:48:44.295253",
+        "action": "login",
+        "fingerprint": "/dev/xvdo"
+      },
+      {
+        "id": "8f91479a-5521-4064-ad97-49730f4375d6",
+        "occured_at": "2003-08-28T10:22:22.707765",
+        "action": "login",
+        "fingerprint": "/dev/xvdh"
+      },
+      {
+        "id": "a77b14f7-7379-4825-89c9-eef771f3df8c",
+        "occured_at": "2009-04-23T19:26:31.233633",
+        "action": "logout",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "865217ea-03b6-462f-9baa-c619e62f8327",
+        "occured_at": "2010-01-25T23:39:20.848885",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "ffafb3ae-5970-42f2-bf61-2d44a5431555",
+        "occured_at": "2011-09-16T12:37:20.846252",
+        "action": "login",
+        "fingerprint": "/dev/sdr"
+      },
+      {
+        "id": "1fd40043-dab1-4022-88ac-ed7dabf111c0",
+        "occured_at": "1995-08-15T03:27:05.450928",
+        "action": "logout",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "5fede238-267f-46cd-8030-7b8910dd8362",
+        "occured_at": "2000-09-14T11:04:59.652386",
+        "action": "login",
+        "fingerprint": "/dev/sdj"
+      }
+    ]
+  },
+  {
+    "id": "6164ec5e-7ed8-47f1-a1b7-fc262f0e342a",
+    "login": "Angela Peterson",
+    "email": "rodgersdiana@example.net",
+    "password": "q*3M_VzpnE",
+    "first_name": "Jennifer",
+    "last_name": "Johnson",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "849935dd-6fc7-4eec-baba-41474240fa1e",
+        "occured_at": "2000-06-08T16:05:11.349426",
+        "action": "logout",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "def2a921-8744-4430-9aee-36b5575321c3",
+        "occured_at": "1996-02-28T22:58:11.843759",
+        "action": "login",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "ef9bf980-4a7f-4401-a374-2f6648fe0e2d",
+        "occured_at": "2017-04-09T20:20:14.132574",
+        "action": "logout",
+        "fingerprint": "/dev/xvdw"
+      },
+      {
+        "id": "da8fc101-e536-4491-b311-f3749c991ab2",
+        "occured_at": "2005-08-24T11:35:36.963905",
+        "action": "login",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "a63deed9-d258-4382-a98f-6d38e844e4ff",
+        "occured_at": "1984-04-22T01:24:17.621960",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "1d9f71cc-0f71-4b06-93de-2da30d225239",
+        "occured_at": "2009-03-10T03:07:09.114372",
+        "action": "login",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "3de5514e-97e5-49ae-8aec-410f8fda6941",
+        "occured_at": "1990-10-09T21:58:42.524274",
+        "action": "logout",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "bd2e50b6-cce9-422a-a225-2ece2ca76309",
+        "occured_at": "1985-08-22T09:46:07.889178",
+        "action": "logout",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "d8f0f19c-4022-4ba4-829d-b2accfee6e83",
+        "occured_at": "1988-07-24T00:30:30.176115",
+        "action": "logout",
+        "fingerprint": "/dev/xvdz"
+      },
+      {
+        "id": "08505af0-e314-4958-8a2c-cbfbb2b8ff99",
+        "occured_at": "2020-03-06T07:17:08.880186",
+        "action": "logout",
+        "fingerprint": "/dev/xvdu"
+      }
+    ]
+  },
+  {
+    "id": "2a29cb0e-5e9e-49d9-a0d6-307d991bf531",
+    "login": "Breanna Rios",
+    "email": "prasmussen@example.net",
+    "password": "@)^55Ke)u4",
+    "first_name": "Phillip",
+    "last_name": "Jackson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "70c84561-9a8a-4dc9-9c2e-584078fbd21d",
+        "occured_at": "1995-04-27T03:49:07.960592",
+        "action": "login",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "0cbfba7a-a359-4c68-ba26-8de0e38a94f7",
+        "occured_at": "1996-11-26T10:28:27.381240",
+        "action": "logout",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "78f2c366-80b6-4310-97ad-2d70f25a9f67",
+        "occured_at": "1991-06-29T12:03:03.750460",
+        "action": "login",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "ddbdc74d-fe79-4f0f-bd5f-b3bf1813e4b9",
+        "occured_at": "2006-06-14T05:47:53.862793",
+        "action": "logout",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "7659b07d-7272-4a53-9542-24064c765372",
+        "occured_at": "1978-03-17T14:32:01.812295",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "d766b091-1bea-4ddd-88ee-53b5bfa6a56c",
+        "occured_at": "2015-03-12T03:41:21.237062",
+        "action": "logout",
+        "fingerprint": "/dev/vdx"
+      },
+      {
+        "id": "acff09d4-4e13-4f6b-af1c-263ec08488d7",
+        "occured_at": "1986-07-29T08:25:38.822288",
+        "action": "login",
+        "fingerprint": "/dev/vdi"
+      }
+    ]
+  },
+  {
+    "id": "262a3659-8f7f-47d2-9e7f-c286b4f153f6",
+    "login": "Jamie Garcia",
+    "email": "browntimothy@example.org",
+    "password": "z_99YTq!nM",
+    "first_name": "Justin",
+    "last_name": "Robinson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "80af3fc8-a4c9-4747-99da-69c284738f62",
+        "occured_at": "1998-07-28T01:40:21.844196",
+        "action": "logout",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "88aff68e-8df0-4bb5-b39c-48b6128538fa",
+        "occured_at": "1986-08-11T07:52:14.469500",
+        "action": "login",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "8996e2b9-22a6-4f3e-9b9a-9739a76761e8",
+        "occured_at": "2009-10-26T14:31:23.839041",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "84d493ec-d51c-4e92-8107-96f8be70793f",
+        "occured_at": "1982-05-18T14:43:10.071076",
+        "action": "login",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "5cb04763-be64-44d2-9e3c-3c16c971e918",
+        "occured_at": "2020-08-24T14:11:20.612934",
+        "action": "logout",
+        "fingerprint": "/dev/sdl"
+      }
+    ]
+  },
+  {
+    "id": "b08c86e9-ef96-48b7-a86a-8f9a2917e121",
+    "login": "Mr. Cody Richardson",
+    "email": "williamjames@example.org",
+    "password": "T$8PrTyR5S",
+    "first_name": "Paul",
+    "last_name": "Jackson",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "b3be7762-57ee-4b7a-ac8c-39c5be235ede",
+        "occured_at": "1994-07-12T05:03:31.128966",
+        "action": "logout",
+        "fingerprint": "/dev/sdt"
+      },
+      {
+        "id": "6d5e15a4-3b1e-4652-9c4c-3a0c48dde0fd",
+        "occured_at": "2011-10-09T08:55:45.143172",
+        "action": "logout",
+        "fingerprint": "/dev/vdd"
+      },
+      {
+        "id": "5797e81a-12a9-426a-8f17-a0ea47e4d320",
+        "occured_at": "2005-12-31T12:19:54.417420",
+        "action": "logout",
+        "fingerprint": "/dev/sdy"
+      },
+      {
+        "id": "d4fc243e-d190-4cf3-bb49-54d787851f93",
+        "occured_at": "1978-04-02T12:38:57.662395",
+        "action": "login",
+        "fingerprint": "/dev/xvdg"
+      },
+      {
+        "id": "12acea34-d24a-45d3-b2e0-4ffb80b08624",
+        "occured_at": "1970-03-10T21:05:15.413641",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "9d493396-ce39-404e-a7ad-ec1012ebf3b6",
+        "occured_at": "1972-02-05T18:16:17.070963",
+        "action": "logout",
+        "fingerprint": "/dev/sdq"
+      }
+    ]
+  },
+  {
+    "id": "4639050b-3c2c-42b4-a3c3-09cc7730c28a",
+    "login": "Elizabeth Berg",
+    "email": "laurasaunders@example.org",
+    "password": "9ZX^PZLs%9",
+    "first_name": "Kathy",
+    "last_name": "Thompson",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "ab8dd815-3a09-430b-bbc0-c46291afc4d1",
+        "occured_at": "1993-07-15T05:01:04.187351",
+        "action": "login",
+        "fingerprint": "/dev/vdu"
+      },
+      {
+        "id": "fced34c4-d2cd-469e-8204-77970a6d2230",
+        "occured_at": "1980-04-25T15:27:41.849811",
+        "action": "login",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "6ca8da05-5fbb-4d1f-ac09-8847cac3a6b6",
+        "occured_at": "2011-07-31T01:48:44.634229",
+        "action": "login",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "13fb5dfe-3dd9-4a29-9980-985ec671ad10",
+        "occured_at": "2021-01-01T04:42:58.511786",
+        "action": "login",
+        "fingerprint": "/dev/sde"
+      },
+      {
+        "id": "13b64e6e-9916-49ef-9580-c01e1536a531",
+        "occured_at": "2009-11-11T18:46:07.192398",
+        "action": "logout",
+        "fingerprint": "/dev/vdu"
+      },
+      {
+        "id": "a8512b66-1bfb-47fb-9f14-649cf026ae29",
+        "occured_at": "2007-01-21T04:42:30.597920",
+        "action": "login",
+        "fingerprint": "/dev/sdj"
+      }
+    ]
+  },
+  {
+    "id": "3cdb4696-24fd-4907-954b-20c9b212e4a0",
+    "login": "Alex Campbell",
+    "email": "stanley07@example.net",
+    "password": "%4Ehnw^wA)",
+    "first_name": "Robin",
+    "last_name": "Mendez",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "7805e338-40c4-4b4a-b70f-fee5bc2a1443",
+        "occured_at": "1989-03-31T08:47:34.156953",
+        "action": "login",
+        "fingerprint": "/dev/xvdl"
+      }
+    ]
+  },
+  {
+    "id": "dd13171c-b751-4976-9e6a-b63218f5bb93",
+    "login": "Dale Logan",
+    "email": "bensonstephanie@example.net",
+    "password": ")v5SNq!dyR",
+    "first_name": "Kristopher",
+    "last_name": "Haney",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "575e16dc-071a-4088-9b14-c907a6f5b553",
+        "occured_at": "2017-09-14T08:56:22.283923",
+        "action": "login",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "1468c14a-1bae-4d8a-93f7-a1a4bb7ca77d",
+        "occured_at": "1996-03-03T22:04:00.504020",
+        "action": "logout",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "df1ed59f-ae26-40ef-bd34-eff2c4fe58d9",
+        "occured_at": "2014-03-02T03:19:18.037108",
+        "action": "logout",
+        "fingerprint": "/dev/xvda"
+      },
+      {
+        "id": "fe4facc3-5242-4294-99cf-b2131a2a2d21",
+        "occured_at": "1998-12-09T01:45:37.595225",
+        "action": "login",
+        "fingerprint": "/dev/vdy"
+      },
+      {
+        "id": "04b8a6be-398a-4639-af21-1665ebb27ef4",
+        "occured_at": "2009-01-29T17:16:25.781579",
+        "action": "logout",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "ae6cf591-0c9c-479d-a5c0-2a31601be187",
+        "occured_at": "1979-05-23T18:11:38.970332",
+        "action": "login",
+        "fingerprint": "/dev/vdd"
+      }
+    ]
+  },
+  {
+    "id": "57ed2cc3-2612-4a44-b66c-7557e72dcb2d",
+    "login": "Amy Mcmahon",
+    "email": "williamsfelicia@example.org",
+    "password": "(qD5U3now1",
+    "first_name": "Gabriella",
+    "last_name": "Thompson",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "17cd0c24-fe0a-4a09-9ce2-1ec3b2c12f2b",
+    "login": "Stephen Miller",
+    "email": "dalebrady@example.net",
+    "password": "N#4C1JIgDV",
+    "first_name": "Peter",
+    "last_name": "Osborne",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "abc49e23-38ff-4d4d-a612-5dd5adab5ab4",
+        "occured_at": "2010-12-30T07:16:05.302815",
+        "action": "login",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "02e8ef05-14f1-4c89-afb9-525cd2fb2ba0",
+        "occured_at": "1985-05-12T18:44:56.115486",
+        "action": "login",
+        "fingerprint": "/dev/sdw"
+      },
+      {
+        "id": "94eef6c4-0e99-448e-a4d7-14c62e4cc36c",
+        "occured_at": "1981-10-04T09:43:27.191820",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      }
+    ]
+  },
+  {
+    "id": "50aea6a3-0ee3-48e0-8572-c4ac96b8bfc0",
+    "login": "Jonathan Farmer MD",
+    "email": "williamlewis@example.com",
+    "password": "^hfBL1XwU8",
+    "first_name": "Anita",
+    "last_name": "Jenkins",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "744ae79a-f85a-48c7-af53-bb512617aaf7",
+        "occured_at": "2000-01-12T16:41:23.960328",
+        "action": "login",
+        "fingerprint": "/dev/vdh"
+      },
+      {
+        "id": "a8644e96-ab18-4061-bd1a-b65ff7d06e4a",
+        "occured_at": "2017-11-28T14:28:50.174572",
+        "action": "logout",
+        "fingerprint": "/dev/vdo"
+      },
+      {
+        "id": "eb0b683a-5c0b-40cf-9b41-8520ace0149c",
+        "occured_at": "1997-12-30T22:59:03.794428",
+        "action": "logout",
+        "fingerprint": "/dev/vdo"
+      },
+      {
+        "id": "7390651c-ac47-4f47-9028-14db7ef2392c",
+        "occured_at": "2017-04-26T10:05:46.588672",
+        "action": "logout",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "144aaa25-5bf0-4183-b18c-1689608dd76d",
+        "occured_at": "1975-11-12T15:33:33.219880",
+        "action": "logout",
+        "fingerprint": "/dev/sdm"
+      }
+    ]
+  },
+  {
+    "id": "4fa60418-1fe0-4ea7-8a93-6a0e0303de02",
+    "login": "Victoria Johnson",
+    "email": "ashley16@example.com",
+    "password": "bD9C+tGv#J",
+    "first_name": "Jerry",
+    "last_name": "Avery",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "fe64b48d-8fc7-4df6-b0d5-0a6c720e67f2",
+        "occured_at": "1983-05-18T14:56:57.272499",
+        "action": "login",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "bdce2def-2849-4ba0-9b7e-e3347157a13e",
+        "occured_at": "1984-08-29T13:50:28.681156",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      },
+      {
+        "id": "3f4d9778-0ec0-43a0-8740-519da083ea4c",
+        "occured_at": "1991-06-10T20:13:55.316633",
+        "action": "logout",
+        "fingerprint": "/dev/sdv"
+      },
+      {
+        "id": "31efa3c6-f9e0-4f06-9343-8fbc4a5b8cd9",
+        "occured_at": "2002-01-07T16:51:50.544589",
+        "action": "login",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "bfba3f1a-4cec-4394-91a9-4778554f8a9d",
+        "occured_at": "2000-02-11T16:24:09.960209",
+        "action": "logout",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "9ea85788-832c-47ab-ab7d-4a0f0b46177c",
+        "occured_at": "1994-10-21T03:31:05.506751",
+        "action": "login",
+        "fingerprint": "/dev/xvdm"
+      },
+      {
+        "id": "e788e0ab-50e8-401c-8942-61b8fdd07774",
+        "occured_at": "2012-08-01T01:36:47.473297",
+        "action": "logout",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "1ac463c1-5786-4c0b-a9df-b107648ac1a6",
+        "occured_at": "1971-05-06T08:11:05.703762",
+        "action": "logout",
+        "fingerprint": "/dev/sdy"
+      },
+      {
+        "id": "5cdbd79c-962e-4aa8-9d89-625437e644c6",
+        "occured_at": "2015-03-29T13:55:24.713569",
+        "action": "logout",
+        "fingerprint": "/dev/sdv"
+      },
+      {
+        "id": "778abd12-2b3a-49d7-b690-2184b912b1ac",
+        "occured_at": "2005-03-09T15:41:04.617225",
+        "action": "login",
+        "fingerprint": "/dev/sdh"
+      }
+    ]
+  },
+  {
+    "id": "8713c1ff-3826-4651-88f4-3d8debca9fb8",
+    "login": "Leon Thompson",
+    "email": "sarah25@example.net",
+    "password": "b*C53iCt#@",
+    "first_name": "Jon",
+    "last_name": "Williams",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "0fbf2ad5-0451-4128-8b1e-dfba1f97b295",
+        "occured_at": "2007-11-03T00:00:46.659962",
+        "action": "login",
+        "fingerprint": "/dev/vds"
+      },
+      {
+        "id": "cdbc20c8-3f67-40b2-aa8b-c11949eb7fd6",
+        "occured_at": "1975-12-22T21:19:01.979754",
+        "action": "logout",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "a57c41a7-a66f-4590-a059-b4d2ec294d18",
+        "occured_at": "1994-09-25T12:29:21.196896",
+        "action": "logout",
+        "fingerprint": "/dev/vdi"
+      },
+      {
+        "id": "afa6e288-4c69-44b1-b678-0636b870dbcb",
+        "occured_at": "2006-02-21T23:27:36.123287",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      }
+    ]
+  },
+  {
+    "id": "4a11b1ce-80bb-4144-8b7b-c396a4d2c2c5",
+    "login": "Richard Baker",
+    "email": "vasqueznicole@example.net",
+    "password": "X@2A8fJvr3",
+    "first_name": "Heather",
+    "last_name": "Sims",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "b3e55878-d6e9-4cba-86f5-12a9815c627d",
+        "occured_at": "2010-04-15T22:27:20.444220",
+        "action": "logout",
+        "fingerprint": "/dev/vdu"
+      },
+      {
+        "id": "378215c7-974a-4e4d-97c5-5e75d7ab98e5",
+        "occured_at": "1987-11-01T14:29:55.578837",
+        "action": "logout",
+        "fingerprint": "/dev/sdm"
+      },
+      {
+        "id": "7a6d4c59-6595-4c41-9032-976dbc934368",
+        "occured_at": "2009-07-19T14:19:53.016320",
+        "action": "logout",
+        "fingerprint": "/dev/vdi"
+      },
+      {
+        "id": "ce61e29d-cee5-4fe3-8424-41b81eea26e9",
+        "occured_at": "2005-01-22T19:27:31.413965",
+        "action": "login",
+        "fingerprint": "/dev/vdx"
+      },
+      {
+        "id": "2e45c6c5-190b-4528-8a76-8bda2ceef2d6",
+        "occured_at": "2009-09-15T09:20:55.907186",
+        "action": "logout",
+        "fingerprint": "/dev/xvdr"
+      },
+      {
+        "id": "819c3675-fa31-42c7-a855-14bac1a684f8",
+        "occured_at": "1975-05-08T12:17:13.875912",
+        "action": "logout",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "f9f3e355-1c9a-4b1d-9cbe-5a03a333631f",
+        "occured_at": "1994-02-19T11:14:24.159864",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "b51ce672-9eac-422e-96ed-606ae7bc4f01",
+        "occured_at": "2014-03-01T14:06:14.231070",
+        "action": "logout",
+        "fingerprint": "/dev/xvdp"
+      }
+    ]
+  },
+  {
+    "id": "5b324121-1e1a-4734-87b3-6487e4914fc2",
+    "login": "Adam Cervantes",
+    "email": "jennalowery@example.com",
+    "password": ")RA2qPeFbX",
+    "first_name": "Elizabeth",
+    "last_name": "Mcguire",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "ca781c17-d403-4401-bd52-079102b8cb86",
+        "occured_at": "1985-04-30T04:59:55.187631",
+        "action": "login",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "593a457e-ea06-4d46-aa0e-9d82cf3a5a9f",
+        "occured_at": "2000-07-15T20:16:44.807689",
+        "action": "logout",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "cd446001-24ed-47be-a30e-d216667ac44a",
+        "occured_at": "2019-05-16T00:02:35.102902",
+        "action": "logout",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "5b83be9a-ef99-4b9b-9763-31d614bf7f3a",
+        "occured_at": "1976-10-14T06:28:29.877476",
+        "action": "logout",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "41c20ab0-d150-40b9-a875-30926e8e08c3",
+        "occured_at": "1995-10-19T15:59:14.246679",
+        "action": "logout",
+        "fingerprint": "/dev/xvdn"
+      },
+      {
+        "id": "380c4965-dd31-4dd6-b386-ea6900cf6cef",
+        "occured_at": "1984-11-12T06:21:55.191507",
+        "action": "logout",
+        "fingerprint": "/dev/xvdm"
+      }
+    ]
+  },
+  {
+    "id": "5e6c66b9-93a8-4d26-8785-4ffa989e193d",
+    "login": "Patricia Fisher",
+    "email": "kinglinda@example.org",
+    "password": "5&3blIppaQ",
+    "first_name": "Keith",
+    "last_name": "Parker",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "c87079b9-2bac-4069-ba66-70fcb7eb8d7c",
+    "login": "John Green",
+    "email": "briggsshelby@example.net",
+    "password": "S6MmYWwv!+",
+    "first_name": "Matthew",
+    "last_name": "White",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "abf44c17-7b13-4e0f-bc0d-cacba5422342",
+        "occured_at": "1995-03-10T20:40:21.887468",
+        "action": "login",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "ce962177-36fa-44db-992d-74568b76e274",
+        "occured_at": "2008-05-21T09:11:15.212974",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "32ce9a98-5aa6-41b4-ad2e-9d3c8807fdb2",
+        "occured_at": "1999-09-24T03:19:40.033110",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "a895a245-2a22-496f-af92-276749d0b639",
+        "occured_at": "2019-02-05T23:29:06.866228",
+        "action": "logout",
+        "fingerprint": "/dev/xvdm"
+      },
+      {
+        "id": "75abfaa3-7321-4323-8931-6f755e91e54a",
+        "occured_at": "2012-03-28T01:21:51.459579",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "2f079374-5bbd-4fb6-9d21-b827b8b5f5fe",
+        "occured_at": "1972-08-29T14:44:02.358415",
+        "action": "logout",
+        "fingerprint": "/dev/vdj"
+      }
+    ]
+  },
+  {
+    "id": "475e0b5e-174d-4bb9-b4f1-332172000034",
+    "login": "Joseph Price",
+    "email": "sarahlewis@example.net",
+    "password": "(Q4UHFrmT@",
+    "first_name": "Brittany",
+    "last_name": "Anderson",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "3537576e-7a1e-4781-9832-9cafaf569e3b",
+    "login": "Michael Lambert",
+    "email": "briannatravis@example.com",
+    "password": "n9hkIQhI$t",
+    "first_name": "Micheal",
+    "last_name": "Carter",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": []
+  },
+  {
+    "id": "2858b95e-cac3-4534-9727-d9e485d65990",
+    "login": "Karen Armstrong",
+    "email": "kennedykarla@example.com",
+    "password": "Uh5yFZJa*I",
+    "first_name": "Anthony",
+    "last_name": "Sanders",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "265ac456-6428-4159-b16b-4681f8a78ad9",
+        "occured_at": "2015-03-20T15:32:48.164344",
+        "action": "logout",
+        "fingerprint": "/dev/vdz"
+      },
+      {
+        "id": "13467fcb-7ad1-4236-95ea-30674cc7dbfa",
+        "occured_at": "2022-02-09T19:45:39.911095",
+        "action": "logout",
+        "fingerprint": "/dev/vdr"
+      },
+      {
+        "id": "9dfc5e88-a4bc-4550-b6ba-f102fecb2065",
+        "occured_at": "2018-08-10T09:23:15.066773",
+        "action": "logout",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "fdde1312-cd99-400b-a96d-5082140c0eab",
+        "occured_at": "2012-01-10T20:03:57.568650",
+        "action": "logout",
+        "fingerprint": "/dev/sdw"
+      },
+      {
+        "id": "dc514b6f-284b-423b-8262-e8c7c2e8adea",
+        "occured_at": "1976-02-06T16:46:17.955258",
+        "action": "logout",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "a33ed762-65d7-41ba-972f-74ed8c93a493",
+        "occured_at": "1981-10-06T12:51:54.483594",
+        "action": "login",
+        "fingerprint": "/dev/xvdi"
+      }
+    ]
+  },
+  {
+    "id": "c8962aae-5de1-469a-8c08-a45e44002806",
+    "login": "Miranda Lara",
+    "email": "georgepotter@example.net",
+    "password": "_3Q1++3hc4",
+    "first_name": "Matthew",
+    "last_name": "Graham",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "fa1d97dd-8164-460e-82fa-aa6c87e5e3ea",
+        "occured_at": "1981-05-28T08:31:09.252386",
+        "action": "login",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "0527a586-beca-4732-a80d-126788f721b9",
+        "occured_at": "2011-12-20T08:44:42.113391",
+        "action": "logout",
+        "fingerprint": "/dev/sdq"
+      },
+      {
+        "id": "3b905844-a5a5-43d9-b4c6-2c5e536cb0a2",
+        "occured_at": "2000-03-28T05:45:34.323562",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "073c4700-8c42-49c8-b6de-1d91abb4a8c1",
+        "occured_at": "1979-12-28T04:41:23.843285",
+        "action": "login",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "c077e577-4aa4-4fce-bbe0-6e5b1defe109",
+        "occured_at": "1976-05-20T14:11:38.523664",
+        "action": "login",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "34fd1ccc-f16a-4d46-abab-5be4a684b1d9",
+        "occured_at": "2017-10-24T04:54:09.869659",
+        "action": "login",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "8ac8381f-117d-4d5b-b5f6-bb5b422f7846",
+        "occured_at": "1972-11-14T07:22:15.695573",
+        "action": "logout",
+        "fingerprint": "/dev/xvdb"
+      }
+    ]
+  },
+  {
+    "id": "cb40f857-0a28-4005-a128-ab7c06ec674c",
+    "login": "Hannah Castro",
+    "email": "clam@example.net",
+    "password": "V03G6LYl^R",
+    "first_name": "Kristin",
+    "last_name": "Shah",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "58fda903-f5ae-429a-b01b-28c6f339ef64",
+        "occured_at": "2021-01-01T22:04:40.004179",
+        "action": "login",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "cd2761de-13dd-4145-9261-696c2c8a2fdc",
+        "occured_at": "2008-11-08T08:00:27.411177",
+        "action": "logout",
+        "fingerprint": "/dev/sdn"
+      },
+      {
+        "id": "71cd7fb5-4696-40dc-aa7b-8bd9475cc9cd",
+        "occured_at": "1986-03-26T20:54:26.058657",
+        "action": "login",
+        "fingerprint": "/dev/sdc"
+      },
+      {
+        "id": "a4ee8619-50bd-4663-8045-1614defde7bf",
+        "occured_at": "2020-03-07T19:27:17.862976",
+        "action": "logout",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "d4d1a4c5-1351-471d-bab6-27bb82ccd923",
+        "occured_at": "2006-04-21T21:05:26.883415",
+        "action": "login",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "29e9c9c0-f20c-4f9b-88f0-1ae0aa70d93a",
+        "occured_at": "1980-07-05T17:51:49.814382",
+        "action": "login",
+        "fingerprint": "/dev/vdk"
+      },
+      {
+        "id": "e01936b3-9306-4b03-9d1e-dda2bb7ca8d9",
+        "occured_at": "1983-11-01T22:23:37.667198",
+        "action": "logout",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "f5dae45b-9364-42b1-aec7-dfa8c03412e1",
+        "occured_at": "1971-07-31T01:46:54.011687",
+        "action": "login",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "5d2f1900-7c87-46ce-ae17-bac1e2c5972f",
+        "occured_at": "1977-09-18T18:14:43.788955",
+        "action": "login",
+        "fingerprint": "/dev/sds"
+      }
+    ]
+  },
+  {
+    "id": "f07a553c-9a18-4fda-ab75-b5cbe8040009",
+    "login": "Keith Jackson",
+    "email": "daisy40@example.org",
+    "password": "w+8LwR*(L)",
+    "first_name": "Philip",
+    "last_name": "Arnold",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "d30e39a1-0983-475a-8e71-d8e84b9b18e4",
+        "occured_at": "2009-09-25T02:52:16.867392",
+        "action": "logout",
+        "fingerprint": "/dev/xvdw"
+      },
+      {
+        "id": "a489a517-7ef0-41c5-95ad-43005729e196",
+        "occured_at": "1973-11-30T07:41:19.739165",
+        "action": "logout",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "4bc55ca8-d999-4b06-8067-c3f80fa98d73",
+        "occured_at": "1982-05-29T20:27:23.344298",
+        "action": "login",
+        "fingerprint": "/dev/xvdg"
+      },
+      {
+        "id": "4220c0f0-7f58-4f1d-a913-1e1d764d1906",
+        "occured_at": "2007-04-16T13:52:52.099902",
+        "action": "login",
+        "fingerprint": "/dev/vdr"
+      }
+    ]
+  },
+  {
+    "id": "3facd823-0877-4c58-8960-93dc4580e0a7",
+    "login": "Jeffery Young",
+    "email": "wriley@example.org",
+    "password": "#KHLJNU#j7",
+    "first_name": "Shawn",
+    "last_name": "Martinez",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "568bee9b-1a12-4dcf-9c21-506631936ea9",
+        "occured_at": "2000-05-18T21:53:52.213568",
+        "action": "login",
+        "fingerprint": "/dev/sdu"
+      }
+    ]
+  },
+  {
+    "id": "0dfc3eb4-45d9-4502-b556-0e8390bbe42c",
+    "login": "William Carey",
+    "email": "george09@example.net",
+    "password": "!)8Ia0Q3C!",
+    "first_name": "Jenny",
+    "last_name": "Young",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "99827b2e-e289-4c9c-9a4d-04db6f934293",
+        "occured_at": "2023-10-31T02:53:42.961723",
+        "action": "login",
+        "fingerprint": "/dev/xvdl"
+      },
+      {
+        "id": "7444b80a-d0c5-424d-834e-18d23ec754f4",
+        "occured_at": "1985-03-30T13:18:54.148327",
+        "action": "logout",
+        "fingerprint": "/dev/xvdj"
+      },
+      {
+        "id": "f4296cd8-8f77-4253-85d8-9434259458bb",
+        "occured_at": "1992-06-25T19:44:32.343422",
+        "action": "login",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "c8aacb6f-732f-4712-be88-0cb7e26abc94",
+        "occured_at": "2015-12-02T02:28:44.139999",
+        "action": "login",
+        "fingerprint": "/dev/vdv"
+      },
+      {
+        "id": "552a0922-e75f-43ba-9667-a25cedf7a0e6",
+        "occured_at": "1978-09-27T21:44:01.826314",
+        "action": "login",
+        "fingerprint": "/dev/xvdr"
+      },
+      {
+        "id": "6914d219-3d8d-43f7-a34a-e3c102cf1501",
+        "occured_at": "2016-11-24T08:33:15.836449",
+        "action": "logout",
+        "fingerprint": "/dev/xvda"
+      },
+      {
+        "id": "cea903c0-e12e-424e-9d37-cf89d1fe2805",
+        "occured_at": "1990-02-22T12:30:07.144379",
+        "action": "login",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "e6c02960-27c4-48dd-9fbd-0961bf77c88d",
+        "occured_at": "2004-04-21T17:54:28.974942",
+        "action": "logout",
+        "fingerprint": "/dev/sdk"
+      }
+    ]
+  },
+  {
+    "id": "7dbd13e1-c05f-4290-8562-48b099b36f2c",
+    "login": "Karen Gutierrez",
+    "email": "christopher65@example.net",
+    "password": "%3_QShelDl",
+    "first_name": "Parker",
+    "last_name": "Martinez",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "ce616415-ddc0-4bdb-8a7e-a3b0bea5bbc0",
+        "occured_at": "2011-03-13T23:45:58.413303",
+        "action": "login",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "019aaf83-6a14-4039-bb18-889dd5908654",
+        "occured_at": "1986-06-25T07:59:38.124728",
+        "action": "login",
+        "fingerprint": "/dev/sdf"
+      },
+      {
+        "id": "dc77bd09-98cc-4c74-baf2-1170511860f0",
+        "occured_at": "1974-05-09T03:09:22.910550",
+        "action": "login",
+        "fingerprint": "/dev/vdi"
+      },
+      {
+        "id": "2fd2df69-f5f9-4a8e-8952-7f2ee17da09d",
+        "occured_at": "2008-05-08T18:02:50.822193",
+        "action": "login",
+        "fingerprint": "/dev/sdp"
+      },
+      {
+        "id": "32f6c3a7-4638-4675-b064-fb367549c534",
+        "occured_at": "1982-09-29T07:29:45.977261",
+        "action": "login",
+        "fingerprint": "/dev/xvdb"
+      }
+    ]
+  },
+  {
+    "id": "c2fe4f06-28e2-4e40-b59a-7aa0dcbf471e",
+    "login": "Theresa Johnson",
+    "email": "tanyanielsen@example.com",
+    "password": ")6MeuSDBKe",
+    "first_name": "Melanie",
+    "last_name": "Miranda",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "7de25d73-2705-4ecc-867f-187184eafcde",
+        "occured_at": "1991-10-04T00:21:41.729744",
+        "action": "login",
+        "fingerprint": "/dev/xvdf"
+      },
+      {
+        "id": "a66c3895-a7c1-4f9c-9777-732a68b526e0",
+        "occured_at": "2023-04-19T06:39:03.032362",
+        "action": "login",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "d04f401c-2214-4a58-848f-37a1b08a5c65",
+        "occured_at": "1982-02-07T04:10:06.103614",
+        "action": "login",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "f6942f55-d9fd-46aa-a325-051a69d1cbb2",
+        "occured_at": "1977-08-15T18:09:52.206130",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "45f79c51-f83b-4bd8-9ff8-12cfcd8f7ad2",
+        "occured_at": "2016-08-24T22:16:14.949656",
+        "action": "logout",
+        "fingerprint": "/dev/sdy"
+      },
+      {
+        "id": "a4acd060-a8f4-49fa-ab8f-d6b60c9a1fb9",
+        "occured_at": "2011-11-13T02:17:16.077734",
+        "action": "login",
+        "fingerprint": "/dev/vdj"
+      },
+      {
+        "id": "5b0a5e47-dfca-4d3b-965b-6219e1837d3b",
+        "occured_at": "1981-11-24T18:01:43.828779",
+        "action": "login",
+        "fingerprint": "/dev/vdl"
+      },
+      {
+        "id": "7af80bf4-6902-4f63-a007-2d85b0dc323d",
+        "occured_at": "1999-10-14T06:12:10.899643",
+        "action": "logout",
+        "fingerprint": "/dev/vda"
+      },
+      {
+        "id": "b937e994-7ed7-40b2-b2bb-54ac535e30c3",
+        "occured_at": "2023-02-03T18:14:21.596618",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "7df078e6-d678-4437-b76f-a900e6b1d903",
+        "occured_at": "1999-05-23T16:20:04.056200",
+        "action": "login",
+        "fingerprint": "/dev/sdr"
+      }
+    ]
+  },
+  {
+    "id": "5d084940-a3e8-4668-a3b3-eb1b617d59b1",
+    "login": "Stephanie Bennett",
+    "email": "torresderrick@example.org",
+    "password": "%DCiu2!RZ0",
+    "first_name": "Patricia",
+    "last_name": "Johns",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "74e28290-8f35-41f8-8c78-79a339196e23",
+        "occured_at": "1999-10-15T18:29:48.437711",
+        "action": "logout",
+        "fingerprint": "/dev/xvdh"
+      },
+      {
+        "id": "f29527f3-f49f-45d7-95c1-b1490b96e2a1",
+        "occured_at": "1979-09-03T02:26:55.422345",
+        "action": "logout",
+        "fingerprint": "/dev/sdb"
+      },
+      {
+        "id": "254dbc2f-859d-49ef-a8bf-918e87fc1420",
+        "occured_at": "1994-03-02T06:51:58.626431",
+        "action": "logout",
+        "fingerprint": "/dev/xvdx"
+      },
+      {
+        "id": "fc833705-4fe1-4c0e-a3ce-0cb3378be002",
+        "occured_at": "1984-03-29T12:34:45.743826",
+        "action": "login",
+        "fingerprint": "/dev/vdc"
+      },
+      {
+        "id": "0ddba2e9-b9a0-42be-83da-464cfa591eaf",
+        "occured_at": "2006-02-16T09:54:36.570373",
+        "action": "login",
+        "fingerprint": "/dev/sdv"
+      },
+      {
+        "id": "53e1825b-78c1-431d-a7ac-d8f56f146af3",
+        "occured_at": "2024-03-01T09:47:47.543731",
+        "action": "logout",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "cbabbae5-ca09-45b7-8406-d8369dfe35ef",
+        "occured_at": "2019-06-13T09:06:07.978077",
+        "action": "logout",
+        "fingerprint": "/dev/sda"
+      }
+    ]
+  },
+  {
+    "id": "486039ec-58ad-46bb-aa53-a5b93bc9fe0c",
+    "login": "Carlos Thomas",
+    "email": "wisenicole@example.net",
+    "password": "$wGPZ_dx3N",
+    "first_name": "Barry",
+    "last_name": "Gutierrez",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "a529f7a0-81fc-4826-bd79-0a2f6f4b05a1",
+        "occured_at": "1998-06-12T04:35:33.198220",
+        "action": "login",
+        "fingerprint": "/dev/xvdc"
+      },
+      {
+        "id": "1ed11cf5-3ce5-46da-a77b-6afaf7de194d",
+        "occured_at": "2013-05-11T20:13:59.874709",
+        "action": "login",
+        "fingerprint": "/dev/sdi"
+      },
+      {
+        "id": "cd217de3-7a65-4a2d-a702-eaae197599a8",
+        "occured_at": "1978-06-26T19:19:05.709226",
+        "action": "login",
+        "fingerprint": "/dev/sdz"
+      },
+      {
+        "id": "b1a19d7b-e0ff-4a2f-98f6-c1ea3e10c425",
+        "occured_at": "2015-06-29T10:38:15.723680",
+        "action": "login",
+        "fingerprint": "/dev/xvdi"
+      },
+      {
+        "id": "035459ea-315f-498c-a066-2d0e38b8391f",
+        "occured_at": "2001-05-29T06:24:39.874150",
+        "action": "login",
+        "fingerprint": "/dev/vdw"
+      },
+      {
+        "id": "3c440ed9-56f7-4220-aeb5-8d8f4a20e821",
+        "occured_at": "1998-01-03T18:58:09.459222",
+        "action": "logout",
+        "fingerprint": "/dev/xvde"
+      },
+      {
+        "id": "da64b745-b487-4344-b0c3-063dc99b0ad9",
+        "occured_at": "2007-05-19T21:18:46.748564",
+        "action": "login",
+        "fingerprint": "/dev/xvdc"
+      }
+    ]
+  },
+  {
+    "id": "53e1ba79-f0cc-462f-821a-86287257df04",
+    "login": "Johnny Brady",
+    "email": "julian82@example.com",
+    "password": "%L2X)kuCma",
+    "first_name": "Heather",
+    "last_name": "Arnold",
+    "roles": [
+      [
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "f8c372b0-f1ed-4415-8b75-c6e6d7a6fb3b",
+        "occured_at": "1982-06-30T20:23:12.878596",
+        "action": "logout",
+        "fingerprint": "/dev/xvde"
+      },
+      {
+        "id": "cd7b8d81-a878-4654-aadb-e92e3975d90c",
+        "occured_at": "1978-10-27T23:44:13.277430",
+        "action": "login",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "5e21d843-7715-49d7-a4f4-4d50c3e7be06",
+        "occured_at": "2001-03-29T03:38:13.867346",
+        "action": "logout",
+        "fingerprint": "/dev/xvdq"
+      },
+      {
+        "id": "606abb00-1788-40c7-8c83-3bd09aa5f0de",
+        "occured_at": "1998-04-21T15:29:18.959782",
+        "action": "logout",
+        "fingerprint": "/dev/vde"
+      },
+      {
+        "id": "72eeddc6-0337-4745-a3ff-220ea859db09",
+        "occured_at": "1970-07-19T00:14:29.059992",
+        "action": "logout",
+        "fingerprint": "/dev/xvds"
+      },
+      {
+        "id": "9e3b0e6a-4d27-488b-8ec7-275c2235c10d",
+        "occured_at": "1984-07-21T21:22:57.572584",
+        "action": "logout",
+        "fingerprint": "/dev/sdo"
+      },
+      {
+        "id": "b18b4ca9-2a09-4293-97c4-cc6bf458f5f4",
+        "occured_at": "1975-11-18T15:33:46.366860",
+        "action": "login",
+        "fingerprint": "/dev/vdb"
+      },
+      {
+        "id": "42f9dcee-fede-40e2-9a2f-66672250fc53",
+        "occured_at": "1999-09-10T20:03:44.626043",
+        "action": "login",
+        "fingerprint": "/dev/xvdz"
+      }
+    ]
+  },
+  {
+    "id": "b002bc8c-6823-4376-918b-51cbc2c37c05",
+    "login": "Courtney Hamilton",
+    "email": "walterchristopher@example.com",
+    "password": "hv9W2Xve5#",
+    "first_name": "Amanda",
+    "last_name": "Mason",
+    "roles": [
+      [
+        {
+          "id": "7c405eb5-c3eb-4fb6-99bc-303d7c6aa007",
+          "title": "subscriber",
+          "description": "subscriber role"
+        },
+        {
+          "id": "d9b380b5-a852-4a75-992b-8e040c36a7f1",
+          "title": "admin",
+          "description": "admin role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "5ecc3e66-677d-4226-81d2-199e51ca240c",
+        "occured_at": "2006-11-11T16:27:15.670270",
+        "action": "login",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "4a3f6960-aa94-453e-9078-9309242cb725",
+        "occured_at": "2006-06-09T10:15:00.480691",
+        "action": "logout",
+        "fingerprint": "/dev/sdw"
+      },
+      {
+        "id": "548560bb-f89f-4cc0-bf01-91894ca1ea58",
+        "occured_at": "1976-03-22T04:25:03.040433",
+        "action": "logout",
+        "fingerprint": "/dev/vdm"
+      },
+      {
+        "id": "59f9d2e0-e7d4-45ec-a01d-0a34c083c196",
+        "occured_at": "2011-12-18T15:02:48.107579",
+        "action": "login",
+        "fingerprint": "/dev/xvdw"
+      },
+      {
+        "id": "8d33c78b-4e75-4d5d-8f73-ae565f5ee369",
+        "occured_at": "1981-12-02T02:06:51.735020",
+        "action": "login",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "6572691b-c7f5-4e13-b7f0-91596e5e0b1d",
+        "occured_at": "2008-09-06T02:44:07.424121",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "0a6c7478-6d44-48d2-b632-8320f8bfcbca",
+        "occured_at": "1973-04-23T19:56:28.682585",
+        "action": "logout",
+        "fingerprint": "/dev/vdf"
+      },
+      {
+        "id": "d4d4c9fc-8288-4d06-97ed-fc22d7b25e6c",
+        "occured_at": "1989-01-15T20:21:15.829182",
+        "action": "logout",
+        "fingerprint": "/dev/vdp"
+      }
+    ]
+  },
+  {
+    "id": "3f35fd1f-5f2e-4f52-b30e-f48b2d643c74",
+    "login": "Leslie Cook",
+    "email": "jennifer86@example.net",
+    "password": "d5N^8DvAra",
+    "first_name": "Lisa",
+    "last_name": "Werner",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        },
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "b9b36cd2-4996-4e40-8fe0-48a5314a48d9",
+        "occured_at": "1989-05-28T01:46:51.830220",
+        "action": "logout",
+        "fingerprint": "/dev/sdd"
+      },
+      {
+        "id": "935f51af-8fac-4273-8c83-dfa07875d6a4",
+        "occured_at": "2013-05-31T05:11:25.274739",
+        "action": "login",
+        "fingerprint": "/dev/xvdv"
+      },
+      {
+        "id": "df104a92-9a9b-422d-af40-b9673fe1b766",
+        "occured_at": "1971-01-09T07:24:08.327742",
+        "action": "login",
+        "fingerprint": "/dev/xvdh"
+      },
+      {
+        "id": "73ba1d44-e85a-4e46-a197-1a2d95f76cce",
+        "occured_at": "2021-01-28T12:47:27.124543",
+        "action": "logout",
+        "fingerprint": "/dev/vdn"
+      },
+      {
+        "id": "76d0854b-41cf-40c6-92eb-dbcdf0dfd8eb",
+        "occured_at": "1997-12-22T08:44:53.658510",
+        "action": "login",
+        "fingerprint": "/dev/sds"
+      },
+      {
+        "id": "47decbcc-8bad-489f-81dc-9b82d1b6ec00",
+        "occured_at": "1980-05-14T18:39:39.759892",
+        "action": "logout",
+        "fingerprint": "/dev/sdr"
+      },
+      {
+        "id": "16e92e84-7652-47f9-95a5-becbe6028630",
+        "occured_at": "2019-04-15T04:43:39.465789",
+        "action": "logout",
+        "fingerprint": "/dev/xvdh"
+      },
+      {
+        "id": "0341364f-6a62-454d-9626-340751c70a5d",
+        "occured_at": "1995-04-12T20:31:00.950571",
+        "action": "login",
+        "fingerprint": "/dev/sdn"
+      }
+    ]
+  },
+  {
+    "id": "06606955-3e61-4764-bf35-a93b39810828",
+    "login": "Jerry Campbell",
+    "email": "lclark@example.net",
+    "password": "Eo1oKFa^a%",
+    "first_name": "Amanda",
+    "last_name": "Martin",
+    "roles": [
+      [
+        {
+          "id": "02da1bbc-8e5f-4c0e-a03f-8634c7bc62e4",
+          "title": "guest",
+          "description": "guest role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "473d8a2d-1911-42b6-9e6d-0d2f946a1212",
+        "occured_at": "2021-04-28T08:04:41.583929",
+        "action": "login",
+        "fingerprint": "/dev/vdj"
+      },
+      {
+        "id": "1ed0483d-4d21-4122-b21b-985688f0a092",
+        "occured_at": "1977-11-28T13:49:42.806612",
+        "action": "login",
+        "fingerprint": "/dev/vdd"
+      },
+      {
+        "id": "9e192551-0960-4449-b3bb-11abdabc082b",
+        "occured_at": "2003-07-11T16:15:54.590280",
+        "action": "logout",
+        "fingerprint": "/dev/sdv"
+      },
+      {
+        "id": "66458706-1a65-4ee2-a450-9b82e9fe6e91",
+        "occured_at": "1987-01-09T04:49:47.717823",
+        "action": "logout",
+        "fingerprint": "/dev/xvdy"
+      },
+      {
+        "id": "dbadc789-9a30-45c3-9a43-80f2b2869a22",
+        "occured_at": "2009-11-25T13:14:35.642304",
+        "action": "login",
+        "fingerprint": "/dev/xvdt"
+      },
+      {
+        "id": "c35ac181-0ae9-433b-96e4-063ac70767b0",
+        "occured_at": "1971-10-14T22:22:51.900307",
+        "action": "login",
+        "fingerprint": "/dev/sdx"
+      },
+      {
+        "id": "d56437f1-d8d6-46c8-adc1-db1d6fcb5782",
+        "occured_at": "2020-02-17T19:17:00.211143",
+        "action": "logout",
+        "fingerprint": "/dev/sdh"
+      },
+      {
+        "id": "f11ce7da-322e-4ccb-ad97-2844a4ea29f1",
+        "occured_at": "1981-04-19T20:55:24.356888",
+        "action": "logout",
+        "fingerprint": "/dev/xvde"
+      }
+    ]
+  },
+  {
+    "id": "6923962f-a3c6-4995-8e72-7e3e33e46ecb",
+    "login": "Margaret Reid",
+    "email": "stephaniejohnson@example.com",
+    "password": "%rqBh^+ry5",
+    "first_name": "Amanda",
+    "last_name": "Ramos",
+    "roles": [
+      [
+        {
+          "id": "8cf278c8-58d0-454a-9a23-63afb667f587",
+          "title": "user",
+          "description": "user role"
+        }
+      ]
+    ],
+    "history": [
+      {
+        "id": "2439d28b-1b7b-4a69-a336-72b1d47242d7",
+        "occured_at": "2001-12-14T07:54:27.958796",
+        "action": "login",
+        "fingerprint": "/dev/sdg"
+      },
+      {
+        "id": "457e5935-7c20-4c2c-8528-8ee3a24c6f3e",
+        "occured_at": "2017-09-20T09:50:01.520029",
+        "action": "logout",
+        "fingerprint": "/dev/vdn"
+      },
+      {
+        "id": "744703b0-91e4-418d-8cf1-ad83435a52ea",
+        "occured_at": "2008-08-11T08:30:51.564495",
+        "action": "logout",
+        "fingerprint": "/dev/vdt"
+      },
+      {
+        "id": "563a2ccf-e0e6-4346-b299-488e7c622021",
+        "occured_at": "1970-04-01T03:12:58.964361",
+        "action": "login",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "43923c52-7608-4f34-acf4-ed72d214ad35",
+        "occured_at": "2006-12-20T10:36:14.867178",
+        "action": "logout",
+        "fingerprint": "/dev/xvdz"
+      },
+      {
+        "id": "9559a26a-60d0-4ff2-a975-dc44a0b540ae",
+        "occured_at": "1985-08-08T18:44:26.024652",
+        "action": "logout",
+        "fingerprint": "/dev/sdn"
+      },
+      {
+        "id": "076dd8b0-d85f-49cb-959b-8f20a6f179da",
+        "occured_at": "1970-09-22T01:21:40.205033",
+        "action": "logout",
+        "fingerprint": "/dev/xvdb"
+      },
+      {
+        "id": "f0322d7a-8529-4f85-b215-2eac42c244e6",
+        "occured_at": "2011-04-27T16:41:53.301417",
+        "action": "logout",
+        "fingerprint": "/dev/xvdd"
+      },
+      {
+        "id": "793a5b67-9c0f-4151-a2dd-73947d9d3b19",
+        "occured_at": "2004-08-27T23:32:59.148517",
+        "action": "login",
+        "fingerprint": "/dev/vdp"
+      },
+      {
+        "id": "4fa9d770-b415-4260-ad51-fb5587985e84",
+        "occured_at": "2008-08-17T03:05:33.693617",
+        "action": "logout",
+        "fingerprint": "/dev/xvdf"
+      }
+    ]
+  }
+]

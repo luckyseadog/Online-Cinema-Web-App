@@ -1,0 +1,21 @@
+[
+    {
+        "id": "938c2db9-0609-4a43-a01a-07513eb79596",
+        "title": "admin",
+        "description": "admin role"
+    },
+    {
+        "id": "37ed6995-0135-4b29-93d2-8b3d381286ef",
+        "title": "user",
+        "description": "user role"
+    },
+    {
+        "id": "fa3803f3-5ffd-4c4c-8187-9c5ff6660f79",
+        "title": "guest",
+        "description": "guest role"
+    },
+    {
+        "title": "subscriber",
+        "description": "subscriber role"
+    }
+]
