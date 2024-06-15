@@ -6,10 +6,9 @@ from core.config import settings
 from core.logger import LOGGING
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from api.v1 import admin, auth, users
+from api.v1 import admin, auth, users, roles
 from db import redis_db, postgres
 from redis.asyncio import Redis
-from db import redis_db
 
 
 @asynccontextmanager
@@ -37,6 +36,7 @@ app = FastAPI(
 app.include_router(admin.router, prefix='/api/v1/auth/admin', tags=['admin'])
 app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])
 app.include_router(users.router, prefix='/api/v1/auth/users', tags=['users'])
+app.include_router(roles.router, prefix='/api/v1/auth/roles', tags=['roles'])
 
 
 if __name__ == '__main__':
