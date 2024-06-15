@@ -10,7 +10,7 @@ from core.config import settings
 import json
 import os
 from models.entity import RoleModel, UserModel, UserRoleModel, UserHistoryModel
-
+from datetime import datetime
 
 @pytest_asyncio.fixture(scope='session')
 def event_loop():
@@ -31,7 +31,6 @@ async def prepare_database():
         f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_password}'
         f'@{settings.pg_host}:{settings.pg_port}/{settings.pg_name}'
     )
-
     engine = create_async_engine(DSN, echo=True, future=True)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -41,12 +40,17 @@ async def prepare_database():
     async with async_session() as session:
         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functionals/testdata/data/roles.json') as file:
             for item in json.load(file):
-                role = RoleModel(title=item['title'], description=item['description'])
+                role = RoleModel(
+                    id=item['id'],
+                    title=item['title'],
+                    description=item['description'],
+                )
                 session.add(role)
-            # await session.commit()
+            await session.flush()
 
         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functionals/testdata/data/users.json') as file:
-            for item in json.load(file):
+            data = json.load(file)
+            for item in data:
                 user = UserModel(
                     id=item['id'],
                     login=item['login'],
@@ -55,23 +59,25 @@ async def prepare_database():
                     first_name=item['first_name'],
                     last_name=item['last_name'],
                 )
+                session.add(user)
                 print(item['roles'])
+
                 for role in item['roles']:
                     user_role = UserRoleModel(user_id=item['id'], role_id=role['id'])
                     session.add(user_role)
-                session.add(user)
+            await session.flush()
 
+            for item in data:
                 for history in item['history']:
                     user_history = UserHistoryModel(
                         user_id=item['id'],
-                        occured_at=history['occured_at'],
+                        occured_at=datetime.strptime(history['occured_at'], '%Y-%m-%d %H:%M:%S'),
                         action=history['action'],
                         fingreprint=history['fingerprint'],
                     )
                     session.add(user_history)
+            await session.flush()
         await session.commit()
-
     yield
-
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

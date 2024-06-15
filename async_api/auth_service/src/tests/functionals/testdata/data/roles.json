@@ -1,20 +1,21 @@
 [
     {
-        "id": "938c2db9-0609-4a43-a01a-07513eb79596",
+        "id": "54a9504b-6e06-4244-9769-43e372ba5bdf",
         "title": "admin",
         "description": "admin role"
     },
     {
-        "id": "37ed6995-0135-4b29-93d2-8b3d381286ef",
+        "id": "28813998-4098-4c8d-b4f0-08c1169390c1",
         "title": "user",
         "description": "user role"
     },
     {
-        "id": "fa3803f3-5ffd-4c4c-8187-9c5ff6660f79",
+        "id": "0de2a8be-cd8b-41b9-87c0-f7eacef65eae",
         "title": "guest",
         "description": "guest role"
     },
     {
+        "id": "02caa4aa-24c8-4abf-8927-b5e015e85788",
         "title": "subscriber",
         "description": "subscriber role"
     }
