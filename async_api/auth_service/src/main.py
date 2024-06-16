@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     yield
     await pg_session.aclose()
     await redis_db.redis.close()
+    await postgres.purge_database()
     logging.info('end')
 
 

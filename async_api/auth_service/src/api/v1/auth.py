@@ -300,11 +300,12 @@ async def signup_guest(
 
     user = await user_service.create_user(guest_create, db)
 
-    note = History(action="/signup_guest",
+    note = History(user_id=user.id,
+        action="/signup_guest",
         fingerprint=user_agent)
     await history_service.make_note(note, db)
 
-    access_token = access_token_service.generate_token(origin, user.id), ["guest"] # TODO: add default role?
+    access_token = access_token_service.generate_token(origin, user.id, ["guest"]) # TODO: add default role?
     refresh_token = refresh_token_service.generate_token(origin, user.id)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
