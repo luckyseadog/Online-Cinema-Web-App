@@ -7,9 +7,11 @@ from schemas.entity import Token, UserLogin
 from datetime import timezone
 from fastapi import status
 from services.user_service import user_service
+from services.password_service import password_service
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from services.utils import create_access_token, create_refresh_token, verify_password
+from schemas.entity import UserCredentials
 
 
 SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
@@ -64,29 +66,47 @@ class AuthService:
         )
         return {'access_token': access_token, 'token_type': 'bearer'}
 
-    async def login(
-            self,
-            form_data: OAuth2PasswordRequestForm = Depends(),
-            db: AsyncSession = Depends(get_session),
-    ) -> Token:
-        user = await user_service.get_user_by_login(form_data.username, db)
+    # async def login(
+    #         self,
+    #         form_data: OAuth2PasswordRequestForm = Depends(),
+    #         db: AsyncSession = Depends(get_session),
+    # ) -> Token:
+    #     user = await user_service.get_user_by_login(form_data.username, db)
+    #     if user is None:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_400_BAD_REQUEST,
+    #             detail='Incorrect username or password',
+    #         )
+
+    #     hash_password = user.password
+    #     if not verify_password(form_data.password, hash_password):
+    #         raise HTTPException(
+    #             status_code=status.HTTP_400_BAD_REQUEST,
+    #             detail='Incorrect username or password',
+    #         )
+
+    #     return {
+    #         'access_token': create_access_token(user.id),
+    #         'refresh_token': create_refresh_token(user.id),
+    #     }
+    
+    async def login(self, user_creds: UserCredentials, db: AsyncSession) -> bool:
+        user = await user_service.get_user_by_login(user_creds.login, db)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
+                detail="Incorrect username or password",
             )
 
-        hash_password = user.password
-        if not verify_password(form_data.password, hash_password):
+        hash_password = password_service.compute_hash(user_creds.password)
+        target_password = user.password
+        if not password_service.check_password(hash_password, target_password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
+                detail="Incorrect username or password",
             )
 
-        return {
-            'access_token': create_access_token(user.id),
-            'refresh_token': create_refresh_token(user.id),
-        }
+        return True
 
 
 auth_service = AuthService()
