@@ -6,14 +6,14 @@ import os
 import time
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 
-SECRET_KEY = os.environ.get('SECRET_KEY', "PRACTIX")
+TOKEN_KEY = os.environ.get('TOKEN_KEY', "PRACTIX")
 ACCESS_TOKEN_MIN = int(os.environ.get('ACCESS_TOKEN_MIN', 15))
 REFRESH_TOKEN_WEEKS = int(os.environ.get('REFRESH_TOKEN_WEEKS', 2))
 
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = SECRET_KEY.encode('utf-8')
+        self.secret_key = TOKEN_KEY.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)
