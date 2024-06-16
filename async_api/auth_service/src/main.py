@@ -15,6 +15,7 @@ from db import redis_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
+    await postgres.create_database() # TODO: need check for database existance
     pg_session = postgres.get_session()
     redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
     yield

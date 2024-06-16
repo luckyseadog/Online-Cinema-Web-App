@@ -5,6 +5,7 @@ from schemas.entity import Role, User, UserRoleUUID, History
 from services.role_service import role_service
 from services.user_service import user_service
 from services.history_service import history_service
+from schemas.updates import RolePatch
 from typing import Annotated, Union
 from fastapi import Cookie
 from services.token_service import access_token_service, refresh_token_service
@@ -12,33 +13,34 @@ from db.redis_db import RedisTokenStorage, get_redis
 import json
 import time
 import datetime
+from uuid import UUID
 
 router = APIRouter()
 
 
-class AuthError(Exception):
+class AdminError(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 async def validate_token(access_token, refresh_token, redis):
     if access_token is None and refresh_token is None:
-        raise AuthError("You are not logged in")
+        raise AdminError("You are not logged in")
 
     if not access_token_service.validate_token(access_token):
-        raise AuthError("Invalid access token")
+        raise AdminError("Invalid access token")
     
-    if await redis.check_banned_atoken(access_token):
-        raise AuthError("Invalid access token")
-    
-    payload_str = access_token_service.decode_b64(access_token).split(".")[1]
+    payload_str = access_token_service.decode_b64(access_token.split(".")[1])
     payload = json.loads(payload_str)
 
+    if await redis.check_banned_atoken(payload["sub"], access_token):
+        raise AdminError("Invalid access token")
+
     if payload["exp"] < time.time():
-        raise AuthError("Invalid access token")
+        raise AdminError("Invalid access token")
     
     if "admin" not in payload["roles"]:
-        raise AuthError("You have no access")
+        raise AdminError("You have no access")
     
     return payload
 
@@ -57,24 +59,25 @@ async def validate_token(access_token, refresh_token, redis):
     ''',
 )
 async def assign_role(
+    role_id: UUID,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
     ) -> User:
-
+    # TODO: check that role_id is valid
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
-                   action="/user_role/assign",
+                   action=f"/user_role/assign?role_id={role_id}",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
-    updated_user = await user_service.assing_user_role(payload["sub"], db)
+
+    await history_service.make_note(note, db)
+    updated_user = await user_service.assign_user_role(payload["sub"], str(role_id), db)
     return updated_user
 
 
@@ -86,23 +89,25 @@ async def assign_role(
     description='',
 )
 async def revoke_role(
+    role_id: UUID,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
     ) -> User:
+    # TODO: check that role_id is valid
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
-                   action="/user_role/revoke",
+                   action=f"/user_role/revoke?role_id={role_id}",
                    fingerprint=user_agent)
-    history_service.make_note(note)
-    updated_user = await user_service.revoke_user_role(payload["sub"], db)
+
+    await history_service.make_note(note, db)
+    updated_user = await user_service.revoke_user_role(payload["sub"], str(role_id), db)
     return updated_user
 
 
@@ -113,23 +118,25 @@ async def revoke_role(
     description='',
 )
 async def check_role(
+    role_id: UUID,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
     ):
+    # TODO: check that role_id is valid
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
-                   action="/user_role/check",
+                   action=f"/user_role/check?role_id={role_id}",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
-    res = await user_service.check_user_role(payload["sub"], db)
+
+    await history_service.make_note(note, db)
+    res = await user_service.check_user_role(payload["sub"], str(role_id), db)
     return {'result': 'YES' if res else 'NO'}
 
 
@@ -149,14 +156,13 @@ async def get_roles(
     ) -> list[Role]:
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
                    action="/roles[GET]",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
     return await role_service.get_roles(db=db)
 
 
@@ -177,15 +183,14 @@ async def add_role(
     ):
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
-                   action="/roles[post]",
+                   action="/roles[POST]",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
-    return await role_service.create_role(db=db, role_create=role_create)
+    await history_service.make_note(note, db)
+    return await role_service.create_role(role_create=role_create, db=db)
 
 
 @router.put(
@@ -196,7 +201,8 @@ async def add_role(
     description='',
 )
 async def update_role(
-    role_create: Role,
+    role_id: UUID,
+    role_patch: RolePatch,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
@@ -205,15 +211,14 @@ async def update_role(
     ):
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
-                   action="/roles[put]",
+                   action="/roles[PUT]",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
-    return await role_service.update_role(role_create, db=db)
+    await history_service.make_note(note, db)
+    return await role_service.update_role(role_id=role_id, role_patch=role_patch, db=db)
 
 
 @router.delete(
@@ -223,7 +228,7 @@ async def update_role(
     description='',
 )
 async def delete_role(
-    id: int, 
+    role_id: UUID, 
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
@@ -232,12 +237,12 @@ async def delete_role(
     ):
     try:
         payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+    except AdminError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
                    occured_at=datetime.datetime.now(),
                    action="/roles[delete]",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
-    return await role_service.delete_role(db=db, role_id=id)
+    await history_service.make_note(note, db)
+    return await role_service.delete_role(role_id=str(role_id), db=db)

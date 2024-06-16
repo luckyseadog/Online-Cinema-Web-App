@@ -13,7 +13,7 @@ import json
 import time
 from services.history_service import history_service
 import datetime
-from services.history_service import history_service
+from schemas.updates import UserPatch
 
 
 router = APIRouter()
@@ -31,29 +31,16 @@ async def validate_token(access_token, refresh_token, redis):
     if not access_token_service.validate_token(access_token):
         raise UserError("Invalid access token")
     
-    if await redis.check_banned_atoken(access_token):
-        raise UserError("Invalid access token")
-    
-    payload_str = access_token_service.decode_b64(access_token).split(".")[1]
+    payload_str = access_token_service.decode_b64(access_token.split(".")[1])
     payload = json.loads(payload_str)
+
+    if await redis.check_banned_atoken(payload["sub"], access_token):
+        raise UserError("Invalid access token")
 
     if payload["exp"] < time.time():
         raise UserError("Invalid access token")
     
     return payload
-
-
-# @router.post('/signup', response_model=User, status_code=status.HTTP_201_CREATED)
-# async def create_user(user_create: User, db: AsyncSession = Depends(get_session)) -> User | None:
-#     return await user_service.create_user(user_create, db)
-#
-#
-# @router.get('/signin', response_model=User, status_code=status.HTTP_200_OK)
-# async def login_user(user_login: str, db: AsyncSession = Depends(get_session)):
-#     db_user = await user_service.get_user_by_login(user_login, db)
-#     if not db_user:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
-#     return db_user
 
 
 
@@ -71,10 +58,9 @@ async def delete_user(
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
                    action="/user[delete]",
                    fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
 
     db_user = await user_service.delete_user(payload["sub"], db)
     if not db_user:
@@ -84,6 +70,7 @@ async def delete_user(
 
 @router.patch('/')
 async def change_user(
+    user_patch: UserPatch,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
@@ -99,9 +86,9 @@ async def change_user(
         occured_at=datetime.datetime.now(),
         action="/user[patch]",
         fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
 
-    db_user = await user_service.update_user(payload["sub"], db)
+    db_user = await user_service.update_user(payload["sub"], user_patch, db)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
     return db_user
@@ -125,10 +112,9 @@ async def get_history(
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
-        occured_at=datetime.datetime.now(),
         action="/user/history",
         fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
 
     user_history = await history_service.get_last_user_notes(payload["sub"])
     return user_history
@@ -147,10 +133,9 @@ async def get_users(
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
-        occured_at=datetime.datetime.now(),
         action="/user/users",
         fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
 
     users = await user_service.get_users(db)
     return users
@@ -169,10 +154,9 @@ async def get_me(
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
-        occured_at=datetime.datetime.now(),
         action="/user/me",
         fingerprint=user_agent)
-    await history_service.make_note(note)
+    await history_service.make_note(note, db)
 
     user = await get_current_user(access_token)
     return user

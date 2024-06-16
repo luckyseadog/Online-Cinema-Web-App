@@ -35,7 +35,7 @@ class AuthService:
     async def _authenticate_user(
             self,
             user_login: UserLogin,
-            db: AsyncSession = Depends(get_session),
+            db: AsyncSession,
     ) -> bool:
         user = await user_service.get_user_by_login(user_login.username, db)
         if not user:
@@ -48,7 +48,7 @@ class AuthService:
         self,
         user_login: UserLogin,
         # token: Annotated[str, Depends],
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession,
     ) -> Token:
         user = await self._authenticate_user(user_login, db)
         if not user:
