@@ -46,3 +46,4 @@ async def validate_refresh_token(service_name, refresh_token, redis: RedisTokenS
     if payload["exp"] < time.time():
         raise APIError(f"{service_name}: Refresh token is expired")
     
+    return payload
