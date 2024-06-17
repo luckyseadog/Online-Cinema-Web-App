@@ -9,7 +9,7 @@ class APIError(Exception):
         super().__init__(self.message)
 
 
-async def validate_access_token(service_name, access_token, refresh_token, redis: RedisTokenStorage):
+async def validate_access_token(service_name, access_token, redis: RedisTokenStorage):
     if access_token is None:
         raise APIError(f"{service_name}: No access token")
 
