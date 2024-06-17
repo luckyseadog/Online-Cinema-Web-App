@@ -34,13 +34,13 @@ async def validate_token(access_token, refresh_token, redis):
     payload = json.loads(payload_str)
 
     if await redis.check_banned_atoken(payload["sub"], access_token):
-        raise AdminError("Invalid access token")
+        raise AdminError("Access token is banned")
 
     if payload["exp"] < time.time():
-        raise AdminError("Invalid access token")
+        raise AdminError("Access token is expired")
     
     if "admin" not in payload["roles"]:
-        raise AdminError("You have no access")
+        raise AdminError("Access token is withdrawn")
     
     return payload
 
@@ -218,7 +218,7 @@ async def update_role(
                    action="/roles[PUT]",
                    fingerprint=user_agent)
     await history_service.make_note(note, db)
-    return await role_service.update_role(role_id=role_id, role_patch=role_patch, db=db)
+    return await role_service.update_role(role_id=str(role_id), role_patch=role_patch, db=db)
 
 
 @router.delete(
@@ -241,7 +241,6 @@ async def delete_role(
         raise HTTPException(status_code=401, detail=e.message)
 
     note = History(user_id=payload["sub"],
-                   occured_at=datetime.datetime.now(),
                    action="/roles[delete]",
                    fingerprint=user_agent)
     await history_service.make_note(note, db)

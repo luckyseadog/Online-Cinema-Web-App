@@ -47,7 +47,7 @@ async def get_current_user(token: str, db: AsyncSession):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload_str = access_token_service.decode_b64(token).split(".")[1]
+        payload_str = access_token_service.decode_b64(token.split(".")[1])
         payload = json.loads(payload_str)
         username: str = payload.get("sub")
         if username is None:

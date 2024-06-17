@@ -5,6 +5,7 @@ from models.entity import RoleModel
 from schemas.entity import Role
 from schemas.updates import RolePatch
 from sqlalchemy import delete, select, update
+import logging
 
 
 class RoleService():
@@ -36,9 +37,10 @@ class RoleService():
         )
 
     async def update_role(self, role_id: str, role_patch: RolePatch, db: AsyncSession) -> Role:
+        logging.warn(role_patch.model_dump(exclude_none=True))
         query = (
             update(RoleModel)
-            .where(RoleModel.id == role_id)
+            .where(RoleModel.id == str(role_id))
             .values(**role_patch.model_dump(exclude_none=True))
             .returning(RoleModel)
         )

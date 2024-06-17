@@ -101,7 +101,7 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User, db: AsyncSession) -> User:
-        user_create.password = password_service.compute_hash(user_create.password)
+        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else None
         user_dto = jsonable_encoder(user_create, exclude_none=True)
         user = UserModel(**user_dto)
         db.add(user)
@@ -125,43 +125,61 @@ class UserService:
         )
 
     async def update_user(self, user_id: int, user_patch: UserPatch, db: AsyncSession):
-        user_patch.password = password_service.compute_hash(user_patch.password)
+        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else None 
         query = (
             update(UserModel)
-            .where(UserModel.id == user_id, UserModel.is_active == True)
+            .where(UserModel.id == user_id)
             .values(**user_patch.model_dump(exclude_none=True))
             .returning(UserModel)
         )
         result = await db.execute(query)
-        updated_user = result.scalars().one()
+        updated_user = result.scalars().one_or_none()
         await db.commit()
 
-        return User(
-            id=updated_user.id, 
-            login=updated_user.login, 
-            password=updated_user.password, 
-            first_name=updated_user.first_name, 
-            last_name=updated_user.last_name,
-            email=updated_user.email,
-            roles=[Role(id=role.id,
+        if updated_user:
+            return User(
+                id=updated_user.id,
+                login=updated_user.login,
+                password=updated_user.password,
+                first_name=updated_user.first_name,
+                last_name=updated_user.last_name,
+                email=updated_user.email,
+                is_superadmin=updated_user.is_superadmin,
+                roles=[
+                    Role(
+                        id=role.id,
                         title=role.title,
-                        description=role.description) for role in updated_user.roles])
+                        description=role.description,
+                    ) for role in updated_user.roles
+                ],
+            )
+        else:
+            return None
 
     async def delete_user(self, user_id: int, db: AsyncSession):
         result = await db.execute(delete(UserModel).where(UserModel.id == user_id).returning(UserModel))
-        deleted_user = result.scalars().one()
+        deleted_user = result.scalars().one_or_none()
         await db.commit()
 
-        return User(
-            id=deleted_user.id, 
-            login=deleted_user.login, 
-            password=deleted_user.password, 
-            first_name=deleted_user.first_name, 
-            last_name=deleted_user.last_name,
-            email=deleted_user.email,
-            roles=[Role(id=role.id,
+        if deleted_user:
+            return User(
+                id=deleted_user.id,
+                login=deleted_user.login,
+                password=deleted_user.password,
+                first_name=deleted_user.first_name,
+                last_name=deleted_user.last_name,
+                email=deleted_user.email,
+                is_superadmin=deleted_user.is_superadmin,
+                roles=[
+                    Role(
+                        id=role.id,
                         title=role.title,
-                        description=role.description) for role in deleted_user.roles])
+                        description=role.description,
+                    ) for role in deleted_user.roles
+                ],
+            )
+        else:
+            return None
 
         
 
