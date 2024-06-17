@@ -14,35 +14,10 @@ import json
 import time
 import datetime
 from uuid import UUID
+from api.v1.utils import APIError, validate_access_token
 
 router = APIRouter()
 
-
-class AdminError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-async def validate_token(access_token, refresh_token, redis):
-    if access_token is None and refresh_token is None:
-        raise AdminError("You are not logged in")
-
-    if not access_token_service.validate_token(access_token):
-        raise AdminError("Invalid access token")
-    
-    payload_str = access_token_service.decode_b64(access_token.split(".")[1])
-    payload = json.loads(payload_str)
-
-    if await redis.check_banned_atoken(payload["sub"], access_token):
-        raise AdminError("Access token is banned")
-
-    if payload["exp"] < time.time():
-        raise AdminError("Access token is expired")
-    
-    if "admin" not in payload["roles"]:
-        raise AdminError("Access token is withdrawn")
-    
-    return payload
 
 
 @router.post(
@@ -68,9 +43,12 @@ async def assign_role(
     ) -> User:
     # TODO: check that role_id is valid
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action=f"/user_role/assign?role_id={role_id}",
@@ -98,9 +76,12 @@ async def revoke_role(
     ) -> User:
     # TODO: check that role_id is valid
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action=f"/user_role/revoke?role_id={role_id}",
@@ -127,9 +108,12 @@ async def check_role(
     ):
     # TODO: check that role_id is valid
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action=f"/user_role/check?role_id={role_id}",
@@ -155,9 +139,12 @@ async def get_roles(
     redis: RedisTokenStorage = Depends(get_redis),
     ) -> list[Role]:
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action="/roles[GET]",
@@ -182,9 +169,12 @@ async def add_role(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action="/roles[POST]",
@@ -210,9 +200,12 @@ async def update_role(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action="/roles[PUT]",
@@ -236,9 +229,12 @@ async def delete_role(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AdminError as e:
+        payload = await validate_access_token("AdminService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
+    
+    if "admin" not in payload["roles"]:
+        raise APIError("No access")
 
     note = History(user_id=payload["sub"],
                    action="/roles[delete]",

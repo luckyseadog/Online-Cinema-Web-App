@@ -15,36 +15,10 @@ import time
 from services.history_service import history_service
 import datetime
 from schemas.updates import UserPatch
+from api.v1.utils import APIError, validate_access_token
 
 
 router = APIRouter()
-
-
-class UserError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-async def validate_token(access_token, refresh_token, redis: RedisTokenStorage):
-    if access_token is None and refresh_token is None:
-        raise UserError("You are not logged in")
-
-    if not access_token_service.validate_token(access_token):
-        raise UserError("Invalid access token")
-    
-    payload_str = access_token_service.decode_b64(access_token.split(".")[1])
-    payload = json.loads(payload_str)
-
-    if await redis.check_banned_atoken(payload["sub"], access_token):
-        raise UserError("Access token is banned")
-
-    if payload["exp"] < time.time():
-        raise UserError("Access token is expired")
-    
-    if payload["iat"] < await redis.get_user_last_logout_all(payload["sub"]):
-        raise UserError("Access token is withdrawn")
-    
-    return payload
 
 
 
@@ -58,8 +32,8 @@ async def delete_user(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except UserError as e:
+        payload = await validate_access_token("UsersService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
@@ -87,8 +61,8 @@ async def change_user(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except UserError as e:
+        payload = await validate_access_token("UsersService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
@@ -115,8 +89,8 @@ async def get_history(
     redis: RedisTokenStorage = Depends(get_redis),
     ) -> list[History]:
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except UserError as e:
+        payload = await validate_access_token("UsersService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
@@ -136,8 +110,8 @@ async def get_users(
     redis: RedisTokenStorage = Depends(get_redis),
     ) -> list[User]:
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except UserError as e:
+        payload = await validate_access_token("UsersService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],
@@ -157,8 +131,8 @@ async def get_me(
     redis: RedisTokenStorage = Depends(get_redis)
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except UserError as e:
+        payload = await validate_access_token("UsersService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
     note = History(user_id=payload["sub"],

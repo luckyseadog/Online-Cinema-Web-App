@@ -19,35 +19,10 @@ from uuid import uuid4
 import datetime
 from services.history_service import history_service
 import logging
+from api.v1.utils import APIError, validate_access_token, validate_refresh_token
 
 
 router = APIRouter()
-
-class AuthError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-async def validate_token(access_token, refresh_token, redis: RedisTokenStorage):
-    if access_token is None and refresh_token is None:
-        raise AuthError("You are not logged in")
-
-    if not access_token_service.validate_token(access_token):
-        raise AuthError("Invalid access token")
-    
-    payload_str = access_token_service.decode_b64(access_token.split(".")[1])
-    payload = json.loads(payload_str)
-    
-    if await redis.check_banned_atoken(payload["sub"], access_token):
-        raise AuthError("Invalid access token")
-
-    if payload["exp"] < time.time():
-        raise AuthError("Invalid access token")
-    
-    if payload["iat"] > await redis.get_user_last_logout_all(payload["sub"]):
-        raise AuthError("Invalid access token")
-    
-    return payload
 
 
 
@@ -168,8 +143,8 @@ async def logout(
     redis: RedisTokenStorage = Depends(get_redis),
     ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+        payload = await validate_access_token("AuthService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
     user_id = payload.get("sub")
@@ -205,11 +180,10 @@ async def logout_all(
     redis: RedisTokenStorage = Depends(get_redis),
 ):
     try:
-        payload = await validate_token(access_token, refresh_token, redis)
-    except AuthError as e:
+        payload = await validate_access_token("AuthService", access_token, redis)
+    except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
     
-
     user_id = payload.get("sub")
 
     note = History(user_id=user_id,
@@ -246,21 +220,12 @@ async def refresh(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required'
         )
-
-    if refresh_token is None:
-        return {"message": "Invalid refresh token"}
     
-    if not refresh_token_service.validate_token(refresh_token):
-        return {"message": "Invalid refresh token"}
+    try:
+        payload = await validate_refresh_token("AuthService", refresh_token, redis)
+    except APIError as e:
+        raise HTTPException(status_code=401, detail=e.message)
     
-    payload_str = refresh_token_service.decode_b64(refresh_token.split(".")[1])
-    payload = json.loads(payload_str)
-
-    if await redis.check_valid_rtoken(payload["sub"], refresh_token) == False:
-        return {"message": "Invalid refresh token"}
-
-    if payload["exp"] < time.time():
-        return {"message": "Invalid refresh token"}
     
     user_id = payload.get("sub")
 
