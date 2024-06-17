@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 from base64 import urlsafe_b64encode
 import os
 
-SALT = os.environ.get('SAULT', "<salt>").encode("utf-8")
+SALT = os.environ.get('SAULT', '<salt>').encode('utf-8')
 APP_ITERS = int(os.environ.get('APP_ITERS', 100_000))
 
 
@@ -19,6 +19,6 @@ class PasswordService:
 
     def check_password(self, password: str, target_hash: str):
         return self.compute_hash(password) == target_hash
-    
+
 
 password_service = PasswordService()

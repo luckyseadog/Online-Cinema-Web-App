@@ -7,23 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from schemas.entity import UserCreate, UserCredentials, User, History
 from fastapi.responses import ORJSONResponse
-from typing import Annotated
 from fastapi import Header
 from services.token_service import access_token_service, refresh_token_service
 from db.redis_db import RedisTokenStorage, get_redis
 from typing import Annotated, Union
 from fastapi import Cookie
-import json
-import time
 from uuid import uuid4
-import datetime
 from services.history_service import history_service
-import logging
 from api.v1.utils import APIError, validate_access_token, validate_refresh_token
 
 
 router = APIRouter()
-
 
 
 @router.post(
@@ -46,12 +40,12 @@ router = APIRouter()
     ''',
 )
 async def signup(
-    user_create: UserCreate, 
-    response: ORJSONResponse, 
-    origin: Annotated[str | None, Header()] = None, 
+    user_create: UserCreate,
+    response: ORJSONResponse,
+    origin: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
-    ):
+):
     if origin is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -65,14 +59,14 @@ async def signup(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
     user = await user_service.create_user(user_create, db)
-    access_token, access_exp = access_token_service.generate_token(origin, user.id, ["user"]) # TODO: add default role?
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])  # TODO: add default role?
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
+    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 
-    return {"message": "User created successfully"}
+    return {'message': 'User created successfully'}
 
 
 @router.post(
@@ -105,22 +99,24 @@ async def login(
         user_roles = [role.title for role in user.roles]
         access_token, access_exp = access_token_service.generate_token(origin, user.id, user_roles)
         refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-        response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
+        response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
+        response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
 
-        note = History(user_id=user.id,
-                   action="/login",
-                   fingerprint=user_agent)
+        note = History(
+            user_id=user.id,
+            action='/login',
+            fingerprint=user_agent,
+        )
         await history_service.make_note(note, db)
 
         await redis.add_valid_rtoken(user.id, refresh_token)
 
-        return {"message": "Success login"}
+        return {'message': 'Success login'}
 
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Login error'  # TODO: which error?
+            detail='Login error',  # TODO: which error?
         )
 
 @router.post(
@@ -141,26 +137,28 @@ async def logout(
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
-    ):
+):
     try:
-        payload = await validate_access_token("AuthService", access_token, redis)
+        payload = await validate_access_token('AuthService', access_token, redis)
     except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
 
-    user_id = payload.get("sub")
+    user_id = payload.get('sub')
 
-    note = History(user_id=user_id,
-        action="/logout",
-        fingerprint=user_agent)
+    note = History(
+        user_id=user_id,
+        action='/logout',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note, db)
 
     await redis.add_banned_atoken(user_id, access_token)
     await redis.delete_refresh(user_id, refresh_token)
 
-    response.delete_cookie(key="access_token")
-    response.delete_cookie(key="refresh_token")
+    response.delete_cookie(key='access_token')
+    response.delete_cookie(key='refresh_token')
 
-    return {"message": "Success"}
+    return {'message': 'Success'}
 
 
 @router.post(
@@ -170,7 +168,6 @@ async def logout(
     summary='Выход пользователя из всех устройств',
     description='',
 )
-
 async def logout_all(
     response: ORJSONResponse,
     access_token: Annotated[Union[str, None], Cookie()] = None,
@@ -180,24 +177,26 @@ async def logout_all(
     redis: RedisTokenStorage = Depends(get_redis),
 ):
     try:
-        payload = await validate_access_token("AuthService", access_token, redis)
+        payload = await validate_access_token('AuthService', access_token, redis)
     except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
-    
-    user_id = payload.get("sub")
 
-    note = History(user_id=user_id,
-        action="/logout_all",
-        fingerprint=user_agent)
+    user_id = payload.get('sub')
+
+    note = History(
+        user_id=user_id,
+        action='/logout_all',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note, db)
 
     await redis.set_user_last_logout_all(user_id)
     await redis.delete_refresh_all(user_id)
 
-    response.delete_cookie(key="access_token")
-    response.delete_cookie(key="refresh_token")
+    response.delete_cookie(key='access_token')
+    response.delete_cookie(key='refresh_token')
 
-    return {"message": "All accounts deactivated"}
+    return {'message': 'All accounts deactivated'}
 
 
 @router.post(
@@ -213,35 +212,36 @@ async def refresh(
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis)
+    redis: RedisTokenStorage = Depends(get_redis),
 ):
     if origin is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required'
+            detail='Origin header is required',
         )
-    
+
     try:
-        payload = await validate_refresh_token("AuthService", refresh_token, redis)
+        payload = await validate_refresh_token('AuthService', refresh_token, redis)
     except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
-    
-    
-    user_id = payload.get("sub")
 
-    note = History(user_id=user_id,
-        action="/refresh",
-        fingerprint=user_agent)
+    user_id = payload.get('sub')
+
+    note = History(
+        user_id=user_id,
+        action='/refresh',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note, db)
 
-    access_token, access_exp = access_token_service.generate_token(origin, user_id, ["user"])
+    access_token, access_exp = access_token_service.generate_token(origin, user_id, ['user'])
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user_id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
+    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user_id, refresh_token)
 
-    return {"message": "Success"}
+    return {'message': 'Success'}
 
 @router.post(
     '/signup_guest',
@@ -256,8 +256,8 @@ async def refresh(
     ''',
 )
 async def signup_guest(
-    response: ORJSONResponse, 
-    origin: Annotated[str | None, Header()] = None,  
+    response: ORJSONResponse,
+    origin: Annotated[str | None, Header()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
@@ -265,28 +265,30 @@ async def signup_guest(
     if origin is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required'
+            detail='Origin header is required',
         )
-    
+
     guest_create = User(
-        login=f"login_{uuid4()}", 
-        email=f"email_{uuid4()}", 
-        password="", 
-        first_name=f"guest_{uuid4()}")
+        login=f'login_{uuid4()}',
+        email=f'email_{uuid4()}',
+        password='',
+        first_name=f'guest_{uuid4()}',
+    )
 
     user = await user_service.create_user(guest_create, db)
 
-    note = History(user_id=user.id,
-        action="/signup_guest",
-        fingerprint=user_agent)
+    note = History(
+        user_id=user.id,
+        action='/signup_guest',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note, db)
 
-    access_token, access_exp = access_token_service.generate_token(origin, user.id, ["guest"])
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['guest'])
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
-    
+    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 
-    return {"message": "Guest created successfully"}
+    return {'message': 'Guest created successfully'}

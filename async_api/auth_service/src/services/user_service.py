@@ -1,12 +1,10 @@
 from schemas.entity import User, Role
 from sqlalchemy import select, update, delete
-from db.postgres import get_session
-from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel, RoleModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.updates import UserPatch
-from services.password_service import password_service 
+from services.password_service import password_service
 
 
 class UserService:
@@ -101,7 +99,7 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User, db: AsyncSession) -> User:
-        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ""
+        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ''
         user_dto = jsonable_encoder(user_create, exclude_none=True)
         user = UserModel(**user_dto)
         db.add(user)
@@ -125,7 +123,7 @@ class UserService:
         )
 
     async def update_user(self, user_id: int, user_patch: UserPatch, db: AsyncSession):
-        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else "" 
+        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else ''
         query = (
             update(UserModel)
             .where(UserModel.id == user_id)
@@ -181,8 +179,6 @@ class UserService:
         else:
             return None
 
-        
-
     async def assign_user_role(self, user_id: str, role_id: str, db: AsyncSession):
         query_user = select(UserModel).where(UserModel.id == user_id)
         query_role = select(RoleModel).where(RoleModel.id == role_id)
@@ -191,7 +187,6 @@ class UserService:
         res_role = await db.execute(query_role)
         user = res_user.scalars().one()
         role = res_role.scalars().one()
-
 
         user.roles.append(role)
         await db.commit()
