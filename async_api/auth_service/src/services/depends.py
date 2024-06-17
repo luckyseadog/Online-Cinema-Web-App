@@ -1,15 +1,7 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.postgres import get_session
-from services.utils import (
-    ALGORITHM,
-    SECRET_KEY_ACCESS,
-)
 from schemas.entity import TokenData
-
-import jwt
 from jwt.exceptions import InvalidTokenError
 from services.user_service import user_service
 from services.token_service import access_token_service

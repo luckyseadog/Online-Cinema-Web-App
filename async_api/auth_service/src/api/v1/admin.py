@@ -245,3 +245,4 @@ async def delete_role(
                    fingerprint=user_agent)
     await history_service.make_note(note, db)
     return await role_service.delete_role(role_id=str(role_id), db=db)
+

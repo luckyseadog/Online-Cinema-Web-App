@@ -36,6 +36,15 @@ class TokenService:
         except ValueError:
             return False
 
+    def decode_b64(self, data: str):
+        length = len(data) + (4 - (len(data) % 4))
+        data_padded = data.ljust(length, '=')
+        return urlsafe_b64decode(data_padded).decode('utf-8')
+
+    def validate_token(self, token: str):
+        header, payload, sign = token.split('.')
+        return self._validate_data(f'{header}.{payload}', sign)
+
 
 class AccessTokenService(TokenService):
     def generate_token(self, iss: str, sub: str, roles: list[str]):

@@ -14,7 +14,9 @@ dsn = (
 engine = create_async_engine(dsn, echo=True, future=True)
 
 async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False,
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
 )
 
 

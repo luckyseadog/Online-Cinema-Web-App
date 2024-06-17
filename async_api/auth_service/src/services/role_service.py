@@ -45,20 +45,23 @@ class RoleService():
             .returning(RoleModel)
         )
         result = await db.execute(query)
-        updated_role = result.scalars().one()
+        updated_role = result.scalars().one_or_none()
+
+        if not updated_role:
+            return
+
         await db.commit()
-
         resp = Role(id=updated_role.id, title=updated_role.title, description=updated_role.description)
-
         return resp
 
     async def delete_role(self, role_id: str, db: AsyncSession):
         result = await db.execute(delete(RoleModel).where(RoleModel.id == role_id).returning(RoleModel))
-        deleted_role = result.scalars().one()
+        deleted_role = result.scalars().one_or_none()
+        if deleted_role is None:
+            return
+
         await db.commit()
-
         resp = Role(id=deleted_role.id, title=deleted_role.title, description=deleted_role.description)
-
         return resp
 
 
