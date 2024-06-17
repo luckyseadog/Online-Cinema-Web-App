@@ -21,7 +21,7 @@ async def person_all(
         page_data: Annotated[dict, Depends(page_data)],
         person_service: PersonService = Depends(get_person_service),
 ) -> list[Person]:
-    persons = await person_service.get_all(page_data["page_size"], page_data["page_number"])
+    persons = await person_service.get_all(page_data['page_size'], page_data['page_number'])
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='not found persons')
     return [Person(id=person.id, name=person.name) for person in persons]
@@ -46,7 +46,7 @@ async def person_search(
         ],
         person_service: PersonService = Depends(get_person_service),
 ) -> list[PersonFilmsRoles]:
-    persons = await person_service.search(query, page_data["page_size"], page_data["page_number"])
+    persons = await person_service.search(query, page_data['page_size'], page_data['page_number'])
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'not found persons by key: {query}')
     return [PersonFilmsRoles(id=person.id, name=person.name, films=person.films) for person in persons]

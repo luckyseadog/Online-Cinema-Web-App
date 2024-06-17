@@ -18,7 +18,7 @@ class PasswordService:
         return password_hash
 
     def check_password(self, password: str, target_hash: str):
-        return self._compute_hash(password) == target_hash
+        return self.compute_hash(password) == target_hash
     
 
 password_service = PasswordService()

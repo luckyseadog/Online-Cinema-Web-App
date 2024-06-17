@@ -1,5 +1,5 @@
 version: '3'
-services: 
+services:
   redis-auth:
     image: redis/redis-stack-server:latest
     volumes:
@@ -20,11 +20,11 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: "${AUTH_POSTGRES_PASSWORD}"
-      POSTGRES_USER: "${AUTH_POSTGRES_USER}"
-      POSTGRES_DB: "${auth_db}"
+      POSTGRES_PASSWORD: "${AUTH_DB_PASSWORD}"
+      POSTGRES_USER: "${AUTH_DB_USER}"
+      POSTGRES_DB: "${AUTH_DB_NAME}"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${AUTH_POSTGRES_USER} -d ${AUTH_POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
       interval: 5s
       timeout: 10s
 
@@ -55,6 +55,3 @@ volumes:
     driver: local
   postgres-auth-data:
     driver: local
-
-
-

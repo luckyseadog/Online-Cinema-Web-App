@@ -6,14 +6,14 @@ import os
 import time
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 
-SECRET_KEY = os.environ.get('SECRET_KEY', "PRACTIX")
+TOKEN_KEY = os.environ.get('TOKEN_KEY', "PRACTIX")
 ACCESS_TOKEN_MIN = int(os.environ.get('ACCESS_TOKEN_MIN', 15))
 REFRESH_TOKEN_WEEKS = int(os.environ.get('REFRESH_TOKEN_WEEKS', 2))
 
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = SECRET_KEY.encode('utf-8')
+        self.secret_key = TOKEN_KEY.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)
@@ -28,6 +28,22 @@ class TokenService:
         length = len(data) + (4 - (len(data) % 4))
         data_padded = data.ljust(length, "=")
         return urlsafe_b64decode(data_padded).decode('utf-8')
+    
+    def validate_token(self, token):
+        try:
+            header, payload, sign = token.split(".")
+            return self._validate_data(f"{header}.{payload}", sign)
+        except ValueError:
+            return False
+
+    def decode_b64(self, data: str):
+        length = len(data) + (4 - (len(data) % 4))
+        data_padded = data.ljust(length, '=')
+        return urlsafe_b64decode(data_padded).decode('utf-8')
+
+    def validate_token(self, token: str):
+        header, payload, sign = token.split('.')
+        return self._validate_data(f'{header}.{payload}', sign)
 
 
 class AccessTokenService(TokenService):
@@ -45,7 +61,7 @@ class AccessTokenService(TokenService):
         
         token = header_b64 + "." + payload_b64 + "." + sign
 
-        return token
+        return token, exp
 
 
 class RefreshTokenService(TokenService):
@@ -63,7 +79,7 @@ class RefreshTokenService(TokenService):
         
         token = header_b64 + "." + payload_b64 + "." + sign
 
-        return token
+        return token, exp
 
 
 access_token_service = AccessTokenService()

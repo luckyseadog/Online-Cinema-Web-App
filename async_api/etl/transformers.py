@@ -44,19 +44,19 @@ class TransformerPersons:
                 'name': d['name'],
             }
         return res
-    
+
 class TransformerGenres:
-    FIELEDS = ["id", "name", "description"]
+    FIELEDS = ['id', 'name', 'description']
 
     async def start(self, data):
         to_return = {}
         for d_list in data:
             d = {key: value for key, value in zip(self.FIELEDS, d_list)}
-            d["id"] = str(d["id"])
-            to_return[d["id"]] = {
-                "id": d["id"],
-                "name": d["name"],
-                "description": d["description"],
+            d['id'] = str(d['id'])
+            to_return[d['id']] = {
+                'id': d['id'],
+                'name': d['name'],
+                'description': d['description'],
             }
 
         return to_return

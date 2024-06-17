@@ -8,6 +8,7 @@ from tests.functional.utils.helpers import backoff
 def ping_es(es_client):
     return es_client.ping()
 
+
 if __name__ == '__main__':
     es_client = Elasticsearch(hosts=f'http://{test_settings.es_host}:{test_settings.es_port}', verify_certs=False)
     ping_es(es_client)

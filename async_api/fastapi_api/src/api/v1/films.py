@@ -27,7 +27,7 @@ async def get_all_films(
     ] = SortModel('-imdb_rating'),
     film_service: FilmService = Depends(get_film_service),
 ):
-    films = await film_service.get_all(page_data["page_size"], page_data["page_number"], genre, sort)
+    films = await film_service.get_all(page_data['page_size'], page_data['page_number'], genre, sort)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
 
@@ -57,7 +57,11 @@ async def film_search(
 ):
     if len(query) < 1 or len(query) > 512:
         raise HTTPException(status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail='Invalid query length')
-    films = await film_service.search(query=query, page_size=page_data["page_size"], page_number=page_data["page_number"])
+    films = await film_service.search(
+        query=query,
+        page_size=page_data['page_size'],
+        page_number=page_data['page_number'],
+    )
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
 

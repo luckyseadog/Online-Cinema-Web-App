@@ -26,9 +26,9 @@ class LoaderMovies:
             timeout = aiohttp.ClientTimeout(total=10)
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.post(
-                    f'http://{self.host}:{self.port}/_bulk', 
-                    headers=headers, 
-                    data=to_request
+                    f'http://{self.host}:{self.port}/_bulk',
+                    headers=headers,
+                    data=to_request,
                 ) as resp:
                     resp.raise_for_status()
         finally:
@@ -69,10 +69,10 @@ class LoaderGenres:
 
     @backoff()
     async def start(self, lock, data):
-        to_request = "\n"
+        to_request = '\n'
         for key, value in data.items():
-            to_request += json.dumps({"index": {"_index": self.index, "_id": key}}) + "\n"
-            to_request += json.dumps(value) + "\n"
+            to_request += json.dumps({'index': {'_index': self.index, '_id': key}}) + '\n'
+            to_request += json.dumps(value) + '\n'
 
         await lock.acquire()
         try:
@@ -80,11 +80,10 @@ class LoaderGenres:
             timeout = aiohttp.ClientTimeout(total=10)
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.post(
-                    f'http://{self.host}:{self.port}/_bulk', 
-                    headers=headers, 
-                    data=to_request
+                    f'http://{self.host}:{self.port}/_bulk',
+                    headers=headers,
+                    data=to_request,
                 ) as resp:
                     resp.raise_for_status()
         finally:
             lock.release()
-

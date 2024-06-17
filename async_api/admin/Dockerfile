@@ -12,7 +12,7 @@ COPY .env .env
 RUN  pip install --upgrade pip \
      && pip install --no-cache-dir -r requirements.txt
 
-# Скопируйте всё оставшееся. Для ускорения сборки образа эту команду стоит разместить ближе к концу файла. 
+# Скопируйте всё оставшееся. Для ускорения сборки образа эту команду стоит разместить ближе к концу файла.
 COPY config ./config
 COPY movies ./movies
 COPY manage.py ./manage.py

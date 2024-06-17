@@ -32,8 +32,25 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255, verbose_name='title')),
                 ('description', models.TextField(null=True, verbose_name='description')),
                 ('creation_date', models.DateField(null=True, verbose_name='creation date')),
-                ('rating', models.FloatField(null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)], verbose_name='rating')),
-                ('type', models.CharField(choices=[('movie', 'Movie'), ('tv_show', 'TV Show')], max_length=255, null=True, verbose_name='type')),
+                (
+                    'rating', models.FloatField(
+                        null=True, validators=[
+                            django.core.validators.MinValueValidator(
+                                0,
+                            ), django.core.validators.MaxValueValidator(100),
+                        ], verbose_name='rating',
+                    ),
+                ),
+                (
+                    'type', models.CharField(
+                        choices=[
+                            ('movie', 'Movie'), (
+                                'tv_show',
+                                'TV Show',
+                            ),
+                        ], max_length=255, null=True, verbose_name='type',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Filmwork',
