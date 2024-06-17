@@ -5,7 +5,7 @@ from services.user_service import user_service
 from db.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
-from schemas.entity import UserCreate, UserCredentials, User, History
+from schemas.entity import UserCreate, UserCredentials, User, History, TokenPair
 from fastapi.responses import ORJSONResponse
 from fastapi import Header
 from services.token_service import access_token_service, refresh_token_service
@@ -15,10 +15,12 @@ from fastapi import Cookie
 from uuid import uuid4
 from services.history_service import history_service
 from api.v1.utils import APIError, validate_access_token, validate_refresh_token
-
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
 
+# form_data = OAuth2PasswordRequestForm(username='admin', password='admin')
 
 @router.post(
     '/signup',
@@ -69,10 +71,13 @@ async def signup(
     return {'message': 'User created successfully'}
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
+
 @router.post(
     '/login',
     # response_model=,
     status_code=status.HTTP_200_OK,
+    response_model=TokenPair,
     summary='Аутентификация пользователя',
     description='''
     В теле запроса принимает два параметра: логин и пароль.
@@ -81,18 +86,19 @@ async def signup(
     ''',
 )
 async def login(
-    user_creds: UserCredentials,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     response: ORJSONResponse,
     origin: Annotated[str | None, Header()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
-):
+) -> TokenPair:
     if origin is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
+    user_creds = UserCredentials(login=form_data.username, password=form_data.password)
     res = await auth_service.login(user_creds, db)
     if res is True:
         user = await user_service.get_user_by_login(user_creds.login, db)
@@ -111,7 +117,11 @@ async def login(
 
         await redis.add_valid_rtoken(user.id, refresh_token)
 
-        return {'message': 'Success login'}
+        # return {'message': 'Success login'}
+        return TokenPair(
+            access_token=access_token,
+            refresh_token=refresh_token,
+        )
 
     else:
         raise HTTPException(

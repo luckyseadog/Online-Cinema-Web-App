@@ -15,6 +15,7 @@ import logging
 class AuthService:
     async def login(self, user_creds: UserCredentials, db: AsyncSession) -> bool:
         user = await user_service.get_user_by_login(user_creds.login, db)
+        print(user_creds)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

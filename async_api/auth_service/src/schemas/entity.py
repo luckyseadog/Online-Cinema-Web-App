@@ -22,6 +22,7 @@ class User(BaseModel):
     email: str = Field(default_factory=str)
     is_superadmin: bool = Field(default=False)
     roles: list[Role] | None = None
+    deleted_at: datetime.datetime | None = None
 
     class Config:
         orm_mode = True
