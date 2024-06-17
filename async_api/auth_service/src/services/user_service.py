@@ -101,7 +101,7 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User, db: AsyncSession) -> User:
-        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else None
+        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ""
         user_dto = jsonable_encoder(user_create, exclude_none=True)
         user = UserModel(**user_dto)
         db.add(user)
@@ -125,7 +125,7 @@ class UserService:
         )
 
     async def update_user(self, user_id: int, user_patch: UserPatch, db: AsyncSession):
-        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else None 
+        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else "" 
         query = (
             update(UserModel)
             .where(UserModel.id == user_id)
