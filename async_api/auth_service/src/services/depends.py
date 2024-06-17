@@ -35,13 +35,13 @@ oauth2_scheme = OAuth2PasswordBearer(
 async def get_current_user(token: str, db: AsyncSession):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Could not validate credentials',
-        headers={'WWW-Authenticate': 'Bearer'},
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload_str = access_token_service.decode_b64(token).split('.')[1]
+        payload_str = access_token_service.decode_b64(token.split(".")[1])
         payload = json.loads(payload_str)
-        username: str = payload.get('sub')
+        username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
@@ -51,3 +51,4 @@ async def get_current_user(token: str, db: AsyncSession):
     if user is None:
         raise credentials_exception
     return user
+

@@ -22,12 +22,8 @@ class HistoryService():
             fingerprint=user_history_note.fingerprint,
         )
 
-    async def get_last_notes(
-            self,
-            skip: int = 0,
-            limit: int = 10,
-            db: AsyncSession = Depends(get_session),
-    ) -> list[History]:
+
+    async def get_last_notes(self, db: AsyncSession, skip: int = 0, limit: int = 10) -> list[History]:
         result = await db.execute(select(UserHistoryModel).offset(skip).limit(limit))
 
         return [
@@ -63,6 +59,16 @@ class HistoryService():
                 fingerprint=hist.fingerprint,
             ) for hist in result.scalars()
         ]
+
+    async def get_last_user_notes(self, user_id: str, db: AsyncSession, skip: int = 0, limit: int = 10) -> list[History]:
+        result = await db.execute(select(UserHistoryModel).where(UserHistoryModel.user_id == user_id).offset(skip).limit(limit))
+
+        return [History(id=hist.id,
+            user_id=hist.user_id,
+            occured_at=hist.occured_at,
+            action=hist.action,
+            fingerprint=hist.fingerprint,
+        ) for hist in result.scalars()]
 
 
 history_service = HistoryService()

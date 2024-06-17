@@ -1,11 +1,11 @@
-from uuid import UUID
-
-from db.postgres import AsyncSession
+from db.postgres import AsyncSession, get_session
+from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from models.entity import RoleModel
 from schemas.entity import Role
 from schemas.updates import RolePatch
 from sqlalchemy import delete, select, update
+import logging
 
 
 class RoleService():
@@ -27,7 +27,7 @@ class RoleService():
             ) for role in result.scalars()
         ]
 
-    async def get_role_by_id(self, role_id: UUID, db: AsyncSession) -> Role:
+    async def get_role_by_id(self, role_id: str, db: AsyncSession) -> Role:
         result = await db.execute(select(RoleModel).filter(RoleModel.id == role_id))
         returned_role = result.scalars().one()
         return Role(
@@ -36,10 +36,11 @@ class RoleService():
             description=returned_role.description,
         )
 
-    async def update_role(self, role_patch: RolePatch, db: AsyncSession) -> Role:
+    async def update_role(self, role_id: str, role_patch: RolePatch, db: AsyncSession) -> Role:
+        logging.warn(role_patch.model_dump(exclude_none=True))
         query = (
             update(RoleModel)
-            .where(RoleModel.id == role_patch.id)
+            .where(RoleModel.id == str(role_id))
             .values(**role_patch.model_dump(exclude_none=True))
             .returning(RoleModel)
         )
@@ -53,7 +54,7 @@ class RoleService():
         resp = Role(id=updated_role.id, title=updated_role.title, description=updated_role.description)
         return resp
 
-    async def delete_role(self, role_id: UUID, db: AsyncSession):
+    async def delete_role(self, role_id: str, db: AsyncSession):
         result = await db.execute(delete(RoleModel).where(RoleModel.id == role_id).returning(RoleModel))
         deleted_role = result.scalars().one_or_none()
         if deleted_role is None:
