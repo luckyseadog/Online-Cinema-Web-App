@@ -197,7 +197,7 @@ async def logout_all(
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
 
-    return {"message": "logout_all"}
+    return {"message": "All accounts deactivated"}
 
 
 @router.post(
