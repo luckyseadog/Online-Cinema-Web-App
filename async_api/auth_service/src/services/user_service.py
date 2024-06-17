@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from models.entity import UserModel, RoleModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.updates import UserPatch
+from services.password_service import password_service 
 
 
 class UserService:
@@ -100,6 +101,7 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User, db: AsyncSession) -> User:
+        user_create.password = password_service.compute_hash(user_create.password)
         user_dto = jsonable_encoder(user_create, exclude_none=True)
         user = UserModel(**user_dto)
         db.add(user)
@@ -123,6 +125,7 @@ class UserService:
         )
 
     async def update_user(self, user_id: int, user_patch: UserPatch, db: AsyncSession):
+        user_patch.password = password_service.compute_hash(user_patch.password)
         query = (
             update(UserModel)
             .where(UserModel.id == user_id, UserModel.is_active == True)

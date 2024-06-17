@@ -12,6 +12,7 @@ from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from services.utils import create_access_token, create_refresh_token, verify_password
 from schemas.entity import UserCredentials
+import logging
 
 
 # SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
@@ -28,8 +29,10 @@ class AuthService:
                 detail="Incorrect username or password",
             )
 
-        hash_password = password_service.compute_hash(user_creds.password)
+        hash_password = user_creds.password
         target_password = user.password
+        logging.warn(f"{hash_password}------{target_password}")
+
         if not password_service.check_password(hash_password, target_password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

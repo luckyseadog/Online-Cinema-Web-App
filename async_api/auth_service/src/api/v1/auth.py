@@ -28,7 +28,7 @@ class AuthError(Exception):
         self.message = message
         super().__init__(self.message)
 
-async def validate_token(access_token, refresh_token, redis):
+async def validate_token(access_token, refresh_token, redis: RedisTokenStorage):
     if access_token is None and refresh_token is None:
         raise AuthError("You are not logged in")
 
@@ -42,6 +42,9 @@ async def validate_token(access_token, refresh_token, redis):
         raise AuthError("Invalid access token")
 
     if payload["exp"] < time.time():
+        raise AuthError("Invalid access token")
+    
+    if payload["iat"] > await redis.get_user_last_logout_all(payload["sub"]):
         raise AuthError("Invalid access token")
     
     return payload
@@ -87,10 +90,10 @@ async def signup(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
     user = await user_service.create_user(user_create, db)
-    access_token = access_token_service.generate_token(origin, user.id, ["user"]) # TODO: add default role?
-    refresh_token = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, ["user"]) # TODO: add default role?
+    refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 
@@ -125,10 +128,10 @@ async def login(
     if res is True:
         user = await user_service.get_user_by_login(user_creds.login, db)
         user_roles = [role.title for role in user.roles]
-        access_token = access_token_service.generate_token(origin, user.id, user_roles)
-        refresh_token = refresh_token_service.generate_token(origin, user.id)
-        response.set_cookie(key='access_token', value=access_token, httponly=True)
-        response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
+        access_token, access_exp = access_token_service.generate_token(origin, user.id, user_roles)
+        refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
+        response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
 
         note = History(user_id=user.id,
                    action="/login",
@@ -157,6 +160,7 @@ async def login(
 # async def logout(current_user: Annotated[User, Depends(get_current_user)]):
 #     return current_user
 async def logout(
+    response: ORJSONResponse,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
@@ -178,6 +182,9 @@ async def logout(
     await redis.add_banned_atoken(user_id, access_token)
     await redis.delete_refresh(user_id, refresh_token)
 
+    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
+
     return {"message": "Success"}
 
 
@@ -190,6 +197,7 @@ async def logout(
 )
 
 async def logout_all(
+    response: ORJSONResponse,
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
@@ -211,6 +219,9 @@ async def logout_all(
 
     await redis.set_user_last_logout_all(user_id)
     await redis.delete_refresh_all(user_id)
+
+    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
 
     return {"message": "logout_all"}
 
@@ -258,10 +269,10 @@ async def refresh(
         fingerprint=user_agent)
     await history_service.make_note(note, db)
 
-    access_token = access_token_service.generate_token(origin, user_id, ["user"]) # TODO: add default role?
-    refresh_token = refresh_token_service.generate_token(origin, user_id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    access_token, access_exp = access_token_service.generate_token(origin, user_id, ["user"])
+    refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user_id)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user_id, refresh_token)
 
@@ -305,10 +316,11 @@ async def signup_guest(
         fingerprint=user_agent)
     await history_service.make_note(note, db)
 
-    access_token = access_token_service.generate_token(origin, user.id, ["guest"]) # TODO: add default role?
-    refresh_token = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, ["guest"])
+    refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, expires=refresh_exp)
+    
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 

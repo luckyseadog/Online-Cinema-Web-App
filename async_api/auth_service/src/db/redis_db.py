@@ -5,12 +5,15 @@ from base64 import urlsafe_b64decode
 from redis.asyncio import Redis
 from typing import Optional
 import logging
+import datetime
 
 ACCESS_TOKEN_BANNED = "banned_tokens"
 REFRESH_TOKENS_VALID = "valid_refresh"
 LAST_LOGOUT_ALL_LIST = "last_logout_all"
 
 TOKEN_SEP = "<TOKEN_SEP>"
+MIN_TIME = datetime.datetime(1971, 1, 1, 0, 0, 0).timestamp()
+
 
 
 class RedisTokenStorage:
@@ -53,8 +56,10 @@ class RedisTokenStorage:
     async def _check_token(self, redis_key: str, user_id: str, token: str):
         tokens = await self._redis.hgetall(redis_key)
         tokens = {key.decode('utf-8'): value.decode('utf-8') for key, value in tokens.items()}
-        logging.warn(tokens)
-        return token in tokens[user_id].split(TOKEN_SEP)
+        if user_id not in tokens:
+            return False
+        else:
+            return token in tokens[user_id].split(TOKEN_SEP)
     
     async def add_banned_atoken(self, user_id: str, token: str) -> int:
         return await self._add_token(ACCESS_TOKEN_BANNED, user_id, token)
@@ -85,7 +90,7 @@ class RedisTokenStorage:
     async def get_user_last_logout_all(self, user_id):
         last_logouts = await self._redis.hgetall(LAST_LOGOUT_ALL_LIST)
         last_logouts = {key.decode('utf-8'): value.decode('utf-8') for key, value in last_logouts.items()}
-        return last_logouts[user_id]
+        return last_logouts.get(user_id, MIN_TIME)
 
     async def bgsave(self):
         return await self._redis.bgsave()
@@ -96,13 +101,14 @@ class RedisTokenStorage:
     async def delete_refresh(self, user_id: str, refresh_token: str):
         tokens = await self._redis.hgetall("valid_refresh")
         tokens = {key.decode('utf-8'): value.decode('utf-8') for key, value in tokens.items()}
-        user_tokens = tokens[user_id].split(TOKEN_SEP)
-        try: 
-            user_tokens.remove(refresh_token) # TODO: now works O(n)
-        except ValueError:
-            pass
-        
-        tokens[user_id] = user_tokens
+        if user_id in tokens:
+            user_tokens = tokens[user_id].split(TOKEN_SEP)
+            try: 
+                user_tokens.remove(refresh_token) # TODO: now works O(n)
+            except ValueError:
+                pass
+            
+            tokens[user_id] = TOKEN_SEP.join(user_tokens)
 
         rows_affected = await self._redis.hset("valid_refresh", mapping=tokens)
 
@@ -111,9 +117,10 @@ class RedisTokenStorage:
     async def delete_refresh_all(self, user_id: str):
         tokens = await self._redis.hgetall("valid_refresh")
         tokens = {key.decode('utf-8'): value.decode('utf-8') for key, value in tokens.items()}
-        user_tokens = tokens[user_id]
+        user_tokens = tokens.get(user_id, "")
         user_tokens = ""
         tokens[user_id] = user_tokens
+        # tokens[user_id] = TOKEN_SEP.join(user_tokens)
 
         rows_affected = await self._redis.hset("valid_refresh", mapping=tokens)
 
