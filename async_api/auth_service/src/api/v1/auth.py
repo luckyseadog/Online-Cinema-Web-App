@@ -18,9 +18,7 @@ from api.v1.utils import APIError, validate_access_token, validate_refresh_token
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
 
-# form_data = OAuth2PasswordRequestForm(username='admin', password='admin')
 
 @router.post(
     '/signup',
@@ -117,7 +115,6 @@ async def login(
 
         await redis.add_valid_rtoken(user.id, refresh_token)
 
-        # return {'message': 'Success login'}
         return TokenPair(
             access_token=access_token,
             refresh_token=refresh_token,
@@ -138,8 +135,6 @@ async def login(
                 'Токен помещается в кеш забаненнных access токенов. '
                 'Если пользователь решит снова аутентифицироваться, то ему придётся ввести логин и пароль.',
 )
-# async def logout(current_user: Annotated[User, Depends(get_current_user)]):
-#     return current_user
 async def logout(
     response: ORJSONResponse,
     access_token: Annotated[Union[str, None], Cookie()] = None,
@@ -180,8 +175,8 @@ async def logout(
 )
 async def logout_all(
     response: ORJSONResponse,
+    # current_user: Annotated[User, Depends(get_current_active_user)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
@@ -217,6 +212,7 @@ async def logout_all(
     description='',
 )
 async def refresh(
+    # current_user: Annotated[User, Depends(get_current_active_user)],
     response: ORJSONResponse,
     origin: Annotated[str | None, Header()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
@@ -229,7 +225,6 @@ async def refresh(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
-
     try:
         payload = await validate_refresh_token('AuthService', refresh_token, redis)
     except APIError as e:
@@ -248,7 +243,6 @@ async def refresh(
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user_id)
     response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
     response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
-
     await redis.add_valid_rtoken(user_id, refresh_token)
 
     return {'message': 'Success'}

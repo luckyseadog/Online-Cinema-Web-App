@@ -14,13 +14,13 @@ from redis.asyncio import Redis
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
-    await postgres.create_database()  # TODO: need check for database existance
+    # await postgres.create_database()  # TODO: need check for database existance
     pg_session = postgres.get_session()
     redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
     yield
     await pg_session.aclose()
     await redis_db.redis.close()
-    await postgres.purge_database()
+    # await postgres.purge_database()
     logging.info('end')
 
 

@@ -1,11 +1,12 @@
 import datetime
 import uuid
-
+from uuid import UUID
 from pydantic import BaseModel, Field
 
 
 class Role(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    # id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID
     title: str
     description: str | None = None
 
@@ -65,3 +66,8 @@ class UserLogin(BaseModel):
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
+
+class AccessTokenData(BaseModel):
+    iss: str
+    sub: str
+    roles: list[str]

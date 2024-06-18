@@ -5,6 +5,7 @@ from schemas.entity import User, History
 from services.user_service import user_service
 from services.history_service import history_service
 from typing import Annotated, Union
+from services.depends import get_current_active_user
 from fastapi import Cookie
 from db.redis_db import RedisTokenStorage, get_redis
 from uuid import UUID
@@ -28,8 +29,8 @@ router = APIRouter()
 )
 async def assign_role(
     role_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
@@ -63,8 +64,8 @@ async def assign_role(
 )
 async def revoke_role(
     role_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
@@ -97,8 +98,8 @@ async def revoke_role(
 )
 async def check_role(
     role_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),

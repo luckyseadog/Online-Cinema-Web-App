@@ -1,16 +1,15 @@
-from fastapi import status, HTTPException
+from fastapi import status
 from db.postgres import AsyncSession, get_session
 from fastapi import APIRouter, Depends
 from schemas.entity import Role, History
 from services.role_service import role_service
 from services.history_service import history_service
 from schemas.updates import RolePatch
-from typing import Annotated, Union
-from fastapi import Cookie, Header
-from db.redis_db import RedisTokenStorage, get_redis
+from schemas.entity import AccessTokenData
+from typing import Annotated
+from fastapi import Header
 from uuid import UUID
-from api.v1.utils import APIError, validate_access_token
-
+from services.validation import check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
 
@@ -23,23 +22,12 @@ router = APIRouter()
     description='',
 )
 async def get_roles(
-    access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ) -> list[Role]:
-
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
-
     note = History(
-        user_id=payload['sub'],
+        user_id=payload.sub,
         action='/roles[GET]',
         fingerprint=user_agent,
     )
@@ -56,22 +44,12 @@ async def get_roles(
 )
 async def add_role(
     role_create: Role,
-    access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ):
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
-
     note = History(
-        user_id=payload['sub'],
+        user_id=payload.sub,
         action='/roles[POST]',
         fingerprint=user_agent,
     )
@@ -89,22 +67,12 @@ async def add_role(
 async def update_role(
     role_id: UUID,
     role_patch: RolePatch,
-    access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ):
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
-
     note = History(
-        user_id=payload['sub'],
+        user_id=payload.sub,
         action='/roles[PUT]',
         fingerprint=user_agent,
     )
@@ -120,22 +88,13 @@ async def update_role(
 )
 async def delete_role(
     role_id: UUID,
-    access_token: Annotated[Union[str, None], Cookie()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ):
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
 
     note = History(
-        user_id=payload['sub'],
+        user_id=payload.sub,
         action='/roles[delete]',
         fingerprint=user_agent,
     )
