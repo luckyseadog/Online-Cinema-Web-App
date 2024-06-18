@@ -1,15 +1,12 @@
-from fastapi import status, HTTPException, Header
+from fastapi import status, Header
 from db.postgres import AsyncSession, get_session
 from fastapi import APIRouter, Depends
 from schemas.entity import User, History
 from services.user_service import user_service
 from services.history_service import history_service
-from typing import Annotated, Union
-from services.depends import get_current_active_user
-from fastapi import Cookie
-from db.redis_db import RedisTokenStorage, get_redis
-from uuid import UUID
-from api.v1.utils import APIError, validate_access_token
+from typing import Annotated
+from services.validation import check_admin_or_super_admin_role_from_access_token
+from schemas.entity import AccessTokenData, UpdateUserRole
 
 router = APIRouter()
 
@@ -28,30 +25,21 @@ router = APIRouter()
     ''',
 )
 async def assign_role(
-    role_id: UUID,
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    access_token: Annotated[Union[str, None], Cookie()] = None,
+    user_role: UpdateUserRole,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ) -> User:
     # TODO: check that role_id is valid
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
 
     note = History(
-        user_id=payload['sub'],
-        action=f'/user_role/assign?role_id={role_id}',
+        user_id=payload.sub,
+        action=f'/user_role/assign?role_id={user_role.role_id}',
         fingerprint=user_agent,
     )
 
     await history_service.make_note(note, db)
-    updated_user = await user_service.assign_user_role(payload['sub'], str(role_id), db)
+    updated_user = await user_service.assign_user_role(str(user_role.user_id), str(user_role.role_id), db)
     return updated_user
 
 
@@ -63,30 +51,21 @@ async def assign_role(
     description='',
 )
 async def revoke_role(
-    role_id: UUID,
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    access_token: Annotated[Union[str, None], Cookie()] = None,
+    user_role: UpdateUserRole,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ) -> User:
     # TODO: check that role_id is valid
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
 
     note = History(
-        user_id=payload['sub'],
-        action=f'/user_role/revoke?role_id={role_id}',
+        user_id=payload.sub,
+        action=f'/user_role/revoke?role_id={user_role.role_id}',
         fingerprint=user_agent,
     )
 
     await history_service.make_note(note, db)
-    updated_user = await user_service.revoke_user_role(payload['sub'], str(role_id), db)
+    updated_user = await user_service.revoke_user_role(str(user_role.user_id), str(user_role.role_id), db)
     return updated_user
 
 
@@ -97,28 +76,19 @@ async def revoke_role(
     description='',
 )
 async def check_role(
-    role_id: UUID,
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    access_token: Annotated[Union[str, None], Cookie()] = None,
+    user_role: UpdateUserRole,
+    payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
-    redis: RedisTokenStorage = Depends(get_redis),
 ):
     # TODO: check that role_id is valid
-    try:
-        payload = await validate_access_token('AdminService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    if 'admin' not in payload['roles']:
-        raise APIError('No access')
 
     note = History(
-        user_id=payload['sub'],
-        action=f'/user_role/check?role_id={role_id}',
+        user_id=payload.sub,
+        action=f'/user_role/check?role_id={user_role.role_id}',
         fingerprint=user_agent,
     )
 
     await history_service.make_note(note, db)
-    res = await user_service.check_user_role(payload['sub'], str(role_id), db)
+    res = await user_service.check_user_role(str(user_role.role_id), str(user_role.role_id), db)
     return {'result': 'YES' if res else 'NO'}

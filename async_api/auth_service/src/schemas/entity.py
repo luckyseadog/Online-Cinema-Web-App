@@ -71,3 +71,8 @@ class AccessTokenData(BaseModel):
     iss: str
     sub: str
     roles: list[str]
+
+
+class UpdateUserRole(BaseModel):
+    role_id: UUID
+    user_id: UUID

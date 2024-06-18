@@ -15,42 +15,79 @@ class APIError(Exception):
         super().__init__(self.message)
 
 
-async def validate_access_token(service_name, access_token, redis: RedisTokenStorage):
+async def validate_access_token(access_token, redis: RedisTokenStorage):
     if access_token is None:
-        raise APIError(f'{service_name}: No access token')
+        # raise APIError(f'{service_name}: No access token')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
 
     if not access_token_service.validate_token(access_token):
-        raise APIError(f'{service_name}: Invalid access token')
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Invalid access token')
 
     payload_str = access_token_service.decode_b64(access_token.split('.')[1])
     payload = json.loads(payload_str)
 
     if await redis.check_banned_atoken(payload['sub'], access_token):
-        raise APIError(f'{service_name}: Access token is banned')
+        # raise APIError(f'{service_name}: Access token is banned')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
 
     if payload['exp'] < time.time():
-        raise APIError(f'{service_name}: Access token is expired')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Access token is expired')
 
     if payload['iat'] < await redis.get_user_last_logout_all(payload['sub']):
-        raise APIError(f'{service_name}: Access token is withdrawn')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Access token is withdrawn')
 
     return payload
 
-async def validate_refresh_token(service_name, refresh_token, redis: RedisTokenStorage):
+
+async def validate_refresh_token(refresh_token, redis: RedisTokenStorage):
     if refresh_token is None:
-        raise APIError(f'{service_name}: No refresh token')
+        # raise APIError(f'{service_name}: No refresh token')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
 
     if not refresh_token_service.validate_token(refresh_token):
-        raise APIError(f'{service_name}: Invalid refresh token')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Invalid refresh token')
 
     payload_str = refresh_token_service.decode_b64(refresh_token.split('.')[1])
     payload = json.loads(payload_str)
 
     if await redis.check_valid_rtoken(payload['sub'], refresh_token) is False:
-        raise APIError(f'{service_name}: Refresh token is not valid')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Refresh token is not valid')
 
     if payload['exp'] < time.time():
-        raise APIError(f'{service_name}: Refresh token is expired')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='No access token',
+        )
+        # raise APIError(f'{service_name}: Refresh token is expired')
 
     return payload
 
@@ -60,7 +97,7 @@ async def get_token_payload(
         redis: RedisTokenStorage = Depends(get_redis),
 ) -> AccessTokenData:
     try:
-        payload = await validate_access_token('AdminService', access_token, redis)
+        payload = await validate_access_token(access_token, redis)
     except APIError as e:
         raise HTTPException(status_code=401, detail=e.message)
 

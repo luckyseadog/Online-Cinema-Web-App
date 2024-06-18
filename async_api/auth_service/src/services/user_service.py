@@ -185,8 +185,14 @@ class UserService:
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
-        user = res_user.scalars().one()
-        role = res_role.scalars().one()
+        user = res_user.scalars().one_or_none()
+        role = res_role.scalars().one_or_none()
+
+        if not user or not role:
+            return {'detail': 'not found'}
+
+        if role in user.roles:
+            return {'detail': 'role already exists'}
 
         user.roles.append(role)
         await db.commit()
@@ -213,8 +219,11 @@ class UserService:
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
-        user = res_user.scalars().one()
-        role = res_role.scalars().one()
+        user = res_user.scalars().one_or_none()
+        role = res_role.scalars().one_or_none()
+
+        if not user or not role:
+            return {'detail': 'not found'}
 
         if role not in user.roles:
             return {'detail': 'not found for this user'}
@@ -244,8 +253,10 @@ class UserService:
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
-        user = res_user.scalars().one()
-        role = res_role.scalars().one()
+        user = res_user.scalars().one_or_none()
+        role = res_role.scalars().one_or_none()
+        if not user or not role:
+            return False
 
         return role in user.roles
 
