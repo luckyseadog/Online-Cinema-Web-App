@@ -1,15 +1,13 @@
 import os
 from base64 import urlsafe_b64encode
 from hashlib import pbkdf2_hmac
-
-SALT = os.environ.get('SAULT', '<salt>').encode('utf-8')
-APP_ITERS = int(os.environ.get('APP_ITERS', 100_000))
+from core.config import settings
 
 
 class PasswordService:
     def __init__(self):
-        self.salt = SALT
-        self.app_iters = APP_ITERS
+        self.salt = settings.sec_salt
+        self.app_iters = settings.sec_app_iters
 
     def compute_hash(self, password: str):
         password_enc = password.encode('utf-8')

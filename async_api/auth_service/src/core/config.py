@@ -27,7 +27,10 @@ class Settings(BaseSettings):
 
     secret_key: str = Field('secret', alias='SECRET_KEY')
     algorithm: str = Field('HS256', alias='ALGORITHM')
-    access_token_expire: int = Field(30, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
+
+    secret_key: str = Field('secret', alias='SECRET_KEY')
+    access_token_min: int = Field(15, alias='ACCESS_TOKEN_MIN')
+    refresh_token_weeks: int = Field(1, alias='REFRESH_TOKEN_WEEKS')
 
     sa_login: str = Field('superadmin', alias='SUPER_USER_LOGIN')
     sa_password: str = Field('admin', alias='SUPER_USER_PASSWORD')
@@ -40,6 +43,9 @@ class Settings(BaseSettings):
 
     role_admin: str = Field('admin', alias='ADMIN_ROLE_NAME')
     role_super_admin: str = Field('superadmin', alias='SUPERADMIN_ROLE_NAME')
+
+    access_token_name: str = Field('access_token', alias='ACCESS_TOKEN')
+    refresh_token_name: str = Field('refresh_token', alias='REFRESH_TOKEN')
 
 
 settings = Settings()

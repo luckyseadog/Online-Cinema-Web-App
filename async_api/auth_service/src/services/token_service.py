@@ -4,15 +4,12 @@ import json
 import os
 import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
-
-TOKEN_KEY = os.environ.get('TOKEN_KEY', 'PRACTIX')
-ACCESS_TOKEN_MIN = int(os.environ.get('ACCESS_TOKEN_MIN', 15))
-REFRESH_TOKEN_WEEKS = int(os.environ.get('REFRESH_TOKEN_WEEKS', 2))
+from core.config import settings
 
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = TOKEN_KEY.encode('utf-8')
+        self.secret_key = settings.secret_key.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)
@@ -35,23 +32,18 @@ class TokenService:
         except ValueError:
             return False
 
-    # def decode_b64(self, data: str):
-    #     length = len(data) + (4 - (len(data) % 4))
-    #     data_padded = data.ljust(length, '=')
-    #     return urlsafe_b64decode(data_padded).decode('utf-8')
-    #
-    # def validate_token(self, token: str):
-    #     header, payload, sign = token.split('.')
-    #     return self._validate_data(f'{header}.{payload}', sign)
-
 
 class AccessTokenService(TokenService):
+    def __init__(self):
+        super().__init__()
+        self.access_token_min = settings.access_token_min
+
     def generate_token(self, iss: str, sub: str, roles: list[str]):
         header = json.dumps({'alg': 'HS256', 'typ': 'JWT'})
         header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8').rstrip('=')
 
         iat = int(time.time())
-        exp = iat + ACCESS_TOKEN_MIN * 60
+        exp = iat + self.access_token_min * 60
         payload = json.dumps({'iss': iss, 'sub': sub, 'iat': iat, 'exp': exp, 'roles': roles})
         payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).decode('utf-8').rstrip('=')
 
@@ -64,12 +56,16 @@ class AccessTokenService(TokenService):
 
 
 class RefreshTokenService(TokenService):
+    def __init__(self):
+        super().__init__()
+        self.refresh_token_weeks = settings.refresh_token_weeks
+
     def generate_token(self, iss: str, sub: str):
         header = json.dumps({'alg': 'HS256', 'typ': 'JWT'})
         header_b64 = urlsafe_b64encode(header.encode('utf-8')).decode('utf-8').rstrip('=')
 
         iat = int(time.time())
-        exp = iat + REFRESH_TOKEN_WEEKS * 7 * 24 * 60 * 60
+        exp = iat + self.refresh_token_weeks * 7 * 24 * 60 * 60
         payload = json.dumps({'iss': iss, 'sub': sub, 'iat': iat, 'exp': exp})
         payload_b64 = urlsafe_b64encode(payload.encode('utf-8')).decode('utf-8').rstrip('=')
 

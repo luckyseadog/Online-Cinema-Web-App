@@ -11,6 +11,7 @@ from services.depends import get_current_user
 from services.history_service import history_service
 from services.user_service import user_service
 from services.validation import get_token_payload_access
+from core.config import settings
 
 router = APIRouter()
 
@@ -33,8 +34,8 @@ async def delete_user(
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
 
-    response.delete_cookie(key='access_token')
-    response.delete_cookie(key='refresh_token')
+    response.delete_cookie(key=settings.access_token_name)
+    response.delete_cookie(key=settings.refresh_token_name)
 
     return db_user
 

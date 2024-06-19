@@ -15,22 +15,16 @@ from services.user_service import user_service
 class AuthService:
     async def login(self, user_creds: UserCredentials, db: AsyncSession) -> bool:
         user = await user_service.get_user_by_login(user_creds.login, db)
-        print(user_creds)
+
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
-            )
+            return False
 
-        hash_password = user_creds.password
+        password = user_creds.password
         target_password = user.password
-        logging.warn(f'{hash_password}------{target_password}')
+        logging.warn(f'{password}------{target_password}')
 
-        if not password_service.check_password(hash_password, target_password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
-            )
+        if not password_service.check_password(password, target_password):
+            return False
 
         return True
 

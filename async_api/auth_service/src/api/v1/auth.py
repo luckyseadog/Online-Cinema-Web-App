@@ -18,6 +18,8 @@ from services.user_service import user_service
 from services.validation import (get_token_payload_access,
                                  get_token_payload_refresh)
 
+from core.config import settings
+
 router = APIRouter()
 
 
@@ -62,8 +64,8 @@ async def signup(
     user = await user_service.create_user(user_create, db)
     access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])  # TODO: add default role?
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
+    response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 
@@ -104,8 +106,8 @@ async def login(
         user_roles = [role.title for role in user.roles]
         access_token, access_exp = access_token_service.generate_token(origin, user.id, user_roles)
         refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-        response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
-        response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
+        response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+        response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
 
         note = History(
             user_id=user.id,
@@ -124,7 +126,7 @@ async def login(
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Login error',  # TODO: which error?
+            detail='Incorrect username or password',
         )
 
 @router.post(
@@ -157,8 +159,8 @@ async def logout(
     await redis.add_banned_atoken(user_id, access_token)
     await redis.delete_refresh(user_id, refresh_token)
 
-    response.delete_cookie(key='access_token')
-    response.delete_cookie(key='refresh_token')
+    response.delete_cookie(key=settings.access_token_name)
+    response.delete_cookie(key=settings.refresh_token_name)
 
     return {'message': 'Success'}
 
@@ -189,8 +191,8 @@ async def logout_all(
     await redis.set_user_last_logout_all(user_id)
     await redis.delete_refresh_all(user_id)
 
-    response.delete_cookie(key='access_token')
-    response.delete_cookie(key='refresh_token')
+    response.delete_cookie(key=settings.access_token_name)
+    response.delete_cookie(key=settings.refresh_token_name)
 
     return {'message': 'All accounts deactivated'}
 
@@ -228,8 +230,8 @@ async def refresh(
 
     access_token, access_exp = access_token_service.generate_token(origin, user_id, ['user'])
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user_id)
-    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
+    response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
     await redis.add_valid_rtoken(user_id, refresh_token)
 
     return {'message': 'Success'}
@@ -277,8 +279,8 @@ async def signup_guest(
 
     access_token, access_exp = access_token_service.generate_token(origin, user.id, ['guest'])
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key='access_token', value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, expires=refresh_exp)
+    response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
 
     await redis.add_valid_rtoken(user.id, refresh_token)
 
