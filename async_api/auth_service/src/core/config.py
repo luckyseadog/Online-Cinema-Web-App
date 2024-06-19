@@ -37,5 +37,8 @@ class Settings(BaseSettings):
     sec_salt: str = Field('<salt>', alias='SALT')
     sec_app_iters: int = Field(100_000, alias='APP_ITERS')
 
+    role_admin: str = Field('admin', alias='ADMIN_ROLE_NAME')
+    role_super_admin: str = Field('superadmin', alias='SUPERADMIN_ROLE_NAME')
+
 
 settings = Settings()

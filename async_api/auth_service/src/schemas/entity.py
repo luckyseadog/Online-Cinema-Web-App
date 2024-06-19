@@ -1,11 +1,12 @@
 import datetime
 import uuid
-
+from uuid import UUID
 from pydantic import BaseModel, Field
 
 
 class Role(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    # id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID
     title: str
     description: str | None = None
 
@@ -22,6 +23,7 @@ class User(BaseModel):
     email: str = Field(default_factory=str)
     is_superadmin: bool = Field(default=False)
     roles: list[Role] | None = None
+    deleted_at: datetime.datetime | None = None
 
     class Config:
         orm_mode = True
@@ -64,3 +66,13 @@ class UserLogin(BaseModel):
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
+
+class AccessTokenData(BaseModel):
+    iss: str
+    sub: str
+    roles: list[str]
+
+
+class UpdateUserRole(BaseModel):
+    role_id: UUID
+    user_id: UUID

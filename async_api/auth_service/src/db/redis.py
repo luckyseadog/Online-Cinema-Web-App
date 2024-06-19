@@ -3,7 +3,6 @@ from base64 import urlsafe_b64decode
 import json
 import time
 
-from redis.asyncio import Redis
 from typing import Optional
 
 ACCESS_TOKEN_BANNED = 'banned_tokens'

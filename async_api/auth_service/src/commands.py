@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from core.config import settings
 import typer
-from typing import Annotated
 from sqlalchemy import create_engine
+from sqlalchemy import select
 from models.entity import RoleModel, UserModel
 from services.password_service import PasswordService
 
@@ -17,15 +17,23 @@ dsn = (
 engine = create_engine(dsn, echo=True, future=True)
 
 
-def create_superadmin_role(role_title: Annotated[str, typer.Argument()] = 'superadmin'):
+def create_role(title: str, description: str):
     with Session(engine) as session:
-        role = RoleModel(title=role_title, description='Superadmin role. All granted')
+        role = session.scalars(select(RoleModel).where(RoleModel.title == title)).one_or_none()
+        if role:
+            return
+
+        role = RoleModel(title=title, description=description)
         session.add(role)
         session.commit()
 
 
 def create_superadmin_user():
     with Session(engine) as session:
+        user = session.scalars(select(UserModel).where(UserModel.login == settings.sa_login)).one_or_none()
+        if user:
+            return
+
         pass_service = PasswordService()
         superadmin = UserModel(
             login=settings.sa_login,
@@ -41,25 +49,30 @@ def create_superadmin_user():
 
 def assign_superadmin_role_to_superadmin():
     with Session(engine) as session:
-        superadmin = session.query(UserModel).filter(UserModel.login == settings.sa_login).first()
-        superadmin_role = session.query(RoleModel).filter(RoleModel.title == 'superadmin').first()
-        superadmin.roles.append(superadmin_role)
+        superadmin_user = session.scalars(select(UserModel).where(UserModel.login == settings.sa_login)).one()
+        superadmin_role = session.scalars(select(RoleModel).where(RoleModel.title == settings.role_super_admin)).one()
+        superadmin_user.roles.append(superadmin_role)
         session.commit()
 
 
 @app.command()
 def create_superadmin():
-    create_superadmin_role()
+    create_role(title=settings.role_super_admin, description=settings.role_super_admin_description)
     create_superadmin_user()
     assign_superadmin_role_to_superadmin()
 
 
 @app.command()
-def delete_seperadmin():
+def delete_superadmin():
     with Session(engine) as session:
-        user = session.query(UserModel).where(UserModel.login == settings.sa_login).one()
-        session.delete(user)
-        session.commit()
+        user = session.scalars(select(UserModel).where(UserModel.login == settings.sa_login)).one_or_none()
+        if user:
+            session.delete(user)
+            session.commit()
+
+@app.command()
+def create_admin_role():
+    create_role(title=settings.role_admin, description='admin role description')
 
 
 if __name__ == '__main__':
