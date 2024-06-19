@@ -6,7 +6,7 @@ from core.config import settings
 
 class PasswordService:
     def __init__(self):
-        self.salt = settings.sec_salt
+        self.salt = settings.sec_salt.encode('utf-8')
         self.app_iters = settings.sec_app_iters
 
     def compute_hash(self, password: str):
