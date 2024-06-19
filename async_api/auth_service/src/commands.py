@@ -70,6 +70,7 @@ def delete_superadmin():
             session.delete(user)
             session.commit()
 
+
 @app.command()
 def create_admin_role():
     create_role(title=settings.role_admin, description='admin role description')

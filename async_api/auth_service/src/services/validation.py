@@ -89,6 +89,7 @@ async def get_token_payload_access(
 
     return AccessTokenData(**payload)
 
+
 async def get_token_payload_refresh(
         refresh_token: Annotated[Union[str, None], Cookie()] = None,
         redis: RedisTokenStorage = Depends(get_redis),

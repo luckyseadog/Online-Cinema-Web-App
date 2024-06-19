@@ -50,6 +50,7 @@ class RoleModel(Base):
     def __repr__(self):
         return f'<RoleModel {self.title}>'
 
+
 class UserHistoryModel(Base):
     __tablename__ = 'user_history'
 

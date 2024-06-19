@@ -7,18 +7,18 @@ from fastapi.security.oauth2 import (OAuth2PasswordBearer,
                                      OAuth2PasswordRequestForm)
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import settings
 from db.postgres import get_session
 from db.redis_db import RedisTokenStorage, get_redis
 from schemas.entity import History, User
-from schemas.entity_schemas import AccessTokenData, RefreshTokenData,  TokenPair, UserCreate, UserCredentials
+from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
+                                    TokenPair, UserCreate, UserCredentials)
 from services.auth_service import auth_service
 from services.history_service import history_service
 from services.token_service import access_token_service, refresh_token_service
 from services.user_service import user_service
 from services.validation import (get_token_payload_access,
                                  get_token_payload_refresh)
-
-from core.config import settings
 
 router = APIRouter()
 
@@ -74,6 +74,7 @@ async def signup(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
 
+
 @router.post(
     '/login',
     # response_model=,
@@ -128,6 +129,7 @@ async def login(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Incorrect username or password',
         )
+
 
 @router.post(
     '/logout',
@@ -235,6 +237,7 @@ async def refresh(
     await redis.add_valid_rtoken(user_id, refresh_token)
 
     return {'message': 'Success'}
+
 
 @router.post(
     '/signup_guest',

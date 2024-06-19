@@ -29,6 +29,7 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+
 class History(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
