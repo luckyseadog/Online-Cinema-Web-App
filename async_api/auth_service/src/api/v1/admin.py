@@ -1,12 +1,13 @@
-from fastapi import status, Header
-from db.postgres import AsyncSession, get_session
-from fastapi import APIRouter, Depends
-from schemas.entity import User, History
-from services.user_service import user_service
-from services.history_service import history_service
 from typing import Annotated
-from services.validation import check_admin_or_super_admin_role_from_access_token
-from schemas.entity import AccessTokenData, UpdateUserRole
+
+from fastapi import APIRouter, Depends, Header, status
+
+from db.postgres import AsyncSession, get_session
+from schemas.entity import AccessTokenData, History, UpdateUserRole, User
+from services.history_service import history_service
+from services.user_service import user_service
+from services.validation import \
+    check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
 
@@ -92,3 +93,20 @@ async def check_role(
     await history_service.make_note(note, db)
     res = await user_service.check_user_role(str(user_role.role_id), str(user_role.role_id), db)
     return {'result': 'YES' if res else 'NO'}
+
+
+@router.get('/user_role')
+async def get_users(
+    user_agent: Annotated[str | None, Header()] = None,
+    payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
+    db: AsyncSession = Depends(get_session),
+) -> list[User]:
+    note = History(
+        user_id=payload.sub,
+        action='/user_role',
+        fingerprint=user_agent,
+    )
+    await history_service.make_note(note, db)
+
+    users = await user_service.get_users(db)
+    return users

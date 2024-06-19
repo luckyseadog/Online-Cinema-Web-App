@@ -1,9 +1,8 @@
-from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordBearer
-
-import jwt
 from datetime import datetime, timedelta, timezone
 
+import jwt
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
 
 ACCESS_TOKEN_EXPIRE_MIN = 10
 REFRESH_TOKEN_EXPIRE_MIN = 60 * 24 * 7

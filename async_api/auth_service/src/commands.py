@@ -1,8 +1,8 @@
-from sqlalchemy.orm import Session
-from core.config import settings
 import typer
-from sqlalchemy import create_engine
-from sqlalchemy import select
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+
+from core.config import settings
 from models.entity import RoleModel, UserModel
 from services.password_service import PasswordService
 

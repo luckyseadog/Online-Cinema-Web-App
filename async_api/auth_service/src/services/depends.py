@@ -1,15 +1,14 @@
-from fastapi import HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from schemas.entity import TokenData
-from jwt.exceptions import InvalidTokenError
-from services.user_service import user_service
-from services.token_service import access_token_service
 import json
 from typing import Annotated
-from fastapi import Depends
-from schemas.entity import User
-from db.postgres import get_session
 
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jwt.exceptions import InvalidTokenError
+
+from db.postgres import get_session
+from schemas.entity import TokenData, User
+from services.token_service import access_token_service
+from services.user_service import user_service
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl='/api/v1/auth/login',

@@ -1,8 +1,9 @@
-from db.postgres import AsyncSession
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import select
+
+from db.postgres import AsyncSession
 from models.entity import UserHistoryModel
 from schemas.entity import History
-from sqlalchemy import select
 
 
 class HistoryService():

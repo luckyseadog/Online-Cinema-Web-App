@@ -1,9 +1,9 @@
-from redis.asyncio import Redis
-from base64 import urlsafe_b64decode
 import json
 import time
-
+from base64 import urlsafe_b64decode
 from typing import Optional
+
+from redis.asyncio import Redis
 
 ACCESS_TOKEN_BANNED = 'banned_tokens'
 REFRESH_TOKENS_VALID = 'valid_refresh'

@@ -1,15 +1,15 @@
-from fastapi import status
-from db.postgres import AsyncSession, get_session
-from fastapi import APIRouter, Depends
-from schemas.entity import Role, History
-from services.role_service import role_service
-from services.history_service import history_service
-from schemas.updates import RolePatch
-from schemas.entity import AccessTokenData
 from typing import Annotated
-from fastapi import Header
 from uuid import UUID
-from services.validation import check_admin_or_super_admin_role_from_access_token
+
+from fastapi import APIRouter, Depends, Header, status
+
+from db.postgres import AsyncSession, get_session
+from schemas.entity import AccessTokenData, History, Role
+from schemas.updates import RolePatch
+from services.history_service import history_service
+from services.role_service import role_service
+from services.validation import \
+    check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
 

@@ -1,11 +1,12 @@
-from db.postgres import AsyncSession, get_session
-from fastapi import Depends
+import logging
+
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import delete, select, update
+
+from db.postgres import AsyncSession
 from models.entity import RoleModel
 from schemas.entity import Role
 from schemas.updates import RolePatch
-from sqlalchemy import delete, select, update
-import logging
 
 
 class RoleService():

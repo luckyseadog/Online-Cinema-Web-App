@@ -3,7 +3,7 @@ import hmac
 import json
 import os
 import time
-from base64 import urlsafe_b64encode, urlsafe_b64decode
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 
 TOKEN_KEY = os.environ.get('TOKEN_KEY', 'PRACTIX')
 ACCESS_TOKEN_MIN = int(os.environ.get('ACCESS_TOKEN_MIN', 15))

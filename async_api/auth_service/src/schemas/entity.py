@@ -1,6 +1,7 @@
 import datetime
 import uuid
 from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 
@@ -70,7 +71,15 @@ class TokenPair(BaseModel):
 class AccessTokenData(BaseModel):
     iss: str
     sub: str
+    iat: int
+    exp: int
     roles: list[str]
+
+class RefreshTokenData(BaseModel):
+    iss: str
+    sub: str
+    iat: int
+    exp: int
 
 
 class UpdateUserRole(BaseModel):

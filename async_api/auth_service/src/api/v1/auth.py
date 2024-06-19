@@ -1,21 +1,22 @@
-from fastapi import APIRouter
-from fastapi import status, HTTPException
-from services.auth_service import auth_service
-from services.user_service import user_service
-from db.postgres import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
-from schemas.entity import UserCreate, UserCredentials, User, History, TokenPair
-from fastapi.responses import ORJSONResponse
-from fastapi import Header
-from services.token_service import access_token_service, refresh_token_service
-from db.redis_db import RedisTokenStorage, get_redis
 from typing import Annotated, Union
-from fastapi import Cookie
 from uuid import uuid4
+
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
+from fastapi.responses import ORJSONResponse
+from fastapi.security.oauth2 import (OAuth2PasswordBearer,
+                                     OAuth2PasswordRequestForm)
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from db.postgres import get_session
+from db.redis_db import RedisTokenStorage, get_redis
+from schemas.entity import (AccessTokenData, History, RefreshTokenData,
+                            TokenPair, User, UserCreate, UserCredentials)
+from services.auth_service import auth_service
 from services.history_service import history_service
-from api.v1.utils import APIError, validate_access_token, validate_refresh_token
-from fastapi.security.oauth2 import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from services.token_service import access_token_service, refresh_token_service
+from services.user_service import user_service
+from services.validation import (get_token_payload_access,
+                                 get_token_payload_refresh)
 
 router = APIRouter()
 
@@ -140,15 +141,11 @@ async def logout(
     access_token: Annotated[Union[str, None], Cookie()] = None,
     refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
+    payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
-    try:
-        payload = await validate_access_token('AuthService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    user_id = payload.get('sub')
+    user_id = payload.sub
 
     note = History(
         user_id=user_id,
@@ -175,18 +172,12 @@ async def logout(
 )
 async def logout_all(
     response: ORJSONResponse,
-    # current_user: Annotated[User, Depends(get_current_active_user)],
-    access_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
+    payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
-    try:
-        payload = await validate_access_token('AuthService', access_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
-
-    user_id = payload.get('sub')
+    user_id = payload.sub
 
     note = History(
         user_id=user_id,
@@ -215,8 +206,8 @@ async def refresh(
     # current_user: Annotated[User, Depends(get_current_active_user)],
     response: ORJSONResponse,
     origin: Annotated[str | None, Header()] = None,
-    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
+    payload: RefreshTokenData = Depends(get_token_payload_refresh),
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
@@ -225,12 +216,8 @@ async def refresh(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
-    try:
-        payload = await validate_refresh_token('AuthService', refresh_token, redis)
-    except APIError as e:
-        raise HTTPException(status_code=401, detail=e.message)
 
-    user_id = payload.get('sub')
+    user_id = payload.sub
 
     note = History(
         user_id=user_id,

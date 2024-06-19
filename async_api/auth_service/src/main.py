@@ -2,13 +2,14 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
-from core.config import settings
-from core.logger import LOGGING
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from api.v1 import admin, auth, users, roles
-from db import redis_db, postgres
 from redis.asyncio import Redis
+
+from api.v1 import admin, auth, roles, users
+from core.config import settings
+from core.logger import LOGGING
+from db import postgres, redis_db
 
 
 @asynccontextmanager

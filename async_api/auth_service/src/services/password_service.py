@@ -1,6 +1,6 @@
-from hashlib import pbkdf2_hmac
-from base64 import urlsafe_b64encode
 import os
+from base64 import urlsafe_b64encode
+from hashlib import pbkdf2_hmac
 
 SALT = os.environ.get('SAULT', '<salt>').encode('utf-8')
 APP_ITERS = int(os.environ.get('APP_ITERS', 100_000))
