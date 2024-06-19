@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
-from db.postgres import get_session
+from db.postgres_db import get_session
 from schemas.entity import User
 from services.token_service import access_token_service
 from services.user_service import user_service

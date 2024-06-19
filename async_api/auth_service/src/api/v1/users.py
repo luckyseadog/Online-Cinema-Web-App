@@ -5,7 +5,7 @@ from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from db.postgres import get_session
+from db.postgres_db import get_session
 from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData, UserPatch
 from services.depends import get_current_user

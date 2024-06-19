@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, status
 
-from db.postgres import AsyncSession, get_session
+from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, Role
 from schemas.entity_schemas import AccessTokenData, RolePatch
 from services.history_service import history_service

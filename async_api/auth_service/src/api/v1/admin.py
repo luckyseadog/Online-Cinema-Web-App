@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, status
 
-from db.postgres import AsyncSession, get_session
+from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData, UpdateUserRole
 from services.history_service import history_service

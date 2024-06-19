@@ -1,7 +1,7 @@
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
-from db.postgres import AsyncSession
+from db.postgres_db import AsyncSession
 from models.entity import UserHistoryModel
 from schemas.entity import History
 

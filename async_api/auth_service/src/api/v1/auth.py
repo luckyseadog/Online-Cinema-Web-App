@@ -8,7 +8,7 @@ from fastapi.security.oauth2 import (OAuth2PasswordBearer,
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from db.postgres import get_session
+from db.postgres_db import get_session
 from db.redis_db import RedisTokenStorage, get_redis
 from schemas.entity import History, User
 from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,

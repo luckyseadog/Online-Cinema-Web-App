@@ -3,7 +3,7 @@ import logging
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, select, update
 
-from db.postgres import AsyncSession
+from db.postgres_db import AsyncSession
 from models.entity import RoleModel
 from schemas.entity import Role
 from schemas.entity_schemas import RolePatch
