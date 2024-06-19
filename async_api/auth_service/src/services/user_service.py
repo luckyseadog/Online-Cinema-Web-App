@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.entity import RoleModel, UserModel
 from schemas.entity import Role, User
-from schemas.updates import UserPatch
+from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
 
 

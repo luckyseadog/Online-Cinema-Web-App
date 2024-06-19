@@ -4,8 +4,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Header, status
 
 from db.postgres import AsyncSession, get_session
-from schemas.entity import AccessTokenData, History, Role
-from schemas.updates import RolePatch
+from schemas.entity import History, Role
+from schemas.entity_schemas import RolePatch, AccessTokenData
 from services.history_service import history_service
 from services.role_service import role_service
 from services.validation import \

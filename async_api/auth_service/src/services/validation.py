@@ -6,7 +6,7 @@ from fastapi import Cookie, Depends, HTTPException, status
 
 from core.config import settings
 from db.redis_db import RedisTokenStorage, get_redis
-from schemas.entity import AccessTokenData, RefreshTokenData
+from schemas.entity_schemas import AccessTokenData, RefreshTokenData
 from services.token_service import access_token_service, refresh_token_service
 
 

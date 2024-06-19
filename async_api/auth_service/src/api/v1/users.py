@@ -5,8 +5,8 @@ from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.postgres import get_session
-from schemas.entity import AccessTokenData, History, User
-from schemas.updates import UserPatch
+from schemas.entity import History, User
+from schemas.entity_schemas import UserPatch, AccessTokenData
 from services.depends import get_current_user
 from services.history_service import history_service
 from services.user_service import user_service

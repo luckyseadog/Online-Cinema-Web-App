@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.postgres import get_session
 from db.redis_db import RedisTokenStorage, get_redis
-from schemas.entity import (AccessTokenData, History, RefreshTokenData,
-                            TokenPair, User, UserCreate, UserCredentials)
+from schemas.entity import History, User
+from schemas.entity_schemas import AccessTokenData, RefreshTokenData,  TokenPair, UserCreate, UserCredentials
 from services.auth_service import auth_service
 from services.history_service import history_service
 from services.token_service import access_token_service, refresh_token_service

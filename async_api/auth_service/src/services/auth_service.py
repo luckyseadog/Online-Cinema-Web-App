@@ -1,9 +1,8 @@
 import logging
 
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.entity import UserCredentials
+from schemas.entity_schemas import UserCredentials
 from services.password_service import password_service
 from services.user_service import user_service
 

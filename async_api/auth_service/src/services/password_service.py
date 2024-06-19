@@ -1,4 +1,3 @@
-import os
 from base64 import urlsafe_b64encode
 from hashlib import pbkdf2_hmac
 from core.config import settings

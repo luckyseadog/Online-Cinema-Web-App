@@ -6,7 +6,7 @@ from sqlalchemy import delete, select, update
 from db.postgres import AsyncSession
 from models.entity import RoleModel
 from schemas.entity import Role
-from schemas.updates import RolePatch
+from schemas.entity_schemas import RolePatch
 
 
 class RoleService():
