@@ -88,7 +88,7 @@ async def get_me(
     db: AsyncSession = Depends(get_session),
 ):
     note = History(
-        user_id=payload['sub'],
+        user_id=payload.sub,
         action='/user/me',
         fingerprint=user_agent,
     )
