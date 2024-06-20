@@ -1,10 +1,10 @@
+import datetime
 import json
 import time
 from base64 import urlsafe_b64decode
+from typing import Optional
 
 from redis.asyncio import Redis
-from typing import Optional
-import datetime
 
 ACCESS_TOKEN_BANNED = 'banned_tokens'
 REFRESH_TOKENS_VALID = 'valid_refresh'
