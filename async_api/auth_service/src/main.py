@@ -2,25 +2,26 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
-from core.config import settings
-from core.logger import LOGGING
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from api.v1 import admin, auth, users, roles
-from db import redis_db, postgres
 from redis.asyncio import Redis
+
+from api.v1 import admin, auth, roles, users
+from core.config import settings
+from core.logger import LOGGING
+from db import postgres_db, redis_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
-    # await postgres.create_database()  # TODO: need check for database existance
-    pg_session = postgres.get_session()
+    # await postgres_db.create_database()  # TODO: need check for database existance
+    pg_session = postgres_db.get_session()
     redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
     yield
     await pg_session.aclose()
     await redis_db.redis.close()
-    # await postgres.purge_database()
+    # await postgres_db.purge_database()
     logging.info('end')
 
 

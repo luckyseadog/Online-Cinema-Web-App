@@ -1,11 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import status
-from services.user_service import user_service
-from services.password_service import password_service
-from fastapi import HTTPException
-from schemas.entity import UserCredentials
 import logging
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from schemas.entity_schemas import UserCredentials
+from services.password_service import password_service
+from services.user_service import user_service
 
 # SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
 # ALGORITHM = 'HS256'
@@ -15,22 +14,16 @@ import logging
 class AuthService:
     async def login(self, user_creds: UserCredentials, db: AsyncSession) -> bool:
         user = await user_service.get_user_by_login(user_creds.login, db)
-        print(user_creds)
+
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
-            )
+            return False
 
-        hash_password = user_creds.password
+        password = user_creds.password
         target_password = user.password
-        logging.warn(f'{hash_password}------{target_password}')
+        logging.warn(f'{password}------{target_password}')
 
-        if not password_service.check_password(hash_password, target_password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Incorrect username or password',
-            )
+        if not password_service.check_password(password, target_password):
+            return False
 
         return True
 

@@ -1,8 +1,9 @@
-from db.postgres import AsyncSession
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import select
+
+from db.postgres_db import AsyncSession
 from models.entity import UserHistoryModel
 from schemas.entity import History
-from sqlalchemy import select
 
 
 class HistoryService():
@@ -33,30 +34,6 @@ class HistoryService():
                 fingerprint=hist.fingerprint,
             ) for hist in result.scalars()
         ]
-
-    # async def get_last_user_notes(
-    #         self,
-    #         user_id: str,
-    #         skip: int = 0,
-    #         limit: int = 10,
-    #         db: AsyncSession = Depends(get_session),
-    # ) -> list[History]:
-    #     result = await db.execute(
-    #         select(UserHistoryModel)
-    #         .where(UserHistoryModel.user_id == user_id)
-    #         .offset(skip)
-    #         .limit(limit),
-    #     )
-    #
-    #     return [
-    #         History(
-    #             id=hist.id,
-    #             user_id=hist.user_id,
-    #             occured_at=hist.occured_at,
-    #             action=hist.action,
-    #             fingerprint=hist.fingerprint,
-    #         ) for hist in result.scalars()
-    #     ]
 
     async def get_last_user_notes(
             self,

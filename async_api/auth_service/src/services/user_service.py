@@ -1,9 +1,10 @@
-from schemas.entity import User, Role
-from sqlalchemy import select, update, delete
 from fastapi.encoders import jsonable_encoder
-from models.entity import UserModel, RoleModel
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.updates import UserPatch
+
+from models.entity import RoleModel, UserModel
+from schemas.entity import Role, User
+from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
 
 
