@@ -45,7 +45,7 @@ async def delete_user(
     return db_user
 
 
-@router.patch('/')
+@router.put('/')
 async def change_user(
     user_patch: UserPatch,
     # current_user: Annotated[User, Depends(get_current_active_user)],

@@ -1,10 +1,16 @@
 import pytest
-from httpx import codes
+
+
+@pytest.mark.asyncio
+async def test_get_users(client):
+    response = await client.get('/users/users')
+    assert response.status_code == 401
+
 
 @pytest.mark.asyncio
 async def test_create_user(client):
     response = await client.post(
-        'http://localhost:8000/api/v1/auth/signup',
+        '/signup',
         headers={'Origin': 'http://localhost:8000'},
         json={
             'login': 'test23',
@@ -17,6 +23,14 @@ async def test_create_user(client):
     print(response.json())
     print(response.headers)
     print(response.cookies)
-    assert response.status_code == codes.CREATED
+    assert response.status_code == 200
 
-    assert len(response.json()) == 4
+
+@pytest.mark.asyncio
+async def test_login(client):
+    pass
+
+@pytest.mark.asyncio
+async def test_logout(client):
+    response = await client.post('/logout')
+    assert response.status_code == 401

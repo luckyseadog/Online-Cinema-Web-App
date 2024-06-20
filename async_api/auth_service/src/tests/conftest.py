@@ -12,6 +12,7 @@ import os
 from models.entity import RoleModel, UserModel, UserRoleModel, UserHistoryModel
 from datetime import datetime
 
+
 @pytest_asyncio.fixture(scope='session')
 def event_loop():
     loop = asyncio.new_event_loop()
@@ -21,7 +22,7 @@ def event_loop():
 
 @pytest_asyncio.fixture(scope='session')
 async def client():
-    async with httpx.AsyncClient(app=app, base_url='http://test') as client:
+    async with httpx.AsyncClient(app=app, base_url='http://localhost:8000/api/v1/auth') as client:
         yield client
 
 
