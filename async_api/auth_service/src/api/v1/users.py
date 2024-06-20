@@ -12,7 +12,6 @@ from services.depends import get_current_user
 from services.history_service import history_service
 from services.user_service import user_service
 from services.validation import get_token_payload_access
-import logging
 
 router = APIRouter()
 

@@ -2,6 +2,7 @@ from typing import Annotated, Union
 from uuid import uuid4
 
 from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import (OAuth2PasswordBearer,
                                      OAuth2PasswordRequestForm)
@@ -12,16 +13,15 @@ from db.postgres_db import get_session
 from db.redis_db import RedisTokenStorage, get_redis
 from schemas.entity import History, User
 from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
-                                    TokenPair, UserCreate, UserCredentials, RoleEnum)
+                                    RoleEnum, TokenPair, UserCreate,
+                                    UserCredentials)
 from services.auth_service import auth_service
 from services.history_service import history_service
+from services.role_service import role_service
 from services.token_service import access_token_service, refresh_token_service
 from services.user_service import user_service
-from services.role_service import role_service
 from services.validation import (get_token_payload_access,
                                  get_token_payload_refresh)
-from fastapi.encoders import jsonable_encoder
-import logging
 
 router = APIRouter()
 
@@ -113,7 +113,11 @@ async def login(
     if res is True:
         user = await user_service.get_user_by_login(user_creds.login, db)
         if await user_service.check_deleted(user.id, db):
-            raise 
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User was deleted',
+            )
+
         user_roles = [role.title for role in user.roles]
         access_token, access_exp = access_token_service.generate_token(origin, user.id, user_roles)
         refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
@@ -164,7 +168,7 @@ async def logout(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
-    
+
     user_id = payload.sub
 
     note = History(
@@ -242,7 +246,7 @@ async def refresh(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
-    
+
     if await user_service.check_deleted(payload.sub, db):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

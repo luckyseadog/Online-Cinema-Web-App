@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, status, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, Role

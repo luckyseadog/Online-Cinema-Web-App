@@ -1,12 +1,13 @@
+import datetime
+
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import delete, select, update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.entity import RoleModel, UserModel
 from schemas.entity import Role, User
 from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
-import datetime
 
 
 class UserService:
@@ -279,7 +280,7 @@ class UserService:
             return False
 
         return role in user.roles
-    
+
     async def check_deleted(self, user_id: str, db: AsyncSession):
         res_user = await db.execute(select(UserModel).where(UserModel.id == user_id))
         user = res_user.scalars().one_or_none()

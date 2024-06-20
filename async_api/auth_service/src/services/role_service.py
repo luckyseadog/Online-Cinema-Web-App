@@ -36,7 +36,7 @@ class RoleService():
             title=returned_role.title,
             description=returned_role.description,
         )
-    
+
     async def get_role_by_name(self, role_name: str, db: AsyncSession) -> Role:
         result = await db.execute(select(RoleModel).where(RoleModel.title == role_name))
         returned_role = result.scalars().one_or_none()

@@ -1,13 +1,15 @@
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel
-from enum import Enum
+
 from core.config import settings
 
 
 class RolePatch(BaseModel):
     title: str | None = None
     description: str | None = None
+
 
 class UserPatch(BaseModel):
     login: str | None = None
@@ -24,13 +26,16 @@ class UserCreate(BaseModel):
     last_name: str
     password: str
 
+
 class UserCredentials(BaseModel):
     login: str
     password: str
 
+
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
+
 
 class AccessTokenData(BaseModel):
     iss: str
@@ -38,6 +43,7 @@ class AccessTokenData(BaseModel):
     iat: int
     exp: int
     roles: list[str]
+
 
 class RefreshTokenData(BaseModel):
     iss: str

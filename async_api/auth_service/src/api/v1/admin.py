@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, status, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, User
