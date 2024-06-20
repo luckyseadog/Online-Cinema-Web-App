@@ -12,6 +12,7 @@ from services.depends import get_current_user
 from services.history_service import history_service
 from services.user_service import user_service
 from services.validation import get_token_payload_access
+import logging
 
 router = APIRouter()
 
@@ -23,6 +24,12 @@ async def delete_user(
     payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/user[delete]',
@@ -47,6 +54,12 @@ async def change_user(
     payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/user[patch]',
@@ -66,6 +79,12 @@ async def get_history(
     payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
 ) -> list[History]:
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/user/history',
@@ -87,6 +106,12 @@ async def get_me(
     payload: AccessTokenData = Depends(get_token_payload_access),
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/user/me',

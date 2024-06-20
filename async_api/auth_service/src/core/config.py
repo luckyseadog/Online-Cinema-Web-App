@@ -43,6 +43,9 @@ class Settings(BaseSettings):
 
     role_admin: str = Field('admin', alias='ADMIN_ROLE_NAME')
     role_super_admin: str = Field('superadmin', alias='SUPERADMIN_ROLE_NAME')
+    role_user: str = Field('user', alias='USER_ROLE_NAME')
+    role_subscriber: str = Field('subscriber', alias='SUBSCRIBER_ROLE_NAME')
+    role_guest: str = Field('guest', alias='GUEST_ROLE_NAME')
 
     access_token_name: str = Field('access_token', alias='ACCESS_TOKEN')
     refresh_token_name: str = Field('refresh_token', alias='REFRESH_TOKEN')

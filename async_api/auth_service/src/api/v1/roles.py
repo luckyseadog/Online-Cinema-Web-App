@@ -1,13 +1,14 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, status, HTTPException
 
 from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, Role
 from schemas.entity_schemas import AccessTokenData, RolePatch
 from services.history_service import history_service
 from services.role_service import role_service
+from services.user_service import user_service
 from services.validation import \
     check_admin_or_super_admin_role_from_access_token
 
@@ -26,6 +27,12 @@ async def get_roles(
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
 ) -> list[Role]:
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/roles[GET]',
@@ -48,6 +55,12 @@ async def add_role(
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/roles[POST]',
@@ -71,6 +84,12 @@ async def update_role(
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/roles[PUT]',
@@ -92,6 +111,11 @@ async def delete_role(
     user_agent: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_session),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
 
     note = History(
         user_id=payload.sub,

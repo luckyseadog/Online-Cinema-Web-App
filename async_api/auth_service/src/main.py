@@ -10,12 +10,19 @@ from api.v1 import admin, auth, roles, users
 from core.config import settings
 from core.logger import LOGGING
 from db import postgres_db, redis_db
+from commands import create_admin_role, create_guest_role, create_subscriber_role, create_user_role
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
     # await postgres_db.create_database()  # TODO: need check for database existance
+
+    create_admin_role()
+    create_guest_role()
+    create_subscriber_role()
+    create_user_role()
+
     pg_session = postgres_db.get_session()
     redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
     yield

@@ -9,10 +9,11 @@ from services.password_service import PasswordService
 app = typer.Typer()
 
 dsn = (
-    f'postgresql://{settings.pg_user}'
+    f'postgresql+psycopg://{settings.pg_user}'
     f':{settings.pg_password}@{settings.pg_host}'
     f':{settings.pg_port}/{settings.pg_name}'
 )
+
 
 engine = create_engine(dsn, echo=True, future=True)
 
@@ -74,6 +75,21 @@ def delete_superadmin():
 @app.command()
 def create_admin_role():
     create_role(title=settings.role_admin, description='admin role description')
+
+
+@app.command()
+def create_subscriber_role():
+    create_role(title=settings.role_subscriber, description='subscriber role description')
+
+
+@app.command()
+def create_guest_role():
+    create_role(title=settings.role_guest, description='guest role description')
+
+
+@app.command()
+def create_user_role():
+    create_role(title=settings.role_user, description='user role description')
 
 
 if __name__ == '__main__':
