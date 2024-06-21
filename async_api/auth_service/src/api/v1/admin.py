@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from db.postgres_db import AsyncSession, get_session
 from schemas.entity import History, User
@@ -34,6 +34,12 @@ async def assign_role(
 ) -> User:
     # TODO: check that role_id is valid
 
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action=f'/user_role/assign?role_id={user_role.role_id}',
@@ -60,6 +66,12 @@ async def revoke_role(
 ) -> User:
     # TODO: check that role_id is valid
 
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action=f'/user_role/revoke?role_id={user_role.role_id}',
@@ -85,6 +97,12 @@ async def check_role(
 ):
     # TODO: check that role_id is valid
 
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action=f'/user_role/check?role_id={user_role.role_id}',
@@ -102,6 +120,12 @@ async def get_users(
     payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
     db: AsyncSession = Depends(get_session),
 ) -> list[User]:
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     note = History(
         user_id=payload.sub,
         action='/user_role',

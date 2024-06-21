@@ -168,3 +168,4 @@ static
 .DS_Store
 .vscode
 .python-version
+reset_auth_service.sh

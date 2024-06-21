@@ -2,6 +2,7 @@ from typing import Annotated, Union
 from uuid import uuid4
 
 from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import (OAuth2PasswordBearer,
                                      OAuth2PasswordRequestForm)
@@ -12,9 +13,11 @@ from db.postgres_db import get_session
 from db.redis_db import RedisTokenStorage, get_redis
 from schemas.entity import History, User
 from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
-                                    TokenPair, UserCreate, UserCredentials)
+                                    RoleEnum, TokenPair, UserCreate,
+                                    UserCredentials)
 from services.auth_service import auth_service
 from services.history_service import history_service
+from services.role_service import role_service
 from services.token_service import access_token_service, refresh_token_service
 from services.user_service import user_service
 from services.validation import (get_token_payload_access,
@@ -61,8 +64,13 @@ async def signup(
     if user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
-    user = await user_service.create_user(user_create, db)
-    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])  # TODO: add default role?
+    role = await role_service.get_role_by_name(RoleEnum.role_user, db)
+    if role is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='role is not found')
+
+    created_user = User(roles=[role], **jsonable_encoder(user_create, exclude_none=True))
+    user = await user_service.create_user(created_user, db)
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, [RoleEnum.role_user])  # TODO: add default role?
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
     response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
     response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
@@ -104,6 +112,12 @@ async def login(
     res = await auth_service.login(user_creds, db)
     if res is True:
         user = await user_service.get_user_by_login(user_creds.login, db)
+        if await user_service.check_deleted(user.id, db):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User was deleted',
+            )
+
         user_roles = [role.title for role in user.roles]
         access_token, access_exp = access_token_service.generate_token(origin, user.id, user_roles)
         refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
@@ -149,6 +163,12 @@ async def logout(
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     user_id = payload.sub
 
     note = History(
@@ -181,6 +201,12 @@ async def logout_all(
     db: AsyncSession = Depends(get_session),
     redis: RedisTokenStorage = Depends(get_redis),
 ):
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+
     user_id = payload.sub
 
     note = History(
@@ -219,6 +245,12 @@ async def refresh(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
+        )
+
+    if await user_service.check_deleted(payload.sub, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
         )
 
     user_id = payload.sub
@@ -264,14 +296,16 @@ async def signup_guest(
             detail='Origin header is required',
         )
 
-    guest_create = User(
+    role = await role_service.get_role_by_name(RoleEnum.role_guest, db)
+    created_guest = User(
         login=f'login_{uuid4()}',
         email=f'email_{uuid4()}',
         password='',
         first_name=f'guest_{uuid4()}',
+        roles=[role],
     )
 
-    user = await user_service.create_user(guest_create, db)
+    user = await user_service.create_user(created_guest, db)
 
     note = History(
         user_id=user.id,
@@ -280,7 +314,7 @@ async def signup_guest(
     )
     await history_service.make_note(note, db)
 
-    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['guest'])
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, [RoleEnum.role_guest])
     refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
     response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
     response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)

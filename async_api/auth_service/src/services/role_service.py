@@ -29,13 +29,25 @@ class RoleService():
         ]
 
     async def get_role_by_id(self, role_id: str, db: AsyncSession) -> Role:
-        result = await db.execute(select(RoleModel).filter(RoleModel.id == role_id))
+        result = await db.execute(select(RoleModel).where(RoleModel.id == role_id))
         returned_role = result.scalars().one()
         return Role(
             id=returned_role.id,
             title=returned_role.title,
             description=returned_role.description,
         )
+
+    async def get_role_by_name(self, role_name: str, db: AsyncSession) -> Role:
+        result = await db.execute(select(RoleModel).where(RoleModel.title == role_name))
+        returned_role = result.scalars().one_or_none()
+        if returned_role is not None:
+            return Role(
+                id=returned_role.id,
+                title=returned_role.title,
+                description=returned_role.description,
+            )
+        else:
+            return
 
     async def update_role(self, role_id: str, role_patch: RolePatch, db: AsyncSession) -> Role:
         logging.warn(role_patch.model_dump(exclude_none=True))

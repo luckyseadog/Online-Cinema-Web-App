@@ -29,7 +29,7 @@ class UserModel(Base):
     email = mapped_column(String(255), nullable=False, unique=True, index=True)
     created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    deleted_at = mapped_column(DateTime, default=datetime.utcnow)  # TODO: rename to is_deleted
+    deleted_at = mapped_column(DateTime, nullable=True, default=None)  # TODO: rename to is_deleted
     is_superadmin = mapped_column(Boolean, default=False)
     roles = relationship('RoleModel', secondary='users_roles', back_populates='users', lazy='selectin')
 
