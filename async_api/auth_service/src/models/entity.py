@@ -2,11 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
-from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
-
-
-class Base(DeclarativeBase):
-    pass
+from sqlalchemy.orm import mapped_column, relationship
+from db.postgres_db import Base
 
 
 class UserRoleModel(Base):

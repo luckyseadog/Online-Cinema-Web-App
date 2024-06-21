@@ -3,22 +3,28 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
 from fastapi.responses import ORJSONResponse
-from fastapi.security.oauth2 import (OAuth2PasswordBearer,
-                                     OAuth2PasswordRequestForm)
+from fastapi.security.oauth2 import (
+    OAuth2PasswordBearer,
+    OAuth2PasswordRequestForm,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from db.postgres_db import get_session
 from db.redis_db import RedisTokenStorage, get_redis
 from schemas.entity import History, User
-from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
-                                    TokenPair, UserCreate, UserCredentials)
+from schemas.entity_schemas import (
+    AccessTokenData, RefreshTokenData,
+    TokenPair, UserCreate, UserCredentials,
+)
 from services.auth_service import auth_service
 from services.history_service import history_service
 from services.token_service import access_token_service, refresh_token_service
 from services.user_service import user_service
-from services.validation import (get_token_payload_access,
-                                 get_token_payload_refresh)
+from services.validation import (
+    get_token_payload_access,
+    get_token_payload_refresh,
+)
 
 router = APIRouter()
 
@@ -62,12 +68,12 @@ async def signup(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
     user = await user_service.create_user(user_create, db)
-    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])  # TODO: add default role?
-    refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
-    response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
-
-    await redis.add_valid_rtoken(user.id, refresh_token)
+    # TODO: add default role?
+    # access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])
+    # refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
+    # response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+    # response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
+    # await redis.add_valid_rtoken(user.id, refresh_token)
 
     return {'message': 'User created successfully'}
 
