@@ -1,5 +1,7 @@
+import datetime
+
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import delete, select, update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.entity import RoleModel, UserModel
@@ -102,6 +104,18 @@ class UserService:
     async def create_user(self, user_create: User, db: AsyncSession) -> User:
         user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ''
         user_dto = jsonable_encoder(user_create, exclude_none=True)
+
+        if "roles" in user_dto:
+            new_roles = []
+            for role in user_dto["roles"]:
+                result = await db.execute(select(RoleModel).where(RoleModel.title == role["title"]))
+                returned_role = result.scalars().one_or_none()
+                if returned_role is None:
+                    raise Exception
+                new_roles.append(returned_role)
+
+            user_dto["roles"] = new_roles
+
         user = UserModel(**user_dto)
         db.add(user)
         await db.commit()
@@ -156,7 +170,13 @@ class UserService:
             return None
 
     async def delete_user(self, user_id: int, db: AsyncSession):
-        result = await db.execute(delete(UserModel).where(UserModel.id == user_id).returning(UserModel))
+        query = (
+            update(UserModel)
+            .where(UserModel.id == user_id)
+            .values(deleted_at=datetime.datetime.utcnow())
+            .returning(UserModel)
+        )
+        result = await db.execute(query)
         deleted_user = result.scalars().one_or_none()
         await db.commit()
 
@@ -249,8 +269,8 @@ class UserService:
         )
 
     async def check_user_role(self, user_id: str, role_id: str, db: AsyncSession):
-        query_user = select(UserModel).filter(UserModel.id == user_id)
-        query_role = select(RoleModel).filter(RoleModel.id == role_id)
+        query_user = select(UserModel).where(UserModel.id == user_id)
+        query_role = select(RoleModel).where(RoleModel.id == role_id)
 
         res_user = await db.execute(query_user)
         res_role = await db.execute(query_role)
@@ -260,6 +280,15 @@ class UserService:
             return False
 
         return role in user.roles
+
+    async def check_deleted(self, user_id: str, db: AsyncSession):
+        res_user = await db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = res_user.scalars().one_or_none()
+
+        if user.deleted_at is not None:
+            return True
+        else:
+            return False
 
 
 user_service = UserService()

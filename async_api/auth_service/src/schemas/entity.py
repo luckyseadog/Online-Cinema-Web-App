@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 class Role(BaseModel):
     # id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    id: UUID
+    id: UUID = Field(default_factory=lambda: uuid.uuid4())
     title: str
     description: str | None = None
 
@@ -24,7 +24,7 @@ class User(BaseModel):
     email: str = Field(default_factory=str)
     is_superadmin: bool = Field(default=False)
     roles: list[Role] | None = None
-    deleted_at: datetime.datetime | None = None
+    deleted_at: datetime.datetime | None = Field(default=None)
 
     class ConfigDict:
         from_attributes = True

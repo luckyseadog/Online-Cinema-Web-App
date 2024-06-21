@@ -68,12 +68,12 @@ async def signup(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
 
     user = await user_service.create_user(user_create, db)
-    # TODO: add default role?
-    # access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])
-    # refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    # response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
-    # response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
-    # await redis.add_valid_rtoken(user.id, refresh_token)
+    access_token, access_exp = access_token_service.generate_token(origin, user.id, ['user'])  # TODO: add default role?
+    refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
+    response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
+    response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
+
+    await redis.add_valid_rtoken(user.id, refresh_token)
 
     return {'message': 'User created successfully'}
 
