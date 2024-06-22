@@ -6,13 +6,18 @@ from sqlalchemy.orm import mapped_column, relationship
 from db.postgres_db import Base
 
 
-class UserRoleModel(Base):
-    __tablename__ = 'users_roles'
+class RoleModel(Base):
+    __tablename__ = 'roles'
 
     id = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = mapped_column(String, ForeignKey('users.id'))
-    role_id = mapped_column(String, ForeignKey('roles.id'))
+    title = mapped_column(String(255), unique=True, nullable=False, index=True)
+    description = mapped_column(String(255), nullable=True)
+    created_at = mapped_column(DateTime, default=datetime.utcnow)
     updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    users = relationship('UserModel', secondary='users_roles', back_populates='roles', lazy='selectin')
+
+    def __repr__(self):
+        return f'<RoleModel {self.title}>'
 
 
 class UserModel(Base):
@@ -33,21 +38,6 @@ class UserModel(Base):
     def __repr__(self) -> str:
         return f'<UserModel {self.login}>'
 
-
-class RoleModel(Base):
-    __tablename__ = 'roles'
-
-    id = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    title = mapped_column(String(255), unique=True, nullable=False, index=True)
-    description = mapped_column(String(255), nullable=True)
-    created_at = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    users = relationship('UserModel', secondary='users_roles', back_populates='roles', lazy='selectin')
-
-    def __repr__(self):
-        return f'<RoleModel {self.title}>'
-
-
 class UserHistoryModel(Base):
     __tablename__ = 'user_history'
 
@@ -59,3 +49,12 @@ class UserHistoryModel(Base):
 
     def __repr__(self):
         return f'<UserHistoryModel {self.user_id} - {self.action}>'
+
+
+class UserRoleModel(Base):
+    __tablename__ = 'users_roles'
+
+    id = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = mapped_column(String, ForeignKey('users.id'))
+    role_id = mapped_column(String, ForeignKey('roles.id'))
+    updated_at = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

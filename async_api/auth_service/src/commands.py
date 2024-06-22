@@ -57,7 +57,7 @@ def assign_superadmin_role_to_superadmin():
 
 @app.command()
 def create_superadmin():
-    create_role(title=settings.role_super_admin, description=settings.role_super_admin_description)
+    create_role(title=settings.role_super_admin, description='superadmin role description')
     create_superadmin_user()
     assign_superadmin_role_to_superadmin()
 
@@ -72,22 +72,10 @@ def delete_superadmin():
 
 
 @app.command()
-def create_admin_role():
+def create_roles():
     create_role(title=settings.role_admin, description='admin role description')
-
-
-@app.command()
-def create_subscriber_role():
     create_role(title=settings.role_subscriber, description='subscriber role description')
-
-
-@app.command()
-def create_guest_role():
     create_role(title=settings.role_guest, description='guest role description')
-
-
-@app.command()
-def create_user_role():
     create_role(title=settings.role_user, description='user role description')
 
 

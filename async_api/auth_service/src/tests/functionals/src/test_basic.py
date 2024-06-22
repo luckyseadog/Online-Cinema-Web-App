@@ -91,7 +91,7 @@ from httpx import codes
     ],
 )
 @pytest.mark.asyncio
-async def test_protected_handlers(params, answer, client):
+async def test_protected_handlers(params, answer, client, prepare_database):
     data = {
         'GET': client.get,
         'POST': client.post,

@@ -20,11 +20,25 @@ test_user = {
 
 
 @pytest.mark.asyncio
-async def test_signup(client):
+async def test_signup(client, prepare_database):
     response = await client.post(
         url='/signup',
-        data=test_user,
-        # headers={'Origin': settings.root_path }
+        json=test_user,
+        headers={'Origin': settings.root_path},
+    )
+    print(settings)
+    print(response.json())
+    assert response.status_code == 200
+    assert 1 == 1
+
+@pytest.mark.asyncio
+async def test_login(client, prepare_database):
+    response = await client.post(
+        url='/login',
+        data={
+            'username': test_user['login'],
+            'password': test_user['password'],
+        },
     )
     print(settings)
     print(response.json())

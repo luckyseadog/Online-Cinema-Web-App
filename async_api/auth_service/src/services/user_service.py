@@ -8,11 +8,17 @@ from models.entity import RoleModel, UserModel
 from schemas.entity import Role, User
 from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
+from functools import lru_cache
+from db.postgres_db import get_session
+from fastapi import Depends
 
 
 class UserService:
-    async def get_user(self, user_id: int, db: AsyncSession) -> User:
-        stmt = await db.execute(select(UserModel).where(UserModel.id == user_id))
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_user(self, user_id: int) -> User:
+        stmt = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
         user = stmt.scalars().one_or_none()
         if user:
             return User(
@@ -34,8 +40,8 @@ class UserService:
         else:
             return None
 
-    async def get_user_by_email(self, user_email: str, db: AsyncSession) -> User | None:
-        stmt = await db.execute(select(UserModel).where(UserModel.email == user_email))
+    async def get_user_by_email(self, user_email: str) -> User | None:
+        stmt = await self.db.execute(select(UserModel).where(UserModel.email == user_email))
         user = stmt.scalars().one_or_none()
         if user:
             return User(
@@ -57,8 +63,8 @@ class UserService:
         else:
             return None
 
-    async def get_user_by_login(self, user_login, db: AsyncSession) -> User:
-        stmt = await db.execute(select(UserModel).where(UserModel.login == user_login))
+    async def get_user_by_login(self, user_login) -> User:
+        stmt = await self.db.execute(select(UserModel).where(UserModel.login == user_login))
         user = stmt.scalars().one_or_none()
         if user:
             return User(
@@ -80,8 +86,8 @@ class UserService:
         else:
             return None
 
-    async def get_users(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> list[User]:
-        result = await db.execute(select(UserModel).offset(skip).limit(limit))
+    async def get_users(self, skip: int = 0, limit: int = 100) -> list[User]:
+        result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
         return [
             User(
                 id=user.id,
@@ -101,25 +107,27 @@ class UserService:
             ) for user in result.scalars()
         ]
 
-    async def create_user(self, user_create: User, db: AsyncSession) -> User:
+    async def create_user(self, user_create: User) -> User:
         user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ''
         user_dto = jsonable_encoder(user_create, exclude_none=True)
 
-        if "roles" in user_dto:
+        if 'roles' in user_dto:
             new_roles = []
-            for role in user_dto["roles"]:
-                result = await db.execute(select(RoleModel).where(RoleModel.title == role["title"]))
+            for role in user_dto['roles']:
+                result = await self.db.execute(select(RoleModel).where(RoleModel.title == role['title']))
                 returned_role = result.scalars().one_or_none()
                 if returned_role is None:
                     raise Exception
                 new_roles.append(returned_role)
 
-            user_dto["roles"] = new_roles
+            user_dto['roles'] = new_roles
+
+            print(self.db, self.redis)
 
         user = UserModel(**user_dto)
-        db.add(user)
-        await db.commit()
-        await db.refresh(user)
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             login=user.login,
@@ -137,7 +145,7 @@ class UserService:
             ],
         )
 
-    async def update_user(self, user_id: int, user_patch: UserPatch, db: AsyncSession):
+    async def update_user(self, user_id: int, user_patch: UserPatch):
         user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else ''
         query = (
             update(UserModel)
@@ -145,9 +153,9 @@ class UserService:
             .values(**user_patch.model_dump(exclude_none=True))
             .returning(UserModel)
         )
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         updated_user = result.scalars().one_or_none()
-        await db.commit()
+        await self.db.commit()
 
         if updated_user:
             return User(
@@ -169,16 +177,16 @@ class UserService:
         else:
             return None
 
-    async def delete_user(self, user_id: int, db: AsyncSession):
+    async def delete_user(self, user_id: int):
         query = (
             update(UserModel)
             .where(UserModel.id == user_id)
             .values(deleted_at=datetime.datetime.utcnow())
             .returning(UserModel)
         )
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         deleted_user = result.scalars().one_or_none()
-        await db.commit()
+        await self.db.commit()
 
         if deleted_user:
             return User(
@@ -200,89 +208,8 @@ class UserService:
         else:
             return None
 
-    async def assign_user_role(self, user_id: str, role_id: str, db: AsyncSession):
-        query_user = select(UserModel).where(UserModel.id == user_id)
-        query_role = select(RoleModel).where(RoleModel.id == role_id)
-
-        res_user = await db.execute(query_user)
-        res_role = await db.execute(query_role)
-        user = res_user.scalars().one_or_none()
-        role = res_role.scalars().one_or_none()
-
-        if not user or not role:
-            return {'detail': 'not found'}
-
-        if role in user.roles:
-            return {'detail': 'role already exists'}
-
-        user.roles.append(role)
-        await db.commit()
-        return User(
-            id=user.id,
-            login=user.login,
-            password=user.password,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-            is_superadmin=user.is_superadmin,
-            roles=[
-                Role(
-                    id=role.id,
-                    title=role.title,
-                    description=role.description,
-                ) for role in user.roles
-            ],
-        )
-
-    async def revoke_user_role(self, user_id: str, role_id: str, db: AsyncSession):
-        query_user = select(UserModel).where(UserModel.id == user_id)
-        query_role = select(RoleModel).where(RoleModel.id == role_id)
-
-        res_user = await db.execute(query_user)
-        res_role = await db.execute(query_role)
-        user = res_user.scalars().one_or_none()
-        role = res_role.scalars().one_or_none()
-
-        if not user or not role:
-            return {'detail': 'not found'}
-
-        if role not in user.roles:
-            return {'detail': 'not found for this user'}
-
-        user.roles.remove(role)
-        await db.commit()
-        return User(
-            id=user.id,
-            login=user.login,
-            password=user.password,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-            is_superadmin=user.is_superadmin,
-            roles=[
-                Role(
-                    id=role.id,
-                    title=role.title,
-                    description=role.description,
-                ) for role in user.roles
-            ],
-        )
-
-    async def check_user_role(self, user_id: str, role_id: str, db: AsyncSession):
-        query_user = select(UserModel).where(UserModel.id == user_id)
-        query_role = select(RoleModel).where(RoleModel.id == role_id)
-
-        res_user = await db.execute(query_user)
-        res_role = await db.execute(query_role)
-        user = res_user.scalars().one_or_none()
-        role = res_role.scalars().one_or_none()
-        if not user or not role:
-            return False
-
-        return role in user.roles
-
-    async def check_deleted(self, user_id: str, db: AsyncSession):
-        res_user = await db.execute(select(UserModel).where(UserModel.id == user_id))
+    async def check_deleted(self, user_id: str):
+        res_user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
         user = res_user.scalars().one_or_none()
 
         if user.deleted_at is not None:
@@ -291,4 +218,9 @@ class UserService:
             return False
 
 
-user_service = UserService()
+@lru_cache
+def get_user_service(
+        db: AsyncSession = Depends(get_session),
+) -> UserService:
+    # redis: RedisTokenStorage = Depends(get_redis)) -> UserService:
+    return UserService(db)
