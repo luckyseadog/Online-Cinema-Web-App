@@ -18,10 +18,5 @@
         "id": "02caa4aa-24c8-4abf-8927-b5e015e85788",
         "title": "subscriber",
         "description": "subscriber role"
-    },
-        {
-        "id": "8c9c4f4c-c3a6-44ae-baf3-7685ba2e1fca",
-        "title": "superadmin",
-        "description": "superadin role"
     }
 ]

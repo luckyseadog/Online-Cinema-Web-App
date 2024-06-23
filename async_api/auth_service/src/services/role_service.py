@@ -11,6 +11,7 @@ from fastapi import Depends
 from db.postgres_db import get_session
 from fastapi import HTTPException, status
 
+
 class RoleService:
     def __init__(self, db: AsyncSession):
         self.db = db

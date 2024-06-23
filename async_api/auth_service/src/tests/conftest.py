@@ -21,15 +21,15 @@ def event_loop():
 @pytest_asyncio.fixture(scope='session')
 async def client():
     async with httpx.AsyncClient(transport=ASGITransport(app), base_url=settings.root_path) as client:
-        # async with httpx.AsyncClient(app=app, base_url=settings.root_path) as client:
         yield client
 
-@pytest_asyncio.fixture(scope='session')
-async def cookies(prepare_database, fill_db, client):
+
+@pytest_asyncio.fixture(scope='function')
+async def superadmin_cookies(prepare_database, super_admin, client):
     response = await client.post(
         '/login', data={
-            'username': 'superadmin',
-            'password': 'superadmin',
+            'username': settings.sa_login,
+            'password': settings.sa_password,
         },
         headers={'Origin': settings.root_path},
     )
