@@ -1,6 +1,6 @@
 import datetime
-from typing import Optional
 from redis.asyncio import Redis
+from core.config import settings
 
 ACCESS_TOKEN_BANNED = 'banned_tokens'
 REFRESH_TOKENS_VALID = 'valid_refresh'
@@ -122,8 +122,20 @@ MIN_TIME = datetime.datetime(1971, 1, 1, 0, 0, 0).timestamp()
 
 
 # redis: Optional[RedisTokenStorage] = None
-redis: Optional[Redis] = None
+# redis_session = Redis(host=settings.redis_host, port=settings.redis_port, db=0, decode_responses=True)
+#
+# cache: Optional[Redis] = None
+#
+#
+# async def get_redis() -> Redis:
+#     return redis_session
 
 
+redis_session = Redis(host=settings.redis_host, port=settings.redis_port, ssl=False)
+
+redis: Redis | None = None
+
+
+# Функция понадобится при внедрении зависимостей
 async def get_redis() -> Redis:
-    return redis
+    return redis_session

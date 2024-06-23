@@ -6,7 +6,6 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from api.v1 import admin, auth, roles, users
-from core.config import settings
 from core.logger import LOGGING
 from db import postgres_db, redis_db
 
@@ -15,7 +14,8 @@ from db import postgres_db, redis_db
 async def lifespan(app: FastAPI):
     logging.info('start')
     pg_session = postgres_db.get_session()
-    redis_db.redis = redis_db.Redis(host=settings.redis_host, port=settings.redis_port, db=0, decode_responses=True)
+    redis_db.redis = redis_db.get_redis()
+
     yield
     await pg_session.aclose()
     await redis_db.redis.close()

@@ -11,11 +11,11 @@ test_user = {
     # 'first_name': 'first_name',
     # 'last_name': 'last_name'
 
-    'login': 'string',
+    'login': 'superadmin',
     'email': 'string',
     'first_name': 'string',
     'last_name': 'string',
-    'password': 'string',
+    'password': 'superadmin',
 }
 
 
@@ -31,14 +31,16 @@ async def test_signup(client, prepare_database):
     assert response.status_code == 200
     assert 1 == 1
 
+
 @pytest.mark.asyncio
-async def test_login(client, prepare_database):
+async def test_login(prepare_database, fill_db, client):
     response = await client.post(
         url='/login',
         data={
-            'username': test_user['login'],
-            'password': test_user['password'],
+            'username': 'superadmin',
+            'password': 'superadmin',
         },
+        headers={'Origin': settings.root_path},
     )
     print(settings)
     print(response.json())

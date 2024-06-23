@@ -1,16 +1,16 @@
 [
   {
     "id": "bfd6f975-ff65-4cf0-b0a5-1efd16c4f744",
-    "login": "andrew95",
-    "email": "brownlisa@example.com",
-    "password": "WXVQs+pN^2",
+    "login": "superadmin",
+    "email": "superadmin@example.com",
+    "password": "superadmin",
     "first_name": "Jennifer",
     "last_name": "Carter",
     "roles": [
       {
-        "id": "28813998-4098-4c8d-b4f0-08c1169390c1",
-        "title": "user",
-        "description": "user role"
+        "id": "8c9c4f4c-c3a6-44ae-baf3-7685ba2e1fca",
+        "title": "superadmin",
+        "description": "superadmin role"
       }
     ],
     "history": [

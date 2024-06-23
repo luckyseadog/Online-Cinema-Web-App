@@ -1,18 +1,15 @@
 import asyncio
 
 from httpx import ASGITransport
-from sqlalchemy.ext.asyncio import create_async_engine
-# from sqlalchemy.orm import sessionmaker
 import pytest_asyncio
-from models.entity import Base
 import httpx
 from main import app
-# import json
-# import os
-# from models.entity import RoleModel, UserModel, UserRoleModel, UserHistoryModel
-# from datetime import datetime
 from tests.settings import settings
 
+
+pytest_plugins = (
+    'tests.functionals.fixtures.db',
+)
 
 @pytest_asyncio.fixture(scope='session')
 def event_loop():
@@ -28,19 +25,19 @@ async def client():
         yield client
 
 
-@pytest_asyncio.fixture(scope='session')
-async def prepare_database():
-    DSN = (
-        f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_pass}'
-        f'@{settings.pg_host}:{settings.pg_port}/{settings.pg_db}'
-    )
-    engine = create_async_engine(DSN, echo=False, future=True)
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+# @pytest_asyncio.fixture(scope='session')
+# async def prepare_database():
+#     DSN = (
+#         f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_pass}'
+#         f'@{settings.pg_host}:{settings.pg_port}/{settings.pg_db}'
+#     )
+#     engine = create_async_engine(DSN, echo=False, future=True)
+#
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+#     yield
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.drop_all)
 
 
 # @pytest_asyncio.fixture(scope='session')
