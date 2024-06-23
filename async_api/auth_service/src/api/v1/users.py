@@ -24,7 +24,7 @@ async def change_user(
     payload: AccessTokenData = Depends(validate_access_token),
     db: AsyncSession = Depends(get_session),
 ):
-    if await user_service.check_deleted(payload.sub, db):
+    if await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -37,7 +37,7 @@ async def change_user(
     # )
     # await history_service.make_note(note, db)
 
-    db_user = await user_service.update_user(payload.sub, user_patch, db)
+    db_user = await user_service.update_user(payload.sub, user_patch)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
     return db_user
@@ -51,7 +51,7 @@ async def delete_user(
     payload: AccessTokenData = Depends(),
     db: AsyncSession = Depends(get_session),
 ):
-    if await user_service.check_deleted(payload.sub, db):
+    if await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -64,7 +64,7 @@ async def delete_user(
     # )
     # await history_service.make_note(note, db)
 
-    db_user = await user_service.delete_user(payload.sub, db)
+    db_user = await user_service.delete_user(payload.sub)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
 

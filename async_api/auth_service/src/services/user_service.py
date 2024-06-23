@@ -108,7 +108,7 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User) -> User:
-        user_create.password = password_service.compute_hash(user_create.password) if user_create.password else ''
+        user_create.password = password_service.compute_hash(user_create.password)
         user_dto = jsonable_encoder(user_create, exclude_none=True)
 
         if 'roles' in user_dto:
@@ -121,8 +121,6 @@ class UserService:
                 new_roles.append(returned_role)
 
             user_dto['roles'] = new_roles
-
-            print(self.db, self.redis)
 
         user = UserModel(**user_dto)
         self.db.add(user)
@@ -137,11 +135,13 @@ class UserService:
             email=user.email,
             is_superadmin=user.is_superadmin,
             roles=[
+                # jsonable_encoder(
                 Role(
                     id=role.id,
                     title=role.title,
                     description=role.description,
                 ) for role in user.roles
+                #        )
             ],
         )
 

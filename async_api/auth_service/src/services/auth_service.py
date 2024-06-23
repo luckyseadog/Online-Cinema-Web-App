@@ -47,7 +47,7 @@ class AuthService:
         if not password_service.check_password(password, target_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Invalid username or password',
+                detail=f'Invalid username or password {password} {target_password}',
             )
 
         at = AccessTokenService()
@@ -58,7 +58,7 @@ class AuthService:
 
         note = History(
             user_id=user.id,
-            action='/logout',
+            action='/login',
             fingerprint=user_agent,
         )
         await self.history_service.make_note(note)

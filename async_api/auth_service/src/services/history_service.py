@@ -29,7 +29,12 @@ class HistoryService:
         )
 
     async def get_last_notes(self, skip: int = 0, limit: int = 10) -> list[History]:
-        result = await self.db.execute(select(UserHistoryModel).offset(skip).limit(limit))
+        result = await self.db.execute(
+            select(UserHistoryModel)
+            .offset(skip)
+            .limit(limit)
+            .order_by(UserHistoryModel.occured_at.desc()),
+        )
 
         return [
             History(
