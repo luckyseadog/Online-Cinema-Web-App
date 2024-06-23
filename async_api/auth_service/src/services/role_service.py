@@ -6,11 +6,10 @@ from sqlalchemy import delete, select, update
 from db.postgres_db import AsyncSession
 from models.entity import RoleModel
 from schemas.entity import Role
-from schemas.entity_schemas import RolePatch
 from functools import lru_cache
 from fastapi import Depends
 from db.postgres_db import get_session
-
+from fastapi import HTTPException, status
 
 class RoleService:
     def __init__(self, db: AsyncSession):
@@ -55,23 +54,26 @@ class RoleService:
         else:
             return
 
-    async def update_role(self, role_id: str, role_patch: RolePatch) -> Role:
+    async def update_role(self, role_patch: Role) -> Role:
         logging.warn(role_patch.model_dump(exclude_none=True))
         query = (
             update(RoleModel)
-            .where(RoleModel.id == str(role_id))
-            .values(**role_patch.model_dump(exclude_none=True))
+            .where(RoleModel.id == str(role_patch.id))
+            # .values(**role_patch.model_dump(exclude_none=True))
+            .values(title=role_patch.title, description=role_patch.description)
             .returning(RoleModel)
         )
         result = await self.db.execute(query)
         updated_role = result.scalars().one_or_none()
 
         if not updated_role:
-            return
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'role with id {role_patch.id} does not exist',
+            )
 
         await self.db.commit()
-        resp = Role(id=updated_role.id, title=updated_role.title, description=updated_role.description)
-        return resp
+        return role_patch
 
     async def delete_role(self, role_id: str):
         result = await self.db.execute(delete(RoleModel).where(RoleModel.id == role_id).returning(RoleModel))

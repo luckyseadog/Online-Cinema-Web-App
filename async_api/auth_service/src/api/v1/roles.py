@@ -3,8 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 
-from schemas.entity import Role
-from schemas.entity_schemas import AccessTokenData, RolePatch
+from schemas.entity_schemas import AccessTokenData, Role
 from services.user_service import UserService, get_user_service
 from services.role_service import RoleService, get_role_service
 from services.validation import check_admin_or_super_admin_role_from_access_token
@@ -31,12 +30,6 @@ async def get_roles(
             detail='User was deleted',
         )
 
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/roles[GET]',
-    #     fingerprint=user_agent,
-    # )
-    # # await history_service.make_note(note, db)
     return await role_service.get_roles()
 
 
@@ -60,43 +53,30 @@ async def add_role(
             detail='User was deleted',
         )
 
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/roles[POST]',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
     return await role_service.create_role(role_create=role_create)
 
 
 @router.put(
     '/roles',
-    #     response_model=,
+    response_model=Role,
     status_code=status.HTTP_200_OK,
     summary='Обновление роли',
     description='',
 )
 async def update_role(
-    role_id: UUID,
-    role_patch: RolePatch,
+    role_patch: Role,
     role_service: Annotated[RoleService, Depends(get_role_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
-):
+) -> Role:
     if await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
 
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/roles[PUT]',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
-    return await role_service.update_role(role_id=str(role_id), role_patch=role_patch)
+    return await role_service.update_role(role_patch)
 
 
 @router.delete(
@@ -117,11 +97,4 @@ async def delete_role(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
-
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/roles[delete]',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
     return await role_service.delete_role(role_id=str(role_id))
