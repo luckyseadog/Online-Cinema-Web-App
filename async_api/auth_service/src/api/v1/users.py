@@ -11,9 +11,29 @@ from schemas.entity_schemas import AccessTokenData, UserPatch
 # from services.depends import get_current_user
 from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
-from services.validation import validate_access_token
+from services.validation import validate_access_token, check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
+
+@router.get(
+    path='/',
+    response_model=list[User],
+    status_code=status.HTTP_200_OK,
+    summary='Получение списка пользователей',
+    description='Получить список пользователй из БД',
+)
+async def get_users(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    user_agent: Annotated[str | None, Header()] = None,
+    payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
+):
+    if await user_service.check_deleted(payload.sub):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+    users = await user_service.get_users()
+    return users
 
 
 @router.put('/')

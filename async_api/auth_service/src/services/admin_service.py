@@ -5,6 +5,7 @@ from db.postgres_db import get_session
 from sqlalchemy import select
 from models.entity import UserModel, RoleModel
 from schemas.entity import User, Role
+from fastapi import HTTPException, status
 
 class AdminService:
 
@@ -20,11 +21,22 @@ class AdminService:
         user = res_user.scalars().one_or_none()
         role = res_role.scalars().one_or_none()
 
-        if not user or not role:
-            return {'detail': 'not found'}
+        if not role:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found role: {role_id}',
+            )
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found user: {user_id}',
+            )
 
         if role in user.roles:
-            return {'detail': 'role already exists'}
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='role already exists',
+            )
 
         user.roles.append(role)
         await self.db.commit()
@@ -54,11 +66,22 @@ class AdminService:
         user = res_user.scalars().one_or_none()
         role = res_role.scalars().one_or_none()
 
-        if not user or not role:
-            return {'detail': 'not found'}
+        if not role:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found role: {role_id }',
+            )
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found user: {user_id}',
+            )
 
         if role not in user.roles:
-            return {'detail': 'not found for this user'}
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f'role {role_id} not fount in user',
+            )
 
         user.roles.remove(role)
         await self.db.commit()
@@ -87,10 +110,25 @@ class AdminService:
         res_role = await self.db.execute(query_role)
         user = res_user.scalars().one_or_none()
         role = res_role.scalars().one_or_none()
-        if not user or not role:
-            return False
+
+        if not role:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found role: {role_id}',
+            )
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found user: {user_id}',
+            )
 
         return role in user.roles
+        # if role not in user.roles:
+        # raise HTTPException(
+        #     status_code=status.HTTP_409_CONFLICT,
+        #     detail='role not fount in user'
+        # )
 
 
 @lru_cache

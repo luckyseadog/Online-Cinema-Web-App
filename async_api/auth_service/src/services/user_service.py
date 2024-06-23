@@ -10,7 +10,7 @@ from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
 from functools import lru_cache
 from db.postgres_db import get_session
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 
 
 class UserService:
@@ -146,7 +146,21 @@ class UserService:
         )
 
     async def update_user(self, user_id: int, user_patch: UserPatch):
-        user_patch.password = password_service.compute_hash(user_patch.password) if user_patch.password else ''
+        user_patch.password = password_service.compute_hash(user_patch.password)
+
+        user = await self.get_user_by_email(user_patch.email)
+        if user and user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f'User with this email {user.email} already exists',
+            )
+        user = await self.get_user_by_login(user_patch.login)
+        if user and user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f'User with this login {user.login} already exists',
+            )
+
         query = (
             update(UserModel)
             .where(UserModel.id == user_id)
