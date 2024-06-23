@@ -24,6 +24,17 @@ async def client():
         # async with httpx.AsyncClient(app=app, base_url=settings.root_path) as client:
         yield client
 
+@pytest_asyncio.fixture(scope='session')
+async def cookies(prepare_database, fill_db, client):
+    response = await client.post(
+        '/login', data={
+            'username': 'superadmin',
+            'password': 'superadmin',
+        },
+        headers={'Origin': settings.root_path},
+    )
+    yield response.cookies
+
 
 # @pytest_asyncio.fixture(scope='session')
 # async def prepare_database():
