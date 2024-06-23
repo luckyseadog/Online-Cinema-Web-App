@@ -7,50 +7,49 @@ from httpx import codes
     [
         (
             {
-                'url': '/admin/roles/roles',
+                'url': '/admin/roles',
                 'method': 'GET',
             },
             {'status': codes.UNAUTHORIZED},
         ),
         (
             {
-                'url': '/admin/roles/roles',
+                'url': '/admin/roles',
                 'method': 'PUT',
             },
             {'status': codes.UNAUTHORIZED},
         ),
         (
             {
-                'url': '/admin/roles/roles',
+                'url': '/admin/roles',
                 'method': 'POST',
             },
             {'status': codes.UNAUTHORIZED},
         ),
         (
             {
-                'url': '/admin/roles/roles',
+                'url': '/admin/roles',
                 'method': 'DELETE',
             },
             {'status': codes.UNAUTHORIZED},
         ),
         (
             {
-                'url': '/users/users',
+                'url': '/users',
                 'method': 'GET',
             },
             {'status': codes.UNAUTHORIZED},
         ),
-
         (
             {
-                'url': '/users/',
+                'url': '/users',
                 'method': 'PUT',
             },
-            {'status': codes.UNPROCESSABLE_ENTITY},
+            {'status': codes.UNAUTHORIZED},
         ),
         (
             {
-                'url': '/users/',
+                'url': '/users',
                 'method': 'DELETE',
             },
             {'status': codes.UNAUTHORIZED},
@@ -71,11 +70,68 @@ from httpx import codes
         ),
         (
             {
+                'url': '/admin/user_role/assign',
+                'method': 'POST',
+            },
+            {'status': codes.UNAUTHORIZED},
+        ),
+        (
+            {
+                'url': '/admin/user_role/revoke',
+                'method': 'POST',
+            },
+            {'status': codes.UNAUTHORIZED},
+        ),
+        (
+            {
+                'url': '/admin/user_role/check',
+                'method': 'POST',
+            },
+            {'status': codes.UNAUTHORIZED},
+        ),
+        (
+            {
                 'url': '/logout',
                 'method': 'POST',
             },
             {'status': codes.UNAUTHORIZED},
         ),
+        (
+            {
+                'url': '/logout_all',
+                'method': 'POST',
+            },
+            {'status': codes.UNAUTHORIZED},
+        ),
+        (
+            {
+                'url': '/refresh',
+                'method': 'POST',
+            },
+            {'status': codes.UNAUTHORIZED},
+        ),
+        (
+            {
+                'url': '/signup',
+                'method': 'POST',
+            },
+            {'status': codes.UNPROCESSABLE_ENTITY},
+        ),
+        (
+            {
+                'url': '/login',
+                'method': 'POST',
+            },
+            {'status': codes.UNPROCESSABLE_ENTITY},
+        ),
+        (
+            {
+                'url': '/signup_guest',
+                'method': 'POST',
+            },
+            {'status': codes.BAD_REQUEST},
+        ),
+
     ],
     ids=[
         'GET /roles',
@@ -87,7 +143,15 @@ from httpx import codes
         'DELETE /users',
         'GET /users/me',
         'GET /users/history',
+        'POST /admin/user_role/assign',
+        'POST /admin/user_role/revoke',
+        'POST /admin/user_role/check',
         'POST /logout',
+        'POST /logout_all',
+        'POST /refresh',
+        'POST /signup',
+        'POST /login',
+        'POST /signup_guest',
     ],
 )
 @pytest.mark.asyncio

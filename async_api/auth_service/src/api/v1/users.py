@@ -16,7 +16,7 @@ from services.validation import validate_access_token, check_admin_or_super_admi
 router = APIRouter()
 
 @router.get(
-    path='/',
+    path='/users',
     response_model=list[User],
     status_code=status.HTTP_200_OK,
     summary='Получение списка пользователей',
@@ -36,7 +36,7 @@ async def get_users(
     return users
 
 
-@router.put('/')
+@router.put('/users')
 async def change_user(
     user_patch: UserPatch,
     user_service: Annotated[UserService, Depends(get_user_service)],
@@ -50,39 +50,25 @@ async def change_user(
             detail='User was deleted',
         )
 
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/user[patch]',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
-
     db_user = await user_service.update_user(payload.sub, user_patch)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
     return db_user
 
 
-@router.delete('/')
+@router.delete('/users')
 async def delete_user(
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
-    payload: AccessTokenData = Depends(),
-    db: AsyncSession = Depends(get_session),
+    payload: AccessTokenData = Depends(validate_access_token),
+    # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
     if await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
-
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/user[delete]',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
 
     db_user = await user_service.delete_user(payload.sub)
     if not db_user:
@@ -94,7 +80,7 @@ async def delete_user(
     return db_user
 
 
-@router.get('/history')
+@router.get('/users/history')
 async def get_history(
     user_service: Annotated[UserService, Depends(get_user_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
@@ -107,19 +93,12 @@ async def get_history(
             detail='User was deleted',
         )
 
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/user/history',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note, db)
-
     user_history = await history_service.get_last_user_notes(payload.sub)
     return user_history
 
 
 @router.get(
-    '/me',
+    '/users/me',
     response_model=User,
 )
 async def get_me(
@@ -132,13 +111,6 @@ async def get_me(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
-
-    # note = History(
-    #     user_id=payload.sub,
-    #     action='/user/me',
-    #     fingerprint=user_agent,
-    # )
-    # await history_service.make_note(note)
 
     user = await user_service.get_user(payload.sub)
     return user

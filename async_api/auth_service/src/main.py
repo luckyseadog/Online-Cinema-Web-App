@@ -34,8 +34,8 @@ app = FastAPI(
 
 app.include_router(admin.router, prefix='/api/v1/auth/admin', tags=['admin'])
 app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])
-app.include_router(users.router, prefix='/api/v1/auth/users', tags=['users'])
-app.include_router(roles.router, prefix='/api/v1/auth/admin/roles', tags=['roles'])
+app.include_router(users.router, prefix='/api/v1/auth', tags=['users'])
+app.include_router(roles.router, prefix='/api/v1/auth/admin', tags=['roles'])
 
 
 if __name__ == '__main__':
