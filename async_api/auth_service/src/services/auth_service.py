@@ -17,7 +17,7 @@ from services.token_service import (
     RefreshTokenService,
 )
 from services.history_service import HistoryService, get_history_service
-from datetime import datetime, UTC
+from datetime import datetime
 
 
 class AuthService:
@@ -100,7 +100,7 @@ class AuthService:
         await self.cache.setex(
             f'{user_id}:logout:_all_',
             settings.access_token_min * 60,
-            datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S'),
+            datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
         )
         keys = await self.cache.keys(pattern=f'{user_id}:login:*')
         await self.cache.delete(*keys)

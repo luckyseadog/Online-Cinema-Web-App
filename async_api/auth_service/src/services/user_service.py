@@ -61,8 +61,6 @@ class UserService:
                     ) for role in user.roles
                 ],
             )
-        else:
-            return None
 
     async def get_user_by_login(self, user_login) -> User:
         stmt = await self.db.execute(select(UserModel).where(UserModel.login == user_login))
@@ -84,8 +82,6 @@ class UserService:
                     ) for role in user.roles
                 ],
             )
-        else:
-            return None
 
     async def get_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
@@ -109,6 +105,14 @@ class UserService:
         ]
 
     async def create_user(self, user_create: User) -> User:
+        user = await self.get_user_by_email(user_create.email)
+        if user:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='email already exists')
+
+        user = await self.get_user_by_login(user_create.login)
+        if user:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
+
         user_create.password = password_service.compute_hash(user_create.password)
         user_dto = jsonable_encoder(user_create, exclude_none=True)
 

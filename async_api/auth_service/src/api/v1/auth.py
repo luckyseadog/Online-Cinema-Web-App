@@ -40,6 +40,7 @@ router = APIRouter()
     'Если пользователь с таким логином и почтой уже существует возвращается ошибка 409 с описанием,
     'что такой пользователь уже существует.\n''
     ''',
+    response_model=User,
 )
 async def signup(
     user_create: UserCreate,
@@ -53,16 +54,8 @@ async def signup(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
-    user = await user_service.get_user_by_email(user_create.email)
-    if user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='email already exists')
-
-    user = await user_service.get_user_by_login(user_create.login)
-    if user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
-
-    user = await user_service.create_user(user_create)
-    return {'message': 'User created successfully'}
+    return await user_service.create_user(user_create)
+    # return {'message': 'User created successfully'}
 
 
 @router.post(
