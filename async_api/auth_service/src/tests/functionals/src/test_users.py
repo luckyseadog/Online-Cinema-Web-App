@@ -100,9 +100,22 @@ async def test_delete_not_existing_user(client, superadmin_cookies):
         cookies=superadmin_cookies,
         params={'user_id': user_for_update_or_delete['id']},
     )
+
     print(response.json())
     assert response.status_code == codes.NOT_FOUND
     assert response.json() == {'detail': f'User with id {user_for_update_or_delete["id"]} not found'}
+
+
+@pytest.mark.asyncio
+async def test_get_me(client, superadmin_cookies):
+    response = await client.get(
+        url='/users/me',
+        cookies=superadmin_cookies,
+    )
+    print(response.json())
+    assert response.status_code == codes.OK
+    assert response.json()['login'] == settings.sa_login
+    assert response.json()['email'] == settings.sa_email
 
 
 # @pytest.mark.asyncio

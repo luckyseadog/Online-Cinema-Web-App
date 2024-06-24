@@ -71,7 +71,9 @@ async def users_in_db(async_session: AsyncSession):
             )
             async_session.add(user)
         await async_session.flush()
-        await async_session.commit()  # data = json.load(file)
+        await async_session.commit()
+
+        # data = json.load(file)
         #             for item in data:
         #                 user = UserModel(
         #                     id=item['id'],

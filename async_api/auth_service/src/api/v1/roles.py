@@ -25,7 +25,7 @@ async def get_roles(
     payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 ) -> list[Role]:
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -48,7 +48,7 @@ async def add_role(
     payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -71,7 +71,7 @@ async def update_role(
     payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 ) -> Role:
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -93,7 +93,7 @@ async def delete_role(
     payload: Annotated[AccessTokenData, Depends(check_admin_or_super_admin_role_from_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',

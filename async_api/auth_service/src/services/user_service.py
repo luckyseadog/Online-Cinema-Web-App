@@ -197,7 +197,7 @@ class UserService:
 
     async def delete_user(self, user_id: str) -> User:
 
-        if not self.check_deleted(user_id):
+        if not self.is_deleted(user_id):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f'User with id {user_id} already deleted',
@@ -234,7 +234,7 @@ class UserService:
             ],
         )
 
-    async def check_deleted(self, user_id: str):
+    async def is_deleted(self, user_id: str):
         user = await self.get_user(user_id)
         if not user:
             raise HTTPException(

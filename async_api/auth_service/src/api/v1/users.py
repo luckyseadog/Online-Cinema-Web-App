@@ -24,7 +24,7 @@ async def get_users(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -40,7 +40,7 @@ async def change_user(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -61,7 +61,7 @@ async def delete_user(
     payload: AccessTokenData = Depends(validate_access_token),
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User with admin role was deleted',
@@ -84,7 +84,7 @@ async def get_history(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ) -> list[History]:
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -103,7 +103,7 @@ async def get_me(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
-    if not await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
