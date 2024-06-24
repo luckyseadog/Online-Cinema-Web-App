@@ -57,6 +57,34 @@ async def roles_in_db(async_session: AsyncSession):
 
 
 @pytest_asyncio.fixture(scope='function')
+async def users_in_db(async_session: AsyncSession):
+    with open(f'{os.path.dirname(os.path.realpath(__file__))}/../testdata/data/users.json') as file:
+        data = json.load(file)
+        for item in data[:10]:
+            user = UserModel(
+                id=item['id'],
+                login=item['login'],
+                password=password_service.compute_hash(item['password']),
+                email=item['email'],
+                first_name=item['first_name'],
+                last_name=item['last_name'],
+            )
+            async_session.add(user)
+        await async_session.flush()
+        await async_session.commit()  # data = json.load(file)
+        #             for item in data:
+        #                 user = UserModel(
+        #                     id=item['id'],
+        #                     login=item['login'],
+        #                     password=password_service.compute_hash(item['password']),
+        #                     email=item['email'],
+        #                     first_name=item['first_name'],
+        #                     last_name=item['last_name'],
+        #                 )
+        #                 async_session.add(user)
+
+
+@pytest_asyncio.fixture(scope='function')
 async def super_admin(async_session: AsyncSession):
     role_id = str(uuid4())
     user_id = str(uuid4())

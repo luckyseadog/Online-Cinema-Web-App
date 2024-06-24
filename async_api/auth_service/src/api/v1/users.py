@@ -2,13 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from fastapi.responses import ORJSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from db.postgres_db import get_session
 from schemas.entity import History, User
-from schemas.entity_schemas import AccessTokenData, UserPatch
-# from services.depends import get_current_user
+from schemas.entity_schemas import AccessTokenData
 from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
 from services.validation import validate_access_token, check_admin_or_super_admin_role_from_access_token
@@ -27,7 +24,7 @@ async def get_users(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
-    if await user_service.check_deleted(payload.sub):
+    if not await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -38,19 +35,18 @@ async def get_users(
 
 @router.put('/users')
 async def change_user(
-    user_patch: UserPatch,
+    user_patch: User,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
-    db: AsyncSession = Depends(get_session),
 ):
-    if await user_service.check_deleted(payload.sub):
+    if not await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
 
-    db_user = await user_service.update_user(payload.sub, user_patch)
+    db_user = await user_service.update_user(user_patch)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
     return db_user
@@ -58,19 +54,20 @@ async def change_user(
 
 @router.delete('/users')
 async def delete_user(
+    user_id: str,
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
-    if await user_service.check_deleted(payload.sub):
+    if not await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User was deleted',
+            detail='User with admin role was deleted',
         )
 
-    db_user = await user_service.delete_user(payload.sub)
+    db_user = await user_service.delete_user(user_id)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
 
@@ -87,7 +84,7 @@ async def get_history(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ) -> list[History]:
-    if await user_service.check_deleted(payload.sub):
+    if not await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -106,7 +103,7 @@ async def get_me(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
-    if await user_service.check_deleted(payload.sub):
+    if not await user_service.check_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',

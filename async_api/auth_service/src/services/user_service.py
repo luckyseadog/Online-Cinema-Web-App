@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, update
@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.entity import RoleModel, UserModel
 from schemas.entity import Role, User
-from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
 from functools import lru_cache
 from db.postgres_db import get_session
@@ -20,25 +19,27 @@ class UserService:
     async def get_user(self, user_id: int) -> User:
         stmt = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
         user = stmt.scalars().one_or_none()
-        if user:
-            return User(
-                id=user.id,
-                login=user.login,
-                password=user.password,
-                first_name=user.first_name,
-                last_name=user.last_name,
-                email=user.email,
-                is_superadmin=user.is_superadmin,
-                roles=[
-                    Role(
-                        id=role.id,
-                        title=role.title,
-                        description=role.description,
-                    ) for role in user.roles
-                ],
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'not found user: {user_id}',
             )
-        else:
-            return None
+        return User(
+            id=user.id,
+            login=user.login,
+            password=user.password,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            is_superadmin=user.is_superadmin,
+            roles=[
+                Role(
+                    id=role.id,
+                    title=role.title,
+                    description=role.description,
+                ) for role in user.roles
+            ],
+        )
 
     async def get_user_by_email(self, user_email: str) -> User | None:
         stmt = await self.db.execute(select(UserModel).where(UserModel.email == user_email))
@@ -145,17 +146,17 @@ class UserService:
             ],
         )
 
-    async def update_user(self, user_id: int, user_patch: UserPatch):
+    async def update_user(self, user_patch: User):
         user_patch.password = password_service.compute_hash(user_patch.password)
 
         user = await self.get_user_by_email(user_patch.email)
-        if user and user.id != user_id:
+        if user and user.id != user_patch.id:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f'User with this email {user.email} already exists',
             )
         user = await self.get_user_by_login(user_patch.login)
-        if user and user.id != user_id:
+        if user and user.id != user_patch.id:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f'User with this login {user.login} already exists',
@@ -163,7 +164,7 @@ class UserService:
 
         query = (
             update(UserModel)
-            .where(UserModel.id == user_id)
+            .where(UserModel.id == user_patch.id)
             .values(**user_patch.model_dump(exclude_none=True))
             .returning(UserModel)
         )
@@ -171,65 +172,76 @@ class UserService:
         updated_user = result.scalars().one_or_none()
         await self.db.commit()
 
-        if updated_user:
-            return User(
-                id=updated_user.id,
-                login=updated_user.login,
-                password=updated_user.password,
-                first_name=updated_user.first_name,
-                last_name=updated_user.last_name,
-                email=updated_user.email,
-                is_superadmin=updated_user.is_superadmin,
-                roles=[
-                    Role(
-                        id=role.id,
-                        title=role.title,
-                        description=role.description,
-                    ) for role in updated_user.roles
-                ],
+        if not updated_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'User with id {user_patch.id} not found',
             )
-        else:
-            return None
 
-    async def delete_user(self, user_id: int):
+        return User(
+            id=updated_user.id,
+            login=updated_user.login,
+            password=updated_user.password,
+            first_name=updated_user.first_name,
+            last_name=updated_user.last_name,
+            email=updated_user.email,
+            is_superadmin=updated_user.is_superadmin,
+            roles=[
+                Role(
+                    id=role.id,
+                    title=role.title,
+                    description=role.description,
+                ) for role in updated_user.roles
+            ],
+        )
+
+    async def delete_user(self, user_id: str) -> User:
+
+        if not self.check_deleted(user_id):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f'User with id {user_id} already deleted',
+            )
+
         query = (
             update(UserModel)
             .where(UserModel.id == user_id)
-            .values(deleted_at=datetime.datetime.utcnow())
+            .values(deleted_at=datetime.utcnow())
             .returning(UserModel)
         )
         result = await self.db.execute(query)
         deleted_user = result.scalars().one_or_none()
         await self.db.commit()
-
-        if deleted_user:
-            return User(
-                id=deleted_user.id,
-                login=deleted_user.login,
-                password=deleted_user.password,
-                first_name=deleted_user.first_name,
-                last_name=deleted_user.last_name,
-                email=deleted_user.email,
-                is_superadmin=deleted_user.is_superadmin,
-                roles=[
-                    Role(
-                        id=role.id,
-                        title=role.title,
-                        description=role.description,
-                    ) for role in deleted_user.roles
-                ],
+        if not deleted_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'User with id {user_id} not found',
             )
-        else:
-            return None
+        return User(
+            id=deleted_user.id,
+            login=deleted_user.login,
+            password=deleted_user.password,
+            first_name=deleted_user.first_name,
+            last_name=deleted_user.last_name,
+            email=deleted_user.email,
+            is_superadmin=deleted_user.is_superadmin,
+            roles=[
+                Role(
+                    id=role.id,
+                    title=role.title,
+                    description=role.description,
+                ) for role in deleted_user.roles
+            ],
+        )
 
     async def check_deleted(self, user_id: str):
-        res_user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
-        user = res_user.scalars().one_or_none()
-
-        if user.deleted_at is not None:
-            return True
-        else:
-            return False
+        user = await self.get_user(user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'User with id {user_id} not found',
+            )
+        return False if user.deleted_at is None else True
 
 
 @lru_cache
