@@ -1,25 +1,18 @@
 from typing import Annotated, Union
-
-from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
-from fastapi.responses import ORJSONResponse
-from fastapi.security.oauth2 import (
-    OAuth2PasswordRequestForm,
-)
+from uuid import uuid4
 
 from core.config import settings
-from schemas.entity_schemas import (
-    AccessTokenData, RefreshTokenData,
-    TokenPair, UserCreate, UserCredentials,
-)
-from schemas.entity import User
-
-from services.user_service import UserService, get_user_service
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
+from fastapi.responses import ORJSONResponse
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from schemas.entity import History, User
+from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
+                                    TokenPair, UserCreate, UserCredentials)
 from services.auth_service import AuthService, get_auth_service
-from services.role_service import RoleService, get_role_service
-from services.validation import validate_access_token, validate_refresh_token
-from uuid import uuid4
-from schemas.entity import History
 from services.history_service import HistoryService, get_history_service
+from services.role_service import RoleService, get_role_service
+from services.user_service import UserService, get_user_service
+from services.validation import validate_access_token, validate_refresh_token
 
 router = APIRouter()
 

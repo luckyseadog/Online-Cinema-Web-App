@@ -1,14 +1,13 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
-
-from schemas.entity import User
+from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData, UpdateUserRole
-from services.validation import check_admin_or_super_admin_role_from_access_token
-from services.user_service import UserService, get_user_service
 from services.admin_service import AdminService, get_admin_service
-from schemas.entity import History
 from services.history_service import HistoryService, get_history_service
+from services.user_service import UserService, get_user_service
+from services.validation import \
+    check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
 

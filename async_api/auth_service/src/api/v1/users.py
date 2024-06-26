@@ -1,16 +1,14 @@
 from typing import Annotated
 
+from core.config import settings
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from fastapi.responses import ORJSONResponse
-
-from core.config import settings
 from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData
+from services.history_service import HistoryService, get_history_service
 from services.user_service import UserService, get_user_service
-from services.history_service import HistoryService, get_history_service
-from services.validation import validate_access_token, check_admin_or_super_admin_role_from_access_token
-from schemas.entity import History
-from services.history_service import HistoryService, get_history_service
+from services.validation import (
+    check_admin_or_super_admin_role_from_access_token, validate_access_token)
 
 router = APIRouter()
 

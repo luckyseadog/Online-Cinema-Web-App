@@ -2,14 +2,13 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
-
+from schemas.entity import History, Role
 from schemas.entity_schemas import AccessTokenData
-from schemas.entity import Role
-from services.user_service import UserService, get_user_service
-from services.role_service import RoleService, get_role_service
-from services.validation import check_admin_or_super_admin_role_from_access_token
-from schemas.entity import History
 from services.history_service import HistoryService, get_history_service
+from services.role_service import RoleService, get_role_service
+from services.user_service import UserService, get_user_service
+from services.validation import \
+    check_admin_or_super_admin_role_from_access_token
 
 router = APIRouter()
 
