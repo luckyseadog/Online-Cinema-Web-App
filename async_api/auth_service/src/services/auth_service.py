@@ -11,12 +11,10 @@ from services.user_service import UserService, get_user_service
 from schemas.entity_schemas import TokenPairExpired
 from fastapi import HTTPException
 from fastapi import status
-from schemas.entity import History
 from services.token_service import (
     AccessTokenService,
     RefreshTokenService,
 )
-from services.history_service import HistoryService, get_history_service
 from datetime import datetime
 
 
@@ -26,12 +24,10 @@ class AuthService:
             db: AsyncSession,
             redis: Redis,
             user_service: UserService,
-            history_service: HistoryService,
     ):
         self.db = db
         self.cache = redis
         self.user_service = user_service
-        self.history_service = history_service
 
     async def login(self, user_creds: UserCredentials, origin, user_agent) -> TokenPairExpired:
         user = await self.user_service.get_user_by_login(user_creds.login)
@@ -56,12 +52,6 @@ class AuthService:
         access_token, access_exp = at.generate_token(origin, user.id, roles)
         refresh_token, refresh_exp = rt.generate_token(origin, user.id)
 
-        note = History(
-            user_id=user.id,
-            action='/login',
-            fingerprint=user_agent,
-        )
-        await self.history_service.make_note(note)
         await self.cache.setex(
             f'{user.id}:login:{user_agent}',
             settings.refresh_token_weeks * 60 * 60 * 24 * 7,
@@ -75,13 +65,6 @@ class AuthService:
         )
 
     async def logout(self, user_id, access_token, user_agent):
-        note = History(
-            user_id=user_id,
-            action='/logout',
-            fingerprint=user_agent,
-        )
-        await self.history_service.make_note(note)
-
         await self.cache.delete(f'{user_id}:login:{user_agent}')
         await self.cache.setex(
             f'{user_id}:logout:{user_agent}',
@@ -91,12 +74,6 @@ class AuthService:
         return {'message': 'User logged out successfully'}
 
     async def logout_all(self, user_id, user_agent):
-        note = History(
-            user_id=user_id,
-            action='/logout_all',
-            fingerprint=user_agent,
-        )
-        await self.history_service.make_note(note)
         await self.cache.setex(
             f'{user_id}:logout:_all_',
             settings.access_token_min * 60,
@@ -130,11 +107,9 @@ def get_auth_service(
         db: AsyncSession = Depends(get_session),
         cache: Redis = Depends(get_redis),
         user_service: UserService = Depends(get_user_service),
-        history_service: HistoryService = Depends(get_history_service),
 ) -> AuthService:
     return AuthService(
         db=db,
         redis=cache,
         user_service=user_service,
-        history_service=history_service,
     )

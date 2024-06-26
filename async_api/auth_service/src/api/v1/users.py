@@ -9,6 +9,8 @@ from schemas.entity_schemas import AccessTokenData
 from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
 from services.validation import validate_access_token, check_admin_or_super_admin_role_from_access_token
+from schemas.entity import History
+from services.history_service import HistoryService, get_history_service
 
 router = APIRouter()
 
@@ -21,6 +23,7 @@ router = APIRouter()
 )
 async def get_users(
     user_service: Annotated[UserService, Depends(get_user_service)],
+    history_service: Annotated[HistoryService, Depends(get_history_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
@@ -29,6 +32,15 @@ async def get_users(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
+
+    user_id = payload.sub
+    note = History(
+            user_id=(str(user_id)),
+            action='/users[GET]',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
+
     users = await user_service.get_users()
     return users
 
@@ -37,6 +49,7 @@ async def get_users(
 async def change_user(
     user_patch: User,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    history_service: Annotated[HistoryService, Depends(get_history_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
@@ -45,6 +58,14 @@ async def change_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
+    
+    user_id = payload.sub
+    note = History(
+            user_id=(str(user_id)),
+            action='/users[CHANGE]',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
 
     db_user = await user_service.update_user(user_patch)
     if not db_user:
@@ -56,6 +77,7 @@ async def change_user(
 async def delete_user(
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    history_service: Annotated[HistoryService, Depends(get_history_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
@@ -65,6 +87,14 @@ async def delete_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User with admin role was deleted',
         )
+
+    user_id = payload.sub
+    note = History(
+            user_id=(str(user_id)),
+            action='/users[DELETE]',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
 
     db_user = await user_service.delete_user(payload.sub)
     if not db_user:
@@ -89,6 +119,14 @@ async def get_history(
             detail='User was deleted',
         )
 
+    user_id = payload.sub
+    note = History(
+            user_id=(str(user_id)),
+            action='/users/history',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
+
     user_history = await history_service.get_last_user_notes(payload.sub)
     return user_history
 
@@ -99,6 +137,7 @@ async def get_history(
 )
 async def get_me(
     user_service: Annotated[UserService, Depends(get_user_service)],
+    history_service: Annotated[HistoryService, Depends(get_history_service)],
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
@@ -107,6 +146,14 @@ async def get_me(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
         )
+
+    user_id = payload.sub
+    note = History(
+            user_id=(str(user_id)),
+            action='/users/me',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
 
     user = await user_service.get_user(payload.sub)
     return user
