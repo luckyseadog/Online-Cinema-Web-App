@@ -54,7 +54,6 @@ async def change_user(
 
 @router.delete('/users')
 async def delete_user(
-    user_id: str,
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
@@ -67,7 +66,7 @@ async def delete_user(
             detail='User with admin role was deleted',
         )
 
-    db_user = await user_service.delete_user(user_id)
+    db_user = await user_service.delete_user(payload.sub)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
 
