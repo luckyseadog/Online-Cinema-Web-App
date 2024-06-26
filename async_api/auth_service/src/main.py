@@ -8,15 +8,18 @@ from fastapi.responses import ORJSONResponse
 from api.v1 import admin, auth, roles, users
 from core.logger import LOGGING
 from db import postgres_db, redis_db
+from redis.asyncio import Redis
+from core.config import settings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info('start')
-    pg_session = postgres_db.get_session()
-    redis_db.redis = redis_db.get_redis()
+    pg_session = postgres_db.get_session() # Нужна ли эта строка? Кажется, тут нужна инициализация
+    redis_db.redis = redis_db.RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port))
 
     yield
+
     await pg_session.aclose()
     await redis_db.redis.close()
     logging.info('end')

@@ -2,6 +2,7 @@ import datetime
 from redis.asyncio import Redis
 from core.config import settings
 import time
+import hashlib
 
 ACCESS_TOKEN_BANNED = 'banned_access'
 REFRESH_TOKEN_VALID = 'valid_refresh'
@@ -16,9 +17,15 @@ class RedisTokenStorage:
     def __init__(self, redis_instance: Redis):
         self._redis = redis_instance
 
+    def _compute_hash(self, data: str):
+        data_bytes = data.encode('utf-8')
+        hash_object = hashlib.sha256(data_bytes)
+
+        return hash_object.hexdigest()
+
     
     async def _add_token(self, user_id: str, token_type: str, user_agent: str, token: str, time_to_exp: int):
-        token_7ch = token[:7]
+        token_7ch = self._compute_hash(token)[:7]
         return await self._redis.setex(
             f'{user_id}:{token_type}:{user_agent}:{token_7ch}',
             time_to_exp,
@@ -26,7 +33,7 @@ class RedisTokenStorage:
         )
 
     async def _check_token(self, user_id: str, token_type: str, user_agent: str, token: str):
-        token_7ch = token[:7]
+        token_7ch = self._compute_hash(token)[:7]
         token_value = await self._redis.get(f'{user_id}:{token_type}:{user_agent}:{token_7ch}')
         return True if token_value is not None else False
         
@@ -61,7 +68,7 @@ class RedisTokenStorage:
         return await self._redis.close()
 
     async def delete_refresh(self, user_id: str, token: str, user_agent: str):
-        token_7ch = token[:7]
+        token_7ch = self._compute_hash(token)[:7]
         return await self._redis.delete(f'{user_id}:{REFRESH_TOKEN_VALID}:{user_agent}:{token_7ch}')
 
     async def delete_refresh_all(self, user_id: str, user_agent: str):

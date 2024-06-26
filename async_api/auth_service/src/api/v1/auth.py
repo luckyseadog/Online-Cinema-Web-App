@@ -135,6 +135,7 @@ async def logout(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
+    refresh_token: Annotated[Union[str, None], Cookie()] = None,
     user_agent: Annotated[str | None, Header()] = None,
 ):
     user_id = payload.sub
@@ -147,7 +148,7 @@ async def logout(
 
     response.delete_cookie(key=settings.access_token_name)
     response.delete_cookie(key=settings.refresh_token_name)
-    return await auth_service.logout(user_id, access_token, user_agent)
+    return await auth_service.logout(user_id, access_token, refresh_token, user_agent)
 
 #
 #

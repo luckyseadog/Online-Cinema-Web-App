@@ -5,7 +5,7 @@ from core.config import settings
 
 from schemas.entity_schemas import UserCredentials
 from services.password_service import password_service
-from db.redis_db import Redis, get_redis
+from db.redis_db import RedisTokenStorage, get_redis
 from db.postgres_db import get_session
 from services.user_service import UserService, get_user_service
 from schemas.entity_schemas import TokenPairExpired
@@ -22,7 +22,7 @@ class AuthService:
     def __init__(
             self,
             db: AsyncSession,
-            redis: Redis,
+            redis: RedisTokenStorage,
             user_service: UserService,
     ):
         self.db = db
@@ -52,11 +52,12 @@ class AuthService:
         access_token, access_exp = at.generate_token(origin, user.id, roles)
         refresh_token, refresh_exp = rt.generate_token(origin, user.id)
 
-        await self.cache.setex(
-            f'{user.id}:login:{user_agent}',
-            settings.refresh_token_weeks * 60 * 60 * 24 * 7,
-            refresh_token,
-        )
+        # await self.cache.setex(
+        #     f'{user.id}:login:{user_agent}',
+        #     settings.refresh_token_weeks * 60 * 60 * 24 * 7,
+        #     refresh_token,
+        # )
+        await self.cache.add_valid_rtoken(user.id, refresh_token, user_agent)
         return TokenPairExpired(
             access_token=access_token,
             refresh_token=refresh_token,
@@ -64,23 +65,28 @@ class AuthService:
             refresh_exp=refresh_exp,
         )
 
-    async def logout(self, user_id, access_token, user_agent):
-        await self.cache.delete(f'{user_id}:login:{user_agent}')
-        await self.cache.setex(
-            f'{user_id}:logout:{user_agent}',
-            settings.access_token_min * 60,
-            access_token,
-        )
+    async def logout(self, user_id, access_token, refresh_token, user_agent):
+        # await self.cache.delete_refresh(f'{user_id}:login:{user_agent}')
+        # await self.cache.setex(
+        #     f'{user_id}:logout:{user_agent}',
+        #     settings.access_token_min * 60,
+        #     access_token,
+        # )
+        await self.cache.delete_refresh(user_id, refresh_token, user_agent)
+        await self.cache.add_banned_atoken(user_id, user_agent, access_token)
         return {'message': 'User logged out successfully'}
 
     async def logout_all(self, user_id, user_agent):
-        await self.cache.setex(
-            f'{user_id}:logout:_all_',
-            settings.access_token_min * 60,
-            datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
-        )
-        keys = await self.cache.keys(pattern=f'{user_id}:login:*')
-        await self.cache.delete(*keys)
+        # await self.cache.setex(
+        #     f'{user_id}:logout:_all_',
+        #     settings.access_token_min * 60,
+        #     datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+        # )
+        # keys = await self.cache.keys(pattern=f'{user_id}:login:*')
+        # await self.cache.delete(*keys)
+        await self.cache.set_user_last_logout_all(user_id, user_agent)
+        await self.cache.delete_refresh_all(user_id, user_agent)
+
 
     async def refresh(self, user_id, origin, user_agent):
         user = await self.user_service.get_user(user_id)
@@ -89,11 +95,12 @@ class AuthService:
         roles = [role.title for role in user.roles]
         access_token, access_exp = at.generate_token(origin, user.id, roles)
         refresh_token, refresh_exp = rt.generate_token(origin, user.id)
-        await self.cache.setex(
-            f'{user.id}:login:{user_agent}',
-            settings.refresh_token_weeks * 60 * 60 * 24 * 7,
-            refresh_token,
-        )
+        # await self.cache.setex(
+        #     f'{user.id}:login:{user_agent}',
+        #     settings.refresh_token_weeks * 60 * 60 * 24 * 7,
+        #     refresh_token,
+        # )
+        await self.cache.add_valid_rtoken(user_id, refresh_token, user_agent)
         return TokenPairExpired(
             access_token=access_token,
             refresh_token=refresh_token,
@@ -105,7 +112,7 @@ class AuthService:
 @lru_cache
 def get_auth_service(
         db: AsyncSession = Depends(get_session),
-        cache: Redis = Depends(get_redis),
+        cache: RedisTokenStorage = Depends(get_redis),
         user_service: UserService = Depends(get_user_service),
 ) -> AuthService:
     return AuthService(
