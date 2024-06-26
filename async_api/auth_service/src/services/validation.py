@@ -2,6 +2,7 @@ import json
 import time
 from typing import Annotated, Union
 
+from services.user_service import UserService, get_user_service
 from fastapi import Cookie, Header, Depends, HTTPException, status
 from db.redis_db import Redis, get_redis
 from core.config import settings
@@ -10,6 +11,7 @@ from services.token_service import (
     AccessTokenService,
     get_access_token_service,
 )
+from schemas.entity import User
 
 
 async def validate_access_token(
@@ -53,6 +55,40 @@ async def validate_access_token(
     #         detail='Access token is withdrawn',
     #     )
     return AccessTokenData(**payload)
+
+
+async def get_current_user(
+        payload: Annotated[AccessTokenData, Depends(validate_access_token)],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+) -> User:
+    user = await user_service.get_user(payload.sub)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='user not found',
+        )
+    return user
+
+
+async def get_current_active_user(
+    user: Annotated[User, Depends(get_current_user)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+) -> User:
+    if await user_service.is_deleted(user.id):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User was deleted',
+        )
+    return user
+
+
+async def check_admin_or_super_admin_role(
+    user: Annotated[User, Depends(get_current_active_user)],
+) -> User:
+    roles = [role.title for role in user.roles]
+    if not (settings.role_admin in roles or settings.role_super_admin in roles):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    return user
 
 
 async def check_admin_or_super_admin_role_from_access_token(
