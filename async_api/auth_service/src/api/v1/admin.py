@@ -31,7 +31,7 @@ async def assign_role(
     admin_service: Annotated[AdminService, Depends(get_admin_service)],
 ) -> User:
 
-    if await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -55,7 +55,7 @@ async def revoke_role(
     user_agent: Annotated[str | None, Header()] = None,
 ) -> User:
 
-    if await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
@@ -79,7 +79,7 @@ async def check_role(
     user_agent: Annotated[str | None, Header()] = None,
 ):
 
-    if await user_service.check_deleted(payload.sub):
+    if await user_service.is_deleted(payload.sub):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User was deleted',
