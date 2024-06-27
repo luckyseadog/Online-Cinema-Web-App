@@ -213,6 +213,7 @@ class UserService:
             .values(deleted_at=datetime.utcnow())
             .returning(UserModel)
         )
+
         result = await self.db.execute(query)
         deleted_user = result.scalars().one_or_none()
         await self.db.commit()

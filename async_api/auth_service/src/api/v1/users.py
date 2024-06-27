@@ -10,9 +10,7 @@ from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
 from services.validation import (
     validate_access_token,
-    # check_admin_or_super_admin_role_from_access_token,
-    get_current_active_user,
-    check_admin_or_super_admin_role,
+    check_admin_or_super_admin_role_from_access_token,
 )
 
 
@@ -21,11 +19,11 @@ router = APIRouter()
 
 @router.get(
     path='/users',
-    # response_model=list[User],
+    response_model=list[User],
     status_code=status.HTTP_200_OK,
     summary='Получение списка пользователей',
     description='Получить список пользователй из БД',
-    dependencies=[Depends(check_admin_or_super_admin_role)],
+    dependencies=[Depends(check_admin_or_super_admin_role_from_access_token)],
 )
 async def get_users(
     user_service: Annotated[UserService, Depends(get_user_service)],
@@ -38,26 +36,20 @@ async def get_users(
 @router.put(
     path='/users',
     status_code=status.HTTP_200_OK,
-    summary='Добавление пользователя',
+    summary='Изменение пользователя пользователя',
     description='Добавление пользователя в БД',
     response_model=User,
-    dependencies=[Depends(get_current_active_user)],
+    dependencies=[Depends(validate_access_token)],
 )
 async def change_user(
     user_patch: User,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
-    payload: AccessTokenData = Depends(validate_access_token),
 ):
-    if await user_service.is_deleted(payload.sub):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User was deleted',
-        )
-
+    # TODO пользователь только сам меняет какие-то данные?
+    # Админ может менять данные пользователя?
+    # Или сделать отдельную ручку, у которой будет своя схема с полями, которые может менять админ?
     db_user = await user_service.update_user(user_patch)
-    if not db_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
     return db_user
 
 
@@ -67,28 +59,21 @@ async def change_user(
     summary='Удаление пользователя из БД',
     response_model=User,
     status_code=status.HTTP_200_OK,
+    # dependencies=[Depends(get_current_active_user)]
 )
 async def delete_user(
     user_id: str,
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user_agent: Annotated[str | None, Header()] = None,
-    payload: AccessTokenData = Depends(validate_access_token),
+    # user_agent: Annotated[str | None, Header()] = None,
+    payload: Annotated[AccessTokenData, Depends(validate_access_token)],
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
-    if await user_service.is_deleted(payload.sub):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User with admin role was deleted',
-        )
+    # TODO пользователь только сам себяю может удалить или админ тоже может?
 
     db_user = await user_service.delete_user(user_id)
-    if not db_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='user not found')
-
     response.delete_cookie(key=settings.access_token_name)
     response.delete_cookie(key=settings.refresh_token_name)
-
     return db_user
 
 
@@ -98,7 +83,6 @@ async def delete_user(
     summary='История входа/выхода пользователя',
     response_model=list[History],
     status_code=status.HTTP_200_OK,
-
 )
 async def get_history(
     user_service: Annotated[UserService, Depends(get_user_service)],
@@ -128,11 +112,5 @@ async def get_me(
     user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ):
-    if await user_service.is_deleted(payload.sub):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User was deleted',
-        )
-
     user = await user_service.get_user(payload.sub)
     return user
