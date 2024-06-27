@@ -133,3 +133,12 @@ async def validate_refresh_token(
     #     )
 
     return RefreshTokenData(**payload)
+
+
+async def check_origin(origin: Annotated[str | None, Header()] = None):
+    if origin is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Origin header is required',
+        )
+    return origin

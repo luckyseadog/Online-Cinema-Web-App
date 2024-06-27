@@ -1,6 +1,6 @@
 from typing import Annotated, Union
 
-from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends, Header, status
 from fastapi.responses import ORJSONResponse
 from fastapi.security.oauth2 import (
     OAuth2PasswordRequestForm,
@@ -16,14 +16,14 @@ from schemas.entity import User
 from services.user_service import UserService, get_user_service
 from services.auth_service import AuthService, get_auth_service
 from services.role_service import RoleService, get_role_service
-from services.validation import validate_access_token, validate_refresh_token
+from services.validation import validate_access_token, validate_refresh_token, check_origin
 from uuid import uuid4
 
 router = APIRouter()
 
 
 @router.post(
-    '/signup',
+    path='/signup',
     # response_model=,
     status_code=status.HTTP_200_OK,
     summary='Регистрация пользователя',
@@ -41,21 +41,14 @@ router = APIRouter()
     'что такой пользователь уже существует.\n''
     ''',
     response_model=User,
+    dependencies=[Depends(check_origin)],
 )
 async def signup(
     user_create: UserCreate,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    response: ORJSONResponse,
-    origin: Annotated[str | None, Header()] = None,
+    # response: ORJSONResponse,
 ):
-
-    if origin is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required',
-        )
     return await user_service.create_user(user_create)
-    # return {'message': 'User created successfully'}
 
 
 @router.post(
@@ -74,14 +67,11 @@ async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     response: ORJSONResponse,
-    origin: Annotated[str | None, Header()] = None,
+    # origin: Annotated[str | None, Header()] = None,
+    origin: Annotated[str, Depends(check_origin)],
     user_agent: Annotated[str | None, Header()] = None,
 ) -> TokenPair:
-    if origin is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required',
-        )
+
     user_creds = UserCredentials(login=form_data.username, password=form_data.password)
     tokens = await auth_service.login(user_creds, origin=origin, user_agent=user_agent)
 
@@ -143,12 +133,9 @@ async def logout_all(
     user_agent: Annotated[str | None, Header()] = None,
 
 ):
-    user_id = payload.sub
-    await auth_service.logout_all(user_id, user_agent)
-
+    await auth_service.logout_all(payload.sub, user_agent)
     response.delete_cookie(key=settings.access_token_name)
     response.delete_cookie(key=settings.refresh_token_name)
-
     return {'message': 'All accounts deactivated'}
 
 
@@ -166,11 +153,6 @@ async def refresh(
     origin: Annotated[str | None, Header()] = None,
     user_agent: Annotated[str | None, Header()] = None,
 ):
-    if origin is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required',
-        )
 
     user_id = payload.sub
     tokens = await auth_service.refresh(user_id, origin, user_agent)
@@ -215,32 +197,20 @@ async def signup_guest(
     origin: Annotated[str | None, Header()] = None,
     user_agent: Annotated[str | None, Header()] = None,
 ):
-    if origin is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required',
-        )
+
     role = await role_service.get_role_by_name(settings.role_guest)
     new_user_id = str(uuid4())
     guest_create = User(
         id=new_user_id,
         login=f'guest_{new_user_id}',
-        email=f'email_{new_user_id}',
+        email=f'email_{new_user_id}@auth.com',
         password=new_user_id,
         first_name=f'first_name_{new_user_id}',
         last_name=f'last_name_{new_user_id}',
         roles=[role],
     )
 
-    user = await user_service.get_user_by_email(guest_create.email)
-    if user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='email already exists')
-
-    user = await user_service.get_user_by_login(guest_create.login)
-    if user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='login already exists')
-
-    user = await user_service.create_user(guest_create)
+    await user_service.create_user(guest_create)
     user_creds = UserCredentials(login=guest_create.login, password=new_user_id)
     tokens = await auth_service.login(user_creds, origin=origin, user_agent=user_agent)
 
@@ -263,14 +233,3 @@ async def signup_guest(
         refresh_token=tokens.refresh_token,
 
     )
-    #
-    # return {'message': 'User created successfully'}
-    #
-    # access_token, access_exp = access_token_service.generate_token(origin, user.id, ['guest'])
-    # refresh_token, refresh_exp = refresh_token_service.generate_token(origin, user.id)
-    # response.set_cookie(key=settings.access_token_name, value=access_token, httponly=True, expires=access_exp)
-    # response.set_cookie(key=settings.refresh_token_name, value=refresh_token, httponly=True, expires=refresh_exp)
-    #
-    # await redis.add_valid_rtoken(user.id, refresh_token)
-    #
-    # return {'message': 'Guest created successfully'}
