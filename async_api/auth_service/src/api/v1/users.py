@@ -8,6 +8,7 @@ from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData
 from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
+from services.auth_service import AuthService, get_auth_service
 from services.validation import (
     validate_access_token,
     check_admin_or_super_admin_role_from_access_token,
@@ -65,15 +66,17 @@ async def delete_user(
     user_id: str,
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    # user_agent: Annotated[str | None, Header()] = None,
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
     payload: Annotated[AccessTokenData, Depends(validate_access_token)],
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
     # TODO пользователь только сам себяю может удалить или админ тоже может?
 
     db_user = await user_service.delete_user(user_id)
+    await auth_service.logout_all_by_delete(user_id)
     response.delete_cookie(key=settings.access_token_name)
     response.delete_cookie(key=settings.refresh_token_name)
+
     return db_user
 
 
@@ -85,17 +88,9 @@ async def delete_user(
     status_code=status.HTTP_200_OK,
 )
 async def get_history(
-    user_service: Annotated[UserService, Depends(get_user_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
-    user_agent: Annotated[str | None, Header()] = None,
     payload: AccessTokenData = Depends(validate_access_token),
 ) -> list[History]:
-    if await user_service.is_deleted(payload.sub):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User was deleted',
-        )
-
     user_history = await history_service.get_last_user_notes(payload.sub)
     return user_history
 

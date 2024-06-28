@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     elastic_port: int = Field(9200, alias='ELASTIC_PORT')
 
     pg_user: str = Field('app', alias='AUTH_DB_USER')
-    pg_host: str = Field('127.0.0.1', alias='AUTH_HOST')
+    pg_host: str = Field('127.0.0.1', alias='AUTH_DB_HOST')
     pg_port: int = Field(5432, alias='AUTH_DB_PORT')
     pg_password: str = Field('123qwe', alias='AUTH_DB_PASSWORD')
     pg_name: str = Field('auth_database', alias='AUTH_DB_NAME')
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     access_token_name: str = Field('access_token', alias='ACCESS_TOKEN')
     refresh_token_name: str = Field('refresh_token', alias='REFRESH_TOKEN')
 
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    # model_config = SettingsConfigDict(env_file='../../.env', env_file_encoding='utf-8')
 
 
 settings = Settings()

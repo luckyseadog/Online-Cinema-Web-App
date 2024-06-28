@@ -69,7 +69,7 @@ class AdminService:
         if not role:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'not found role: {role_id }',
+                detail=f'not found role: {role_id}',
             )
         if not user:
             raise HTTPException(

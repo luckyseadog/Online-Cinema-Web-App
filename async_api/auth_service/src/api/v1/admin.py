@@ -44,7 +44,8 @@ async def revoke_role(
     user_role: UpdateUserRole,
     admin_service: Annotated[AdminService, Depends(get_admin_service)],
 ) -> User:
-    return await admin_service.revoke_user_role(str(user_role.user_id), str(user_role.role_id))
+    updated_user = await admin_service.revoke_user_role(str(user_role.user_id), str(user_role.role_id))
+    return updated_user
 
 
 @router.post(
@@ -56,7 +57,6 @@ async def revoke_role(
 async def check_role(
     user_role: UpdateUserRole,
     admin_service: Annotated[AdminService, Depends(get_admin_service)],
-    # user_agent: Annotated[str | None, Header()] = None,
 ):
     res = await admin_service.check_user_role(str(user_role.user_id), str(user_role.role_id))
-    return {'result': 'YES' if res else 'NO'}
+    return {'result': res}

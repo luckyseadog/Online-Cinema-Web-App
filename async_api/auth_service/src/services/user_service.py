@@ -19,7 +19,7 @@ class UserService:
     async def get_user(self, user_id: int) -> User:
         stmt = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
         user = stmt.scalars().one_or_none()
-        if not user:
+        if user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f'not found user: {user_id}',
@@ -62,7 +62,7 @@ class UserService:
                 ],
             )
 
-    async def get_user_by_login(self, user_login) -> User:
+    async def get_user_by_login(self, user_login) -> User | None:
         stmt = await self.db.execute(select(UserModel).where(UserModel.login == user_login))
         user = stmt.scalars().one_or_none()
         if user:
@@ -82,6 +82,7 @@ class UserService:
                     ) for role in user.roles
                 ],
             )
+            
 
     async def get_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
@@ -247,6 +248,13 @@ class UserService:
                 detail=f'User with id {user_id} not found',
             )
         return False if user.deleted_at is None else True
+    
+    async def check_deleted(self, user_id: str):
+        if self.is_deleted(user_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User was deleted',
+            )
 
 
 @lru_cache
