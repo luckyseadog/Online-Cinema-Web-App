@@ -16,7 +16,8 @@ from services.token_service import get_access_token_service, get_refresh_token_s
 
 
 async def validate_access_token(
-        access_token, 
+        user_agent: Annotated[Union[str, None], Header()] = None,
+        access_token: Annotated[Union[str, None], Cookie()] = None,
         access_token_service: AccessTokenService = Depends(get_access_token_service),
         cache: RedisTokenStorage = Depends(get_redis),
     ):
@@ -35,7 +36,7 @@ async def validate_access_token(
     payload_str = access_token_service.decode_b64(access_token.split('.')[1])
     payload = json.loads(payload_str)
 
-    if await cache.check_banned_atoken(payload['sub'], access_token):
+    if await cache.check_banned_atoken(payload['sub'], user_agent, access_token):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is banned',
@@ -47,7 +48,7 @@ async def validate_access_token(
             detail='Access token is expired',
         )
 
-    if payload['iat'] < await cache.get_user_last_logout_all(payload['sub']):
+    if payload['iat'] < await cache.get_user_last_logout_all(payload['sub'], user_agent):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is withdrawn',
@@ -65,7 +66,8 @@ async def check_admin_or_super_admin_role_from_access_token(
 
 
 async def validate_refresh_token(
-        refresh_token, 
+        user_agent: Annotated[Union[str, None], Header()] = None,
+        refresh_token: Annotated[Union[str, None], Cookie()] = None,
         refresh_token_service: RefreshTokenService = Depends(get_refresh_token_service),
         cache: RedisTokenStorage = Depends(get_redis),
     ):
@@ -84,7 +86,7 @@ async def validate_refresh_token(
     payload_str = refresh_token_service.decode_b64(refresh_token.split('.')[1])
     payload = json.loads(payload_str)
 
-    if await cache.check_valid_rtoken(payload['sub'], refresh_token) is False:
+    if await cache.check_valid_rtoken(payload['sub'], user_agent, refresh_token) is False:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=' Refresh token is not valid',

@@ -10,6 +10,7 @@ from services.password_service import password_service
 from functools import lru_cache
 from db.postgres_db import get_session
 from fastapi import Depends, HTTPException, status
+import logging
 
 
 class UserService:
@@ -247,10 +248,11 @@ class UserService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f'User with id {user_id} not found',
             )
+        logging.warn(user.deleted_at)
         return False if user.deleted_at is None else True
     
     async def check_deleted(self, user_id: str):
-        if self.is_deleted(user_id):
+        if await self.is_deleted(user_id):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User was deleted',
