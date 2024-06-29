@@ -10,9 +10,10 @@ from services.token_service import (
     AccessTokenService,
     RefreshTokenService,
     get_access_token_service,
-    get_refresh_token_service
+    get_refresh_token_service,
 )
-from services.token_service import get_access_token_service, get_refresh_token_service
+from services.user_service import UserService, get_user_service
+from fastapi.responses import ORJSONResponse
 
 
 async def validate_access_token(
@@ -34,31 +35,58 @@ async def validate_access_token(
         )
 
     payload_str = access_token_service.decode_b64(access_token.split('.')[1])
-    payload = json.loads(payload_str)
+    payload = AccessTokenData(**json.loads(payload_str))
 
-    if await cache.check_banned_atoken(payload['sub'], user_agent, access_token):
+    if await cache.check_banned_atoken(payload.sub, user_agent, access_token):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is banned',
         )
 
-    if payload['exp'] < time.time():
+    if payload.exp < time.time():
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is expired',
         )
 
-    if payload['iat'] < await cache.get_user_last_logout_all(payload['sub'], user_agent):
+    if payload.iat < await cache.get_user_last_logout_all(payload.sub, user_agent):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is withdrawn',
         )
 
-    return AccessTokenData(**payload)
+    return payload
+
+async def check_role_consistency(
+    response: ORJSONResponse,
+    user_service: UserService = Depends(get_user_service),
+    access_token_service: AccessTokenService = Depends(get_access_token_service),
+    payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
+    origin: Annotated[str | None, Header()] = None
+    ):
+    user = await user_service.get_user(payload.sub)
+
+    if user.roles != payload.roles:
+        roles = [role.title for role in user.roles]
+        access_token, access_exp = access_token_service.generate_token(origin, user.id, roles)
+
+        response.set_cookie(
+            key=settings.access_token_name,
+            value=access_token,
+            httponly=True,
+            expires=access_exp,
+        )
+
+        payload_str = access_token_service.decode_b64(access_token.split('.')[1])
+        payload = AccessTokenData(**json.loads(payload_str))
+    
+    return payload
+        
+
 
 
 async def check_admin_or_super_admin_role_from_access_token(
-    payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
+    payload: Annotated[AccessTokenData, Depends(check_role_consistency)] = None,
 ) -> list[str]:
     if not (settings.role_admin in payload.roles or settings.role_super_admin in payload.roles):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

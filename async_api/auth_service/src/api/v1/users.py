@@ -10,7 +10,7 @@ from services.user_service import UserService, get_user_service
 from services.history_service import HistoryService, get_history_service
 from services.auth_service import AuthService, get_auth_service
 from services.validation import (
-    validate_access_token,
+    check_role_consistency,
     check_admin_or_super_admin_role_from_access_token,
 )
 
@@ -40,7 +40,7 @@ async def get_users(
     summary='Изменение пользователя пользователя',
     description='Добавление пользователя в БД',
     response_model=User,
-    dependencies=[Depends(validate_access_token)],
+    dependencies=[Depends(check_role_consistency)],
 )
 async def change_user(
     user_patch: User,
@@ -67,7 +67,7 @@ async def delete_user(
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    payload: Annotated[AccessTokenData, Depends(validate_access_token)],
+    payload: Annotated[AccessTokenData, Depends(check_role_consistency)],
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
     # TODO пользователь только сам себяю может удалить или админ тоже может?
@@ -89,7 +89,7 @@ async def delete_user(
 )
 async def get_history(
     history_service: Annotated[HistoryService, Depends(get_history_service)],
-    payload: AccessTokenData = Depends(validate_access_token),
+    payload: AccessTokenData = Depends(check_role_consistency),
 ) -> list[History]:
     user_history = await history_service.get_last_user_notes(payload.sub)
     return user_history
@@ -105,7 +105,7 @@ async def get_history(
 async def get_me(
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
-    payload: AccessTokenData = Depends(validate_access_token),
+    payload: AccessTokenData = Depends(check_role_consistency),
 ):
     user = await user_service.get_user(payload.sub)
     return user

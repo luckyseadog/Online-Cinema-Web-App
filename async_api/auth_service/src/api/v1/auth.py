@@ -2,6 +2,7 @@ from typing import Annotated, Union
 
 from fastapi import APIRouter, Cookie, Depends, Header, status, HTTPException
 from fastapi.responses import ORJSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.security.oauth2 import (
     OAuth2PasswordRequestForm,
 )
@@ -10,13 +11,14 @@ from core.config import settings
 from schemas.entity_schemas import (
     AccessTokenData, RefreshTokenData,
     TokenPair, UserCreate, UserCredentials,
+    RoleEnum,
 )
 from schemas.entity import History, User
 
 from services.user_service import UserService, get_user_service
 from services.auth_service import AuthService, get_auth_service
 from services.role_service import RoleService, get_role_service
-from services.validation import validate_access_token, validate_refresh_token, check_origin
+from services.validation import validate_access_token, validate_refresh_token, check_origin, check_role_consistency
 from uuid import uuid4
 from services.history_service import HistoryService, get_history_service
 import logging
@@ -48,8 +50,16 @@ router = APIRouter()
 async def signup(
     user_create: UserCreate,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    role_service: Annotated[RoleService, Depends(get_role_service)],
 ):
-    return await user_service.create_user(user_create)
+    role = await role_service.get_role_by_name(RoleEnum.role_user)
+    if role is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='role is not found')
+
+    created_user = User(roles=[role], **jsonable_encoder(user_create, exclude_none=True))
+    user = await user_service.create_user(created_user)
+
+    return user
 
 
 @router.post(
@@ -77,16 +87,21 @@ async def login(
     user_creds = UserCredentials(login=form_data.username, password=form_data.password)
 
     user = await user_service.get_user_by_login(user_creds.login)
-    if user is not None:
-        user_id = user.id
-        await user_service.check_deleted(user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Invalid username or password',
+        )
 
-        note = History(
-                user_id=(str(user_id)),
-                action='/login',
-                fingerprint=user_agent,
-            )
-        await history_service.make_note(note)
+    user_id = user.id
+    await user_service.check_deleted(user_id)
+
+    note = History(
+            user_id=(str(user_id)),
+            action='/login',
+            fingerprint=user_agent,
+        )
+    await history_service.make_note(note)
 
     tokens = await auth_service.login(user_creds, origin=origin, user_agent=user_agent)
 
@@ -122,7 +137,7 @@ async def login(
 )
 async def logout(
     response: ORJSONResponse,
-    payload: Annotated[AccessTokenData, Depends(validate_access_token)],
+    payload: Annotated[AccessTokenData, Depends(check_role_consistency)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
@@ -155,7 +170,7 @@ async def logout_all(
     response: ORJSONResponse,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
-    payload: Annotated[AccessTokenData, Depends(validate_access_token)],
+    payload: Annotated[AccessTokenData, Depends(check_role_consistency)],
     user_agent: Annotated[str | None, Header()] = None,
 
 ):
