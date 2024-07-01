@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, Header, status
 
 from schemas.entity import Role
 from services.role_service import RoleService, get_role_service
-from services.validation import check_admin_or_super_admin_role_from_access_token
+from services.validation import get_admin_access_token
 
 router = APIRouter(
-    dependencies=[Depends(check_admin_or_super_admin_role_from_access_token)],
+    dependencies=[Depends(get_admin_access_token)],
 )
 
 

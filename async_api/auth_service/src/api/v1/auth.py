@@ -18,7 +18,7 @@ from schemas.entity import History, User
 from services.user_service import UserService, get_user_service
 from services.auth_service import AuthService, get_auth_service
 from services.role_service import RoleService, get_role_service
-from services.validation import validate_access_token, validate_refresh_token, check_origin, check_role_consistency
+from services.validation import validate_access_token, validate_refresh_token, check_origin, check_role_consistency, get_access_token, get_refresh_token
 from uuid import uuid4
 from services.history_service import HistoryService, get_history_service
 import logging
@@ -137,7 +137,7 @@ async def login(
 )
 async def logout(
     response: ORJSONResponse,
-    payload: Annotated[AccessTokenData, Depends(check_role_consistency)],
+    payload: Annotated[AccessTokenData, Depends(get_access_token)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
     access_token: Annotated[Union[str, None], Cookie()] = None,
@@ -170,7 +170,7 @@ async def logout_all(
     response: ORJSONResponse,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     history_service: Annotated[HistoryService, Depends(get_history_service)],
-    payload: Annotated[AccessTokenData, Depends(check_role_consistency)],
+    payload: Annotated[AccessTokenData, Depends(get_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 
 ):
@@ -198,7 +198,7 @@ async def logout_all(
 )
 async def refresh(
     response: ORJSONResponse,
-    payload: Annotated[RefreshTokenData, Depends(validate_refresh_token)],
+    payload: Annotated[RefreshTokenData, Depends(get_refresh_token)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     origin: Annotated[str | None, Header()] = None,
     user_agent: Annotated[str | None, Header()] = None,

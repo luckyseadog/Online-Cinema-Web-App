@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, status
 
 from schemas.entity import User
 from schemas.entity_schemas import UpdateUserRole
-from services.validation import check_admin_or_super_admin_role_from_access_token
+from services.validation import get_admin_access_token
 from services.admin_service import AdminService, get_admin_service
 
 router = APIRouter(
-    dependencies=[Depends(check_admin_or_super_admin_role_from_access_token)],
+    dependencies=[Depends(get_admin_access_token)],
 )
 
 

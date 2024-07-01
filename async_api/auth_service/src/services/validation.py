@@ -57,18 +57,23 @@ async def validate_access_token(
 
     return payload
 
-async def check_role_consistency(
-    response: ORJSONResponse,
-    user_service: UserService = Depends(get_user_service),
-    access_token_service: AccessTokenService = Depends(get_access_token_service),
-    payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
-    origin: Annotated[str | None, Header()] = None
-    ):
+
+async def check_origin(origin: Annotated[str | None, Header()] = None):
     if origin is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Origin header is required',
         )
+    return origin
+
+
+async def check_role_consistency(
+    response: ORJSONResponse,
+    origin: Annotated[str, Depends(check_origin)],
+    user_service: UserService = Depends(get_user_service),
+    access_token_service: AccessTokenService = Depends(get_access_token_service),
+    payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
+    ):
     user = await user_service.get_user(payload.sub)
 
     if user.roles != payload.roles:
@@ -86,13 +91,16 @@ async def check_role_consistency(
         payload = AccessTokenData(**json.loads(payload_str))
     
     return payload
-        
 
-
-
-async def check_admin_or_super_admin_role_from_access_token(
+async def get_access_token(
     payload: Annotated[AccessTokenData, Depends(check_role_consistency)] = None,
-) -> list[str]:
+) -> AccessTokenData:
+    return payload
+
+
+async def get_admin_access_token(
+    payload: Annotated[AccessTokenData, Depends(check_role_consistency)] = None,
+) -> AccessTokenData:
     if not (settings.role_admin in payload.roles or settings.role_super_admin in payload.roles):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     return payload
@@ -134,10 +142,7 @@ async def validate_refresh_token(
     return RefreshTokenData(**payload)
 
 
-async def check_origin(origin: Annotated[str | None, Header()] = None):
-    if origin is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Origin header is required',
-        )
-    return origin
+async def get_refresh_token(
+    payload: Annotated[RefreshTokenData, Depends(validate_refresh_token)] = None,
+) -> RefreshTokenData:
+    return payload
