@@ -64,6 +64,11 @@ async def check_role_consistency(
     payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
     origin: Annotated[str | None, Header()] = None
     ):
+    if origin is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Origin header is required',
+        )
     user = await user_service.get_user(payload.sub)
 
     if user.roles != payload.roles:

@@ -11,6 +11,7 @@ from functools import lru_cache
 from db.postgres_db import get_session
 from fastapi import Depends, HTTPException, status
 import logging
+from schemas.entity_schemas import UserPatch
 
 
 class UserService:
@@ -152,21 +153,8 @@ class UserService:
             ],
         )
 
-    async def update_user(self, user_patch: User):
+    async def update_user(self, user_patch: UserPatch):
         user_patch.password = password_service.compute_hash(user_patch.password)
-
-        user = await self.get_user_by_email(user_patch.email)
-        if user and user.id != user_patch.id:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=f'User with this email {user.email} already exists',
-            )
-        user = await self.get_user_by_login(user_patch.login)
-        if user and user.id != user_patch.id:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=f'User with this login {user.login} already exists',
-            )
 
         query = (
             update(UserModel)

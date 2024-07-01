@@ -13,6 +13,7 @@ from services.validation import (
     check_role_consistency,
     check_admin_or_super_admin_role_from_access_token,
 )
+from schemas.entity_schemas import UserPatch
 
 
 router = APIRouter()
@@ -43,7 +44,7 @@ async def get_users(
     dependencies=[Depends(check_role_consistency)],
 )
 async def change_user(
-    user_patch: User,
+    user_patch: UserPatch,
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_agent: Annotated[str | None, Header()] = None,
 ):
@@ -63,7 +64,6 @@ async def change_user(
     # dependencies=[Depends(get_current_active_user)]
 )
 async def delete_user(
-    user_id: str,
     response: ORJSONResponse,
     user_service: Annotated[UserService, Depends(get_user_service)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
@@ -71,7 +71,7 @@ async def delete_user(
     # payload_admin: AccessTokenData = Depends(check_admin_or_super_admin_role_from_access_token),
 ):
     # TODO пользователь только сам себяю может удалить или админ тоже может?
-
+    user_id = payload.sub
     db_user = await user_service.delete_user(user_id)
     await auth_service.logout_all_by_delete(user_id)
     response.delete_cookie(key=settings.access_token_name)
