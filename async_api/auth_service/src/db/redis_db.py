@@ -66,12 +66,23 @@ class RedisTokenStorage:
 
     async def get_user_last_logout_all(self, user_id: str, user_agent: str):
         last_logout_time = await self._redis.get(f'{user_id}:{LAST_LOGOUT_ALL}:{user_agent}')
-
         last_deleted_time = await self._redis.get(f'{user_id}:{LAST_LOGOUT_ALL}:ALL_USER_AGENT')
-        if last_logout_time is not None and last_deleted_time is not None:
-            last_logout_time = max(last_logout_time, last_deleted_time)
 
-        return last_logout_time if last_logout_time else MIN_TIME
+        if last_logout_time is not None and last_deleted_time is not None:
+            last_logout_time_int = float(last_logout_time.decode("utf-8"))
+            last_deleted_time_int = float(last_deleted_time.decode("utf-8"))
+            return max(last_logout_time_int, last_deleted_time_int)
+
+        elif last_logout_time is not None:
+            last_logout_time_int = float(last_logout_time.decode("utf-8"))
+            return last_logout_time_int
+
+        elif last_deleted_time is not None:
+            last_deleted_time_int = float(last_deleted_time.decode("utf-8"))
+            return last_deleted_time_int
+
+        else:
+            return MIN_TIME
 
     async def bgsave(self):
         return await self._redis.bgsave()

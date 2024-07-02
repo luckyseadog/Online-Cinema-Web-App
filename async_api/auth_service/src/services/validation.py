@@ -14,6 +14,7 @@ from services.token_service import (
 )
 from services.user_service import UserService, get_user_service
 from fastapi.responses import ORJSONResponse
+import logging
 
 
 async def validate_access_token(
@@ -54,6 +55,9 @@ async def validate_access_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Access token is withdrawn',
         )
+    
+    logging.warn(payload.iat)
+    logging.warn(await cache.get_user_last_logout_all(payload.sub, user_agent))
 
     return payload
 

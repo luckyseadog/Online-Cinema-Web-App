@@ -154,7 +154,8 @@ class UserService:
         )
 
     async def update_user(self, user_patch: UserPatch):
-        user_patch.password = password_service.compute_hash(user_patch.password)
+        if user_patch.password:
+            user_patch.password = password_service.compute_hash(user_patch.password)
 
         query = (
             update(UserModel)
