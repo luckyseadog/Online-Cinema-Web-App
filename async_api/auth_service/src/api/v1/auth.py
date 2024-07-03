@@ -1,4 +1,3 @@
-import logging
 from typing import Annotated, Union
 from uuid import uuid4
 
@@ -16,9 +15,7 @@ from services.auth_service import AuthService, get_auth_service
 from services.history_service import HistoryService, get_history_service
 from services.role_service import RoleService, get_role_service
 from services.user_service import UserService, get_user_service
-from services.validation import (check_origin, check_role_consistency,
-                                 get_access_token, get_refresh_token,
-                                 validate_access_token, validate_refresh_token)
+from services.validation import check_origin, get_access_token, get_refresh_token
 
 router = APIRouter()
 
