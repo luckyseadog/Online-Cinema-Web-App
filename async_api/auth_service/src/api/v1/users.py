@@ -5,17 +5,12 @@ from fastapi.responses import ORJSONResponse
 
 from core.config import settings
 from schemas.entity import History, User
-from schemas.entity_schemas import AccessTokenData
-from services.user_service import UserService, get_user_service
-from services.history_service import HistoryService, get_history_service
+from schemas.entity_schemas import AccessTokenData, UserPatch
 from services.auth_service import AuthService, get_auth_service
-from services.validation import (
-    check_role_consistency,
-    get_admin_access_token,
-    get_access_token,
-)
-from schemas.entity_schemas import UserPatch
-
+from services.history_service import HistoryService, get_history_service
+from services.user_service import UserService, get_user_service
+from services.validation import (check_role_consistency, get_access_token,
+                                 get_admin_access_token)
 
 router = APIRouter()
 

@@ -1,11 +1,13 @@
 from functools import lru_cache
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from db.postgres_db import get_session
+
+from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
-from models.entity import UserModel, RoleModel
-from schemas.entity import User, Role
-from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from db.postgres_db import get_session
+from models.entity import RoleModel, UserModel
+from schemas.entity import Role, User
+
 
 class AdminService:
 

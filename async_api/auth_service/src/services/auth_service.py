@@ -1,15 +1,16 @@
 from datetime import datetime
 from functools import lru_cache
 
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from core.config import settings
 from db.postgres_db import get_session
 from db.redis_db import RedisTokenStorage, get_redis
-from fastapi import Depends, HTTPException, status
 from schemas.entity_schemas import TokenPairExpired, UserCredentials
 from services.password_service import password_service
 from services.token_service import AccessTokenService, RefreshTokenService
 from services.user_service import UserService, get_user_service
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AuthService:

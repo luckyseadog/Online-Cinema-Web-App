@@ -1,20 +1,18 @@
 import json
+import logging
 import time
 from typing import Annotated, Union
 
-from fastapi import Cookie, Header, Depends, HTTPException, status
-from db.redis_db import RedisTokenStorage, get_redis
-from core.config import settings
-from schemas.entity_schemas import AccessTokenData, RefreshTokenData
-from services.token_service import (
-    AccessTokenService,
-    RefreshTokenService,
-    get_access_token_service,
-    get_refresh_token_service,
-)
-from services.user_service import UserService, get_user_service
+from fastapi import Cookie, Depends, Header, HTTPException, status
 from fastapi.responses import ORJSONResponse
-import logging
+
+from core.config import settings
+from db.redis_db import RedisTokenStorage, get_redis
+from schemas.entity_schemas import AccessTokenData, RefreshTokenData
+from services.token_service import (AccessTokenService, RefreshTokenService,
+                                    get_access_token_service,
+                                    get_refresh_token_service)
+from services.user_service import UserService, get_user_service
 
 
 async def validate_access_token(

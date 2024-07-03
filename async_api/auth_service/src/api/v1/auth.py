@@ -1,27 +1,24 @@
+import logging
 from typing import Annotated, Union
+from uuid import uuid4
 
-from fastapi import APIRouter, Cookie, Depends, Header, status, HTTPException
-from fastapi.responses import ORJSONResponse
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from fastapi.security.oauth2 import (
-    OAuth2PasswordRequestForm,
-)
+from fastapi.responses import ORJSONResponse
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
 from core.config import settings
-from schemas.entity_schemas import (
-    AccessTokenData, RefreshTokenData,
-    TokenPair, UserCreate, UserCredentials,
-    RoleEnum,
-)
 from schemas.entity import History, User
-
-from services.user_service import UserService, get_user_service
+from schemas.entity_schemas import (AccessTokenData, RefreshTokenData,
+                                    RoleEnum, TokenPair, UserCreate,
+                                    UserCredentials)
 from services.auth_service import AuthService, get_auth_service
-from services.role_service import RoleService, get_role_service
-from services.validation import validate_access_token, validate_refresh_token, check_origin, check_role_consistency, get_access_token, get_refresh_token
-from uuid import uuid4
 from services.history_service import HistoryService, get_history_service
-import logging
+from services.role_service import RoleService, get_role_service
+from services.user_service import UserService, get_user_service
+from services.validation import (check_origin, check_role_consistency,
+                                 get_access_token, get_refresh_token,
+                                 validate_access_token, validate_refresh_token)
 
 router = APIRouter()
 

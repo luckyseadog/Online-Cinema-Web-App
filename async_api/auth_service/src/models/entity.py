@@ -3,6 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import mapped_column, relationship
+
 from db.postgres_db import Base
 
 
