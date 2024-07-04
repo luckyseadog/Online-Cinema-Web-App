@@ -8,7 +8,7 @@ from tests.settings import settings
 
 
 pytest_plugins = (
-    'tests.functionals.fixtures.db',
+    'tests.functional.fixtures.db',
 )
 
 @pytest_asyncio.fixture(scope='session')
@@ -64,7 +64,7 @@ async def superadmin_cookies(prepare_database, super_admin, client):
 #         await conn.run_sync(Base.metadata.create_all)
 #
 #     async with async_session() as session:
-#         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functionals/testdata/data/roles.json') as file:
+#         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functional/testdata/data/roles.json') as file:
 #             for item in json.load(file):
 #                 role = RoleModel(
 #                     id=item['id'],
@@ -74,7 +74,7 @@ async def superadmin_cookies(prepare_database, super_admin, client):
 #                 session.add(role)
 #             await session.flush()
 #
-#         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functionals/testdata/data/users.json') as file:
+#         with open(f'{os.path.dirname(os.path.realpath(__file__))}/functional/testdata/data/users.json') as file:
 #             data = json.load(file)
 #             for item in data:
 #                 user = UserModel(
