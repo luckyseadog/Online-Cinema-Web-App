@@ -8,7 +8,6 @@ from tests.functional.utils.helpers import backoff
 def ping_redis(redis_client):
     return redis_client.ping()
 
-
 if __name__ == '__main__':
     redis = Redis(host=test_settings.redis_host, port=test_settings.redis_port)
     ping_redis(redis)
