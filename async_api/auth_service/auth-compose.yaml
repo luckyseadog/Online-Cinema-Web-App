@@ -30,7 +30,7 @@ services:
       timeout: 10s
 
   fastapi-auth:
-    build: ./src
+    build: .
     env_file:
       - .env
     ports:
