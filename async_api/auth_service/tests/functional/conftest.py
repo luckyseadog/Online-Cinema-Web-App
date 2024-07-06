@@ -1,15 +1,21 @@
 import asyncio
 
-from httpx import ASGITransport
+import aiohttp
 import pytest_asyncio
-import httpx
-from main import app
-from tests.settings import settings
-
-
-pytest_plugins = (
-    'tests.functional.fixtures.db',
+from redis.asyncio import Redis
+from collections.abc import AsyncGenerator
+from tests.functional.settings import auth_test_settings
+import pytest_asyncio
+from sqlalchemy.ext.asyncio import (
+    create_async_engine, AsyncSession, AsyncEngine, AsyncConnection,
 )
+from tests.functional.utils.db_models import Base
+from pathlib import Path
+
+
+# pytest_plugins = (
+#     'tests.functional.fixtures.db',
+# )
 
 @pytest_asyncio.fixture(scope='session')
 def event_loop():
@@ -17,23 +23,89 @@ def event_loop():
     yield loop
     loop.close()
 
+@pytest_asyncio.fixture(scope='session')
+async def aiohttp_client():
+    session = aiohttp.ClientSession()
+    yield session
+    await session.close()
+
+# @pytest_asyncio.fixture(scope='session')
+# async def client():
+#     async with httpx.AsyncClient(transport=ASGITransport(app), base_url=settings.root_path) as client:
+#         yield client
 
 @pytest_asyncio.fixture(scope='session')
-async def client():
-    async with httpx.AsyncClient(transport=ASGITransport(app), base_url=settings.root_path) as client:
-        yield client
+async def redis_client():
+    redis = Redis(host=auth_test_settings.redis_host, port=auth_test_settings.redis_port)
+    yield redis
+    await redis.aclose()
 
 
-@pytest_asyncio.fixture(scope='function')
-async def superadmin_cookies(prepare_database, super_admin, client):
-    response = await client.post(
-        '/login', data={
-            'username': settings.sa_login,
-            'password': settings.sa_password,
-        },
-        headers={'Origin': settings.root_path},
+
+@pytest_asyncio.fixture(scope='session')
+async def async_engine() -> AsyncEngine:
+    DSN = (
+        f'postgresql+asyncpg://{auth_test_settings.pg_user}:{auth_test_settings.pg_pass}'
+        f'@{auth_test_settings.pg_host}:{auth_test_settings.pg_port}/{auth_test_settings.pg_db}'
     )
-    yield response.cookies
+    return create_async_engine(DSN, echo=False, future=True)
+
+
+@pytest_asyncio.fixture(scope='module')
+async def prepare_database(async_engine: AsyncEngine):
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest_asyncio.fixture(scope='session')
+async def async_connection(async_engine: AsyncEngine) -> AsyncGenerator[AsyncConnection, None]:
+    async with async_engine.connect() as connection:
+        yield connection
+
+
+@pytest_asyncio.fixture(scope='session')
+async def async_session(async_connection: AsyncConnection):
+    async with AsyncSession(bind=async_connection) as session:
+        yield session
+
+
+@pytest_asyncio.fixture(scope='module')
+async def test_user(aiohttp_client):
+    """
+    Creates test_user which would be checked
+    """
+    user_creds = {
+        "login": "john",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "password": "securepassword123"
+    }
+    url = Path(f'{auth_test_settings.root_path}') / "signup"
+
+    async with aiohttp_client.post(url, json=user_creds) as resp:
+        resp.raise_for_status()
+
+
+
+
+
+
+
+
+# @pytest_asyncio.fixture(scope='function')
+# async def superadmin_cookies(prepare_database, super_admin, client):
+#     response = await client.post(
+#         '/login', data={
+#             'username': settings.sa_login,
+#             'password': settings.sa_password,
+#         },
+#         headers={'Origin': settings.root_path},
+#     )
+#     yield response.cookies
 
 
 # @pytest_asyncio.fixture(scope='session')
@@ -113,80 +185,38 @@ async def superadmin_cookies(prepare_database, super_admin, client):
 
 # FROM folder fixtures
 
-import pytest_asyncio
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, AsyncEngine, AsyncConnection,
-)
-from uuid import uuid4
-from tests.settings import settings
-from db.postgres_db import Base
-from models.entity import RoleModel, UserModel, UserRoleModel
-from services.password_service import password_service
-
-import json
-import os
 
 
-@pytest_asyncio.fixture(scope='session')
-async def async_engine() -> AsyncEngine:
-    DSN = (
-        f'postgresql+asyncpg://{settings.pg_user}:{settings.pg_pass}'
-        f'@{settings.pg_host}:{settings.pg_port}/{settings.pg_db}'
-    )
-    return create_async_engine(DSN, echo=False, future=True)
+# @pytest_asyncio.fixture(scope='function')
+# async def roles_in_db(async_session: AsyncSession):
+#     with open(f'{os.path.dirname(os.path.realpath(__file__))}/../testdata/data/roles.json') as file:
+#         for item in json.load(file):
+#             role = RoleModel(
+#                 id=item['id'],
+#                 title=item['title'],
+#                 description=item['description'],
+#             )
+#             async_session.add(role)
+#         await async_session.flush()
+#         await async_session.commit()
 
 
-@pytest_asyncio.fixture(scope='function')
-async def prepare_database(async_engine: AsyncEngine):
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-
-
-@pytest_asyncio.fixture(scope='session')
-async def async_connection(async_engine: AsyncEngine) -> AsyncConnection:
-    async with async_engine.connect() as connection:
-        yield connection
-
-
-@pytest_asyncio.fixture(scope='session')
-async def async_session(async_connection: AsyncConnection):
-    async with AsyncSession(bind=async_connection) as session:
-        yield session
-
-
-@pytest_asyncio.fixture(scope='function')
-async def roles_in_db(async_session: AsyncSession):
-    with open(f'{os.path.dirname(os.path.realpath(__file__))}/../testdata/data/roles.json') as file:
-        for item in json.load(file):
-            role = RoleModel(
-                id=item['id'],
-                title=item['title'],
-                description=item['description'],
-            )
-            async_session.add(role)
-        await async_session.flush()
-        await async_session.commit()
-
-
-@pytest_asyncio.fixture(scope='function')
-async def users_in_db(async_session: AsyncSession):
-    with open(f'{os.path.dirname(os.path.realpath(__file__))}/../testdata/data/users.json') as file:
-        data = json.load(file)
-        for item in data[:10]:
-            user = UserModel(
-                id=item['id'],
-                login=item['login'],
-                password=password_service.compute_hash(item['password']),
-                email=item['email'],
-                first_name=item['first_name'],
-                last_name=item['last_name'],
-            )
-            async_session.add(user)
-        await async_session.flush()
-        await async_session.commit()
+# @pytest_asyncio.fixture(scope='function')
+# async def users_in_db(async_session: AsyncSession):
+#     with open(f'{os.path.dirname(os.path.realpath(__file__))}/../testdata/data/users.json') as file:
+#         data = json.load(file)
+#         for item in data[:10]:
+#             user = UserModel(
+#                 id=item['id'],
+#                 login=item['login'],
+#                 password=password_service.compute_hash(item['password']),
+#                 email=item['email'],
+#                 first_name=item['first_name'],
+#                 last_name=item['last_name'],
+#             )
+#             async_session.add(user)
+#         await async_session.flush()
+#         await async_session.commit()
 
         # data = json.load(file)
         #             for item in data:
@@ -201,33 +231,33 @@ async def users_in_db(async_session: AsyncSession):
         #                 async_session.add(user)
 
 
-@pytest_asyncio.fixture(scope='function')
-async def super_admin(async_session: AsyncSession):
-    role_id = str(uuid4())
-    user_id = str(uuid4())
+# @pytest_asyncio.fixture(scope='function')
+# async def super_admin(async_session: AsyncSession):
+#     role_id = str(uuid4())
+#     user_id = str(uuid4())
 
-    role = RoleModel(
-        id=role_id,
-        title=settings.role_super_admin,
-        description=f'{settings.role_super_admin} description',
-    )
-    async_session.add(role)
-    await async_session.flush()
+#     role = RoleModel(
+#         id=role_id,
+#         title=settings.role_super_admin,
+#         description=f'{settings.role_super_admin} description',
+#     )
+#     async_session.add(role)
+#     await async_session.flush()
 
-    user = UserModel(
-        id=user_id,
-        login=settings.sa_login,
-        password=password_service.compute_hash(settings.sa_password),
-        email=settings.sa_email,
-        first_name=settings.sa_firstname,
-        last_name=settings.sa_lastname,
-    )
-    async_session.add(user)
-    await async_session.flush()
+#     user = UserModel(
+#         id=user_id,
+#         login=settings.sa_login,
+#         password=password_service.compute_hash(settings.sa_password),
+#         email=settings.sa_email,
+#         first_name=settings.sa_firstname,
+#         last_name=settings.sa_lastname,
+#     )
+#     async_session.add(user)
+#     await async_session.flush()
 
-    user_role = UserRoleModel(user_id=user_id, role_id=role_id)
-    async_session.add(user_role)
-    await async_session.commit()
+#     user_role = UserRoleModel(user_id=user_id, role_id=role_id)
+#     async_session.add(user_role)
+#     await async_session.commit()
 
 
 # @pytest_asyncio.fixture(scope='session')

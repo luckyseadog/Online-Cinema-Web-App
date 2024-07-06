@@ -1,34 +1,41 @@
 version: '3'
 
 services:
-  postgres:
+  auth-test-postgres:
     image: postgres:16
-    volumes:
-      - pg_data_test:/var/lib/postgresql/data
     ports:
-      - "5431:5431"
+      - "5432:5432"
+    env_file:
+     - .env
     environment:
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: ${PG_NAME}
+      POSTGRES_PASSWORD: "${AUTH_DB_PASSWORD}"
+      POSTGRES_USER: "${AUTH_DB_USER}"
+      POSTGRES_DB: "${AUTH_DB_NAME}"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -h localhost -d ${PG_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
       interval: 10s
       timeout: 5s
 
-  redis:
+  auth-test-redis:
     image: redis/redis-stack-server:latest
-    volumes:
-      - redis_data_test:/data
+    env_file:
+      - .env
     ports:
-      - "6378:6378"
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-
-volumes:
-  pg_data_test:
-    driver: local
-  redis_data_test:
-    driver: local
+  
+  auth-test-fastapi:
+    build: ../../.
+    image: auth-test-fastapi-image
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      auth-test-postgres:
+        condition: service_healthy
+      auth-test-redis:
+        condition: service_healthy

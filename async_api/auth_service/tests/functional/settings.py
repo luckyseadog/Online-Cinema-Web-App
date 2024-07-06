@@ -3,30 +3,30 @@ from pydantic import Field
 
 
 class Settings(BaseSettings):
-    redis_host: str = Field('127.0.0.1', alias='REDIS_HOST')
-    redis_port: int = Field(6379, alias='REDIS_PORT')
+    root_path: str = 'http://localhost:8000/api/v1/auth'
 
-    pg_db: str = Field('auth_database', alias='PG_NAME')
-    pg_host: str = Field('127.0.0.1', alias='PG_HOST')
-    pg_port: int = Field(5432, alias='PG_PORT')
-    pg_user: str = Field('app', alias='PG_USER')
-    pg_pass: str = Field('123qwe', alias='PG_PASSWORD')
+    redis_host: str = '127.0.0.1'
+    redis_port: int = 6379
 
-    root_path: str = Field('http://localhost:8000/api/v1/auth', alias='ROOT_PATH')
+    pg_db: str = 'test_db'
+    pg_host: str = '127.0.0.1'
+    pg_port: int = 5432
+    pg_user: str = 'test_user'
+    pg_pass: str = '123qwe'
 
-    sa_login: str = Field('superadmin', alias='SUPER_USER_LOGIN')
-    sa_password: str = Field('admin', alias='SUPER_USER_PASSWORD')
-    sa_firstname: str = Field('admin', alias='SUPER_USER_FIRST_NAME')
-    sa_lastname: str = Field('admin', alias='SUPER_USER_LAST_NAME')
-    sa_email: str = Field('superadmin@admin.com', alias='SUPER_USER_EMAIL')
+    sa_login: str = 'superadmin'
+    sa_password: str = 'admin'
+    sa_firstname: str = 'admin'
+    sa_lastname: str = 'admin'
+    sa_email: str = 'superadmin@admin.com'
 
-    role_admin: str = Field('admin', alias='ADMIN_ROLE_NAME')
-    role_super_admin: str = Field('superadmin', alias='SUPERADMIN_ROLE_NAME')
-    role_user: str = Field('user', alias='USER_ROLE_NAME')
-    role_subscriber: str = Field('subscriber', alias='SUBSCRIBER_ROLE_NAME')
-    role_guest: str = Field('guest', alias='GUEST_ROLE_NAME')
+    role_admin: str = 'admin'
+    role_super_admin: str = 'superadmin'
+    role_user: str = 'user'
+    role_subscriber: str = 'subscriber'
+    role_guest: str = 'guest'
 
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    # model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
 
-settings = Settings()
+auth_test_settings = Settings()
