@@ -42,12 +42,14 @@ async def get_users(
 async def change_user(
     user_patch: UserPatch,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    payload: Annotated[AccessTokenData, Depends(get_access_token)],
     user_agent: Annotated[str | None, Header()] = None,
 ):
     # TODO пользователь только сам меняет какие-то данные?
     # Админ может менять данные пользователя?
     # Или сделать отдельную ручку, у которой будет своя схема с полями, которые может менять админ?
-    db_user = await user_service.update_user(user_patch)
+    user_id = payload.sub
+    db_user = await user_service.update_user(user_id, user_patch)
     return db_user
 
 

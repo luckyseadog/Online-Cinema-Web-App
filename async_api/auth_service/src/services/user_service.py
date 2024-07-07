@@ -153,13 +153,13 @@ class UserService:
             ],
         )
 
-    async def update_user(self, user_patch: UserPatch):
+    async def update_user(self, user_id: str, user_patch: UserPatch):
         if user_patch.password:
             user_patch.password = password_service.compute_hash(user_patch.password)
 
         query = (
             update(UserModel)
-            .where(UserModel.id == user_patch.id)
+            .where(UserModel.id == user_id)
             .values(**user_patch.model_dump(exclude_none=True))
             .returning(UserModel)
         )
