@@ -2,30 +2,21 @@ import pytest
 from tests.functional.settings import auth_test_settings
 from aiohttp import FormData
 
-from faker import Faker
-
-from uuid import uuid4
-
-faker = Faker()
+import pdb 
+import asyncio
 
 
-USER_NAME = faker.user_name()
-USER_PASSWORD = faker.password()
-
+# pdb.set_trace()
 
 
 @pytest.mark.asyncio
-async def test_user_signup(aiohttp_client1):
-    # data = FormData()
-    # data.add_field('username', 'superadmin')
-    # data.add_field('password', 'admin')
-
+async def test_user_signup(aiohttp_client1, random_creds):
     creds = {
-        "login": USER_NAME,
-        "email": f"{USER_NAME}@example.com",
-        "first_name": USER_NAME,
-        "last_name": USER_NAME,
-        "password": USER_PASSWORD
+        "login": random_creds["username"],
+        "email": f'{random_creds["username"]}@example.com',
+        "first_name": random_creds["username"],
+        "last_name": random_creds["username"],
+        "password": random_creds["password"]
     }
 
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/signup", json=creds)
@@ -35,10 +26,10 @@ async def test_user_signup(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_user_login(aiohttp_client1):
+async def test_user_login(aiohttp_client1, random_creds):
     data = FormData()
-    data.add_field('username', USER_NAME)
-    data.add_field('password', USER_PASSWORD)
+    data.add_field('username', random_creds["username"])
+    data.add_field('password', random_creds["password"])
 
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/login", data=data)
 
@@ -49,14 +40,18 @@ async def test_user_login(aiohttp_client1):
 
 @pytest.mark.asyncio
 async def test_user_refresh(aiohttp_client1):
-    old_access = aiohttp_client1.cookie_jar.filter_cookies("").get("access_token", None)
-    old_refresh = aiohttp_client1.cookie_jar.filter_cookies("").get("refresh_token", None)
+    old_access = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("access_token", None).value
+    old_refresh = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("refresh_token", None).value
 
+    await asyncio.sleep(1)
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/refresh")
-
     assert resp.status == 200
-    assert resp.cookies["access_token"] != old_access
-    assert resp.cookies["refresh_token"] != old_refresh
+
+    new_access = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("access_token", None).value
+    new_refresh = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("refresh_token", None).value
+
+    assert new_access != old_access
+    assert new_refresh != old_refresh
 
 
 @pytest.mark.asyncio
@@ -84,8 +79,8 @@ async def test_user_logout(aiohttp_client1):
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/logout")
     assert resp.status == 200
 
-    assert aiohttp_client1.cookie_jar.filter_cookies("").get("access_token", None) is None
-    assert aiohttp_client1.cookie_jar.filter_cookies("").get("refresh_token", None) is None
+    assert aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("access_token", None) is None
+    assert aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("refresh_token", None) is None
 
     resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users/me")
     assert resp.status == 401

@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from tests.functional.utils.db_models import Base
 from pathlib import Path
+from faker import Faker
 
 
 # pytest_plugins = (
@@ -111,6 +112,12 @@ async def test_user(aiohttp_client):
     async with aiohttp_client.post(url, json=user_creds) as resp:
         resp.raise_for_status()
 
+
+
+@pytest_asyncio.fixture(scope="module")
+def random_creds():
+    faker = Faker()
+    return {"username": faker.user_name(), "password": faker.password()}
 
 
 

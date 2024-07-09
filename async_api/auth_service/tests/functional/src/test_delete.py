@@ -4,28 +4,18 @@ from aiohttp import FormData
 import pdb 
 import asyncio
 
-from faker import Faker
-
-from uuid import uuid4
-
-faker = Faker()
-
-
-USER_NAME = faker.user_name()
-USER_PASSWORD = faker.password()
-
 
 # pdb.set_trace()
 
 
 @pytest.mark.asyncio
-async def test_user_signup(aiohttp_client1):
+async def test_user_signup(aiohttp_client1, random_creds):
     creds = {
-        "login": USER_NAME,
-        "email": f"{USER_NAME}@example.com",
-        "first_name": USER_NAME,
-        "last_name": USER_NAME,
-        "password": USER_PASSWORD
+        "login": random_creds["username"],
+        "email": f'{random_creds["username"]}@example.com',
+        "first_name": random_creds["username"],
+        "last_name": random_creds["username"],
+        "password": random_creds["password"]
     }
 
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/signup", json=creds)
@@ -34,11 +24,11 @@ async def test_user_signup(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_delete_login(aiohttp_client1, aiohttp_client2):
+async def test_delete_login(aiohttp_client1, aiohttp_client2, random_creds):
     for client in [aiohttp_client1, aiohttp_client2]:
         data = FormData()
-        data.add_field('username', USER_NAME)
-        data.add_field('password', USER_PASSWORD)
+        data.add_field('username', random_creds["username"])
+        data.add_field('password', random_creds["password"])
 
         resp = await client.post(f"{auth_test_settings.root_path}/login", data=data)
 
@@ -67,10 +57,10 @@ async def test_delete_me(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_delete_login2(aiohttp_client2):
+async def test_delete_login2(aiohttp_client2, random_creds):
     data = FormData()
-    data.add_field('username', USER_NAME)
-    data.add_field('password', USER_PASSWORD)
+    data.add_field('username', random_creds["username"])
+    data.add_field('password', random_creds["password"])
 
     resp = await aiohttp_client2.post(f"{auth_test_settings.root_path}/login", data=data)
 
