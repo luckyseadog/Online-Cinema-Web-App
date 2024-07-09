@@ -34,6 +34,7 @@ class UserService:
             last_name=user.last_name,
             email=user.email,
             is_superadmin=user.is_superadmin,
+            deleted_at=user.deleted_at,
             roles=[
                 Role(
                     id=role.id,
@@ -55,6 +56,7 @@ class UserService:
                 last_name=user.last_name,
                 email=user.email,
                 is_superadmin=user.is_superadmin,
+                deleted_at=user.deleted_at,
                 roles=[
                     Role(
                         id=role.id,
@@ -76,6 +78,7 @@ class UserService:
                 last_name=user.last_name,
                 email=user.email,
                 is_superadmin=user.is_superadmin,
+                deleted_at=user.deleted_at,
                 roles=[
                     Role(
                         id=role.id,
@@ -97,6 +100,7 @@ class UserService:
                 last_name=user.last_name,
                 email=user.email,
                 is_superadmin=user.is_superadmin,
+                deleted_at=user.deleted_at,
                 roles=[
                     Role(
                         id=role.id,
@@ -142,6 +146,7 @@ class UserService:
             last_name=user.last_name,
             email=user.email,
             is_superadmin=user.is_superadmin,
+            deleted_at=user.deleted_at,
             roles=[
                 # jsonable_encoder(
                 Role(
@@ -181,6 +186,7 @@ class UserService:
             last_name=updated_user.last_name,
             email=updated_user.email,
             is_superadmin=updated_user.is_superadmin,
+            deleted_at=updated_user.deleted_at,
             roles=[
                 Role(
                     id=role.id,
@@ -192,7 +198,7 @@ class UserService:
 
     async def delete_user(self, user_id: str) -> User:
 
-        if not self.is_deleted(user_id):
+        if await self.is_deleted(user_id):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f'User with id {user_id} already deleted',
@@ -221,6 +227,7 @@ class UserService:
             last_name=deleted_user.last_name,
             email=deleted_user.email,
             is_superadmin=deleted_user.is_superadmin,
+            deleted_at=deleted_user.deleted_at,
             roles=[
                 Role(
                     id=role.id,

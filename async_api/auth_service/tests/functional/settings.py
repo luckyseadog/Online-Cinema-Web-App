@@ -8,11 +8,11 @@ class Settings(BaseSettings):
     redis_host: str = '127.0.0.1'
     redis_port: int = 6379
 
-    pg_db: str = 'test_db'
-    pg_host: str = '127.0.0.1'
-    pg_port: int = 5432
-    pg_user: str = 'test_user'
-    pg_pass: str = '123qwe'
+    auth_db: str = 'auth_db'
+    auth_db_host: str = '127.0.0.1'
+    auth_db_port: int = 5432
+    auth_db_user: str = 'auth_user'
+    auth_db_password: str = 'qwerty'
 
     sa_login: str = 'superadmin'
     sa_password: str = 'admin'

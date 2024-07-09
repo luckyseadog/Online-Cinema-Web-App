@@ -12,7 +12,7 @@ dsn = (
     f':{settings.pg_password}@{settings.pg_host}'
     f':{settings.pg_port}/{settings.pg_name}'
 )
-engine = create_async_engine(dsn, echo=True, future=True)
+engine = create_async_engine(dsn, echo=False, future=True)
 
 async_session = sessionmaker(
     engine,

@@ -23,11 +23,33 @@ def event_loop():
     yield loop
     loop.close()
 
-@pytest_asyncio.fixture(scope='session')
-async def aiohttp_client():
-    session = aiohttp.ClientSession()
+@pytest_asyncio.fixture(scope='module')
+async def aiohttp_client1():
+    headers = {"Origin": "www.somesite.com"}
+    jar = aiohttp.CookieJar(unsafe=True)
+    session = aiohttp.ClientSession(
+        cookie_jar=jar,
+        headers=headers
+    )
+
     yield session
+
     await session.close()
+
+
+@pytest_asyncio.fixture(scope='module')
+async def aiohttp_client2():
+    headers = {"Origin": "www.somesite.com"}
+    jar = aiohttp.CookieJar(unsafe=True)
+    session = aiohttp.ClientSession(
+        cookie_jar=jar,
+        headers=headers
+    )
+
+    yield session
+
+    await session.close()
+
 
 # @pytest_asyncio.fixture(scope='session')
 # async def client():
@@ -45,8 +67,8 @@ async def redis_client():
 @pytest_asyncio.fixture(scope='session')
 async def async_engine() -> AsyncEngine:
     DSN = (
-        f'postgresql+asyncpg://{auth_test_settings.pg_user}:{auth_test_settings.pg_pass}'
-        f'@{auth_test_settings.pg_host}:{auth_test_settings.pg_port}/{auth_test_settings.pg_db}'
+        f'postgresql+asyncpg://{auth_test_settings.auth_db_user}:{auth_test_settings.auth_db_password}'
+        f'@{auth_test_settings.auth_db_host}:{auth_test_settings.auth_db_port}/{auth_test_settings.auth_db}'
     )
     return create_async_engine(DSN, echo=False, future=True)
 

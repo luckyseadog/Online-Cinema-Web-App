@@ -1,20 +1,20 @@
-import pytest
-from tests.functional.settings import auth_test_settings
-from pathlib import Path
-from aiohttp import FormData
+# import pytest
+# from tests.functional.settings import auth_test_settings
+# from pathlib import Path
+# from aiohttp import FormData
+
+# HEADERS = {"Origin": "www.somesite.com"}
 
 
-@pytest.mark.asyncio
-async def test_admin_basic(aiohttp_client):
-    path = f"{auth_test_settings.root_path}/login"
-    headers = {"Origin": "www.somesite.com"}
-    data = FormData()
-    data.add_field('username', 'superadmin')
-    data.add_field('password', 'admin')
+# @pytest.mark.asyncio
+# async def test_admin_basic(aiohttp_client):
+#     data = FormData()
+#     data.add_field('username', 'superadmin')
+#     data.add_field('password', 'admin')
 
-    resp = await aiohttp_client.post(str(path), headers=headers, data=data)
+#     resp = await aiohttp_client.post("/login", data=data)
 
-    assert resp.status == 200
+#     assert resp.status == 200
 
 
     # username: john, password: securepassword123

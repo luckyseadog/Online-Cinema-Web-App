@@ -15,7 +15,7 @@ dsn = (
 )
 
 
-engine = create_engine(dsn, echo=True, future=True)
+engine = create_engine(dsn, echo=False, future=True)
 
 
 def create_role(title: str, description: str):
