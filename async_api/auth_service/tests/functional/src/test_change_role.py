@@ -1,12 +1,6 @@
 import pytest
-from tests.functional.settings import auth_test_settings
 from aiohttp import FormData
-from faker import Faker
-
-from uuid import uuid4
-
-
-
+from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio

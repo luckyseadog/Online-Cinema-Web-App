@@ -1,7 +1,7 @@
-import pytest
-from tests.functional.settings import auth_test_settings
 import asyncio
 
+import pytest
+from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio

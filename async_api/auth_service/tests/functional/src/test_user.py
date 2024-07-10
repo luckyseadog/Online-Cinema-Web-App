@@ -1,12 +1,8 @@
-import pytest
-from tests.functional.settings import auth_test_settings
-from aiohttp import FormData
-
-import pdb 
 import asyncio
 
-
-# pdb.set_trace()
+import pytest
+from aiohttp import FormData
+from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio
