@@ -10,10 +10,13 @@ async def test_signup(aiohttp_client1, random_creds):
         "email": f'{random_creds["username"]}@example.com',
         "first_name": random_creds["username"],
         "last_name": random_creds["username"],
-        "password": random_creds["password"]
+        "password": random_creds["password"],
     }
 
-    resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/signup", json=creds)
+    resp = await aiohttp_client1.post(
+        f"{auth_test_settings.root_path}/signup",
+        json=creds
+    )
 
     assert resp.status == 200
 
@@ -21,8 +24,14 @@ async def test_signup(aiohttp_client1, random_creds):
 @pytest.mark.asyncio
 async def test_login(aiohttp_client1, aiohttp_client2, random_creds):
     creds = [
-        {"login": random_creds["username"], "password": random_creds["password"]},
-        {"login": "superadmin", "password": "admin"},
+        {
+            "login": random_creds["username"],
+            "password": random_creds["password"],
+        },
+        {
+            "login": "superadmin",
+            "password": "admin",
+        },
     ]
 
     for client, cred in [(aiohttp_client1, creds[0]), (aiohttp_client2, creds[1])]:
@@ -30,7 +39,10 @@ async def test_login(aiohttp_client1, aiohttp_client2, random_creds):
         data.add_field('username', cred["login"])
         data.add_field('password', cred["password"])
 
-        resp = await client.post(f"{auth_test_settings.root_path}/login", data=data)
+        resp = await client.post(
+            f"{auth_test_settings.root_path}/login",
+            data=data
+        )
 
         assert resp.status == 200
         assert resp.cookies.get("access_token", None) is not None
@@ -39,19 +51,25 @@ async def test_login(aiohttp_client1, aiohttp_client2, random_creds):
 
 @pytest.mark.asyncio
 async def test_no_access(aiohttp_client1):
-    resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users")
+    resp = await aiohttp_client1.get(
+        f"{auth_test_settings.root_path}/users"
+    )
     assert resp.status == 403
 
 
 @pytest.mark.asyncio
 async def test_add_admin_role(aiohttp_client1, aiohttp_client2):
-    resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users/me")
+    resp = await aiohttp_client1.get(
+        f"{auth_test_settings.root_path}/users/me"
+    )
     assert resp.status == 200
 
     user = await resp.json()
     user_id = user["id"]
 
-    resp = await aiohttp_client2.get(f"{auth_test_settings.root_path}/admin/roles")
+    resp = await aiohttp_client2.get(
+        f"{auth_test_settings.root_path}/admin/roles"
+    )
     assert resp.status == 200
 
     roles = await resp.json()
@@ -61,17 +79,18 @@ async def test_add_admin_role(aiohttp_client1, aiohttp_client2):
 
     body = {
         "role_id": role_id,
-        "user_id": user_id
+        "user_id": user_id,
     }
-    resp = await aiohttp_client2.post(f"{auth_test_settings.root_path}/admin/user_role/assign", json=body)
+    resp = await aiohttp_client2.post(
+        f"{auth_test_settings.root_path}/admin/user_role/assign",
+        json=body
+    )
     assert resp.status == 200
 
 
 @pytest.mark.asyncio
 async def test_access(aiohttp_client1):
-    resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users")
+    resp = await aiohttp_client1.get(
+        f"{auth_test_settings.root_path}/users"
+    )
     assert resp.status == 200
-
-    
-
-    

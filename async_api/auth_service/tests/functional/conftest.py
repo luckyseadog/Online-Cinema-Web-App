@@ -5,7 +5,6 @@ import pytest_asyncio
 from redis.asyncio import Redis
 from collections.abc import AsyncGenerator
 from tests.functional.settings import auth_test_settings
-import pytest_asyncio
 from sqlalchemy.ext.asyncio import (
     create_async_engine, AsyncSession, AsyncEngine, AsyncConnection,
 )
@@ -14,15 +13,12 @@ from pathlib import Path
 from faker import Faker
 
 
-# pytest_plugins = (
-#     'tests.functional.fixtures.db',
-# )
-
 @pytest_asyncio.fixture(scope='session')
 def event_loop():
     loop = asyncio.new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest_asyncio.fixture(scope='module')
 async def aiohttp_client1():
@@ -52,17 +48,14 @@ async def aiohttp_client2():
     await session.close()
 
 
-# @pytest_asyncio.fixture(scope='session')
-# async def client():
-#     async with httpx.AsyncClient(transport=ASGITransport(app), base_url=settings.root_path) as client:
-#         yield client
-
 @pytest_asyncio.fixture(scope='session')
 async def redis_client():
-    redis = Redis(host=auth_test_settings.redis_host, port=auth_test_settings.redis_port)
+    redis = Redis(
+        host=auth_test_settings.redis_host,
+        port=auth_test_settings.redis_port,
+    )
     yield redis
     await redis.aclose()
-
 
 
 @pytest_asyncio.fixture(scope='session')
@@ -113,16 +106,10 @@ async def test_user(aiohttp_client):
         resp.raise_for_status()
 
 
-
 @pytest_asyncio.fixture(scope="module")
 def random_creds():
     faker = Faker()
     return {"username": faker.user_name(), "password": faker.password()}
-
-
-
-
-
 
 
 # @pytest_asyncio.fixture(scope='function')
