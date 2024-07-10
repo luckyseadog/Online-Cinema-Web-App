@@ -4,7 +4,7 @@ from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio
-async def test_change_signup(aiohttp_client1, random_creds):
+async def test_signup(aiohttp_client1, random_creds):
     creds = {
         "login": random_creds["username"],
         "email": f'{random_creds["username"]}@example.com',
@@ -19,7 +19,7 @@ async def test_change_signup(aiohttp_client1, random_creds):
 
 
 @pytest.mark.asyncio
-async def test_change_login(aiohttp_client1, aiohttp_client2, random_creds):
+async def test_login(aiohttp_client1, aiohttp_client2, random_creds):
     creds = [
         {"login": random_creds["username"], "password": random_creds["password"]},
         {"login": "superadmin", "password": "admin"},
@@ -38,13 +38,13 @@ async def test_change_login(aiohttp_client1, aiohttp_client2, random_creds):
 
 
 @pytest.mark.asyncio
-async def test_change_users_1(aiohttp_client1):
+async def test_no_access(aiohttp_client1):
     resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users")
     assert resp.status == 403
 
 
 @pytest.mark.asyncio
-async def test_change_assign(aiohttp_client1, aiohttp_client2):
+async def test_add_admin_role(aiohttp_client1, aiohttp_client2):
     resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users/me")
     assert resp.status == 200
 
@@ -68,7 +68,7 @@ async def test_change_assign(aiohttp_client1, aiohttp_client2):
 
 
 @pytest.mark.asyncio
-async def test_change_users_2(aiohttp_client1):
+async def test_access(aiohttp_client1):
     resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users")
     assert resp.status == 200
 

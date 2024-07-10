@@ -5,7 +5,7 @@ from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio
-async def test_guest_signup(aiohttp_client1):
+async def test_signup(aiohttp_client1):
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/signup_guest")
 
     assert resp.status == 200
@@ -14,7 +14,7 @@ async def test_guest_signup(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_guest_refresh(aiohttp_client1):
+async def test_refresh(aiohttp_client1):
     old_access = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("access_token", None)
     old_refresh = aiohttp_client1.cookie_jar.filter_cookies("http://localhost").get("refresh_token", None)
 
@@ -30,7 +30,7 @@ async def test_guest_refresh(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_guest_me(aiohttp_client1):
+async def test_getme(aiohttp_client1):
     resp = await aiohttp_client1.get(f"{auth_test_settings.root_path}/users/me")
     assert resp.status == 200
 
@@ -40,7 +40,7 @@ async def test_guest_me(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_guest_logout(aiohttp_client1):
+async def test_logout(aiohttp_client1):
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/logout")
     assert resp.status == 200
 

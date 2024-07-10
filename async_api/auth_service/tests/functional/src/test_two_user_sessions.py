@@ -4,7 +4,7 @@ from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio
-async def test_two_signup(aiohttp_client1, random_creds):
+async def test_signup(aiohttp_client1, random_creds):
     creds = {
         "login": random_creds["username"],
         "email": f'{random_creds["username"]}@example.com',
@@ -19,7 +19,7 @@ async def test_two_signup(aiohttp_client1, random_creds):
 
 
 @pytest.mark.asyncio
-async def test_two_login(aiohttp_client1, aiohttp_client2, random_creds):
+async def test_login(aiohttp_client1, aiohttp_client2, random_creds):
     for client in [aiohttp_client1, aiohttp_client2]:
         data = FormData()
         data.add_field('username', random_creds["username"])
@@ -32,7 +32,7 @@ async def test_two_login(aiohttp_client1, aiohttp_client2, random_creds):
         assert resp.cookies.get("refresh_token", None) is not None
 
 @pytest.mark.asyncio
-async def test_two_logout_all(aiohttp_client1):
+async def test_logout_all_session1(aiohttp_client1):
     resp = await aiohttp_client1.post(f"{auth_test_settings.root_path}/logout_all")
     assert resp.status == 200
 
@@ -44,13 +44,13 @@ async def test_two_logout_all(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_two_me(aiohttp_client2):
+async def test_getme_session2(aiohttp_client2):
     resp = await aiohttp_client2.get(f"{auth_test_settings.root_path}/users/me")
     assert resp.status == 401
 
 
 @pytest.mark.asyncio
-async def test_two_refresh(aiohttp_client2):
+async def test_refresh_session(aiohttp_client2):
     resp = await aiohttp_client2.post(f"{auth_test_settings.root_path}/refresh")
     assert resp.status == 403
 
