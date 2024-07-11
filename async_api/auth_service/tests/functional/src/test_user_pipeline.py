@@ -1,12 +1,14 @@
 import asyncio
+from http import HTTPStatus
 
 import pytest
-from aiohttp import FormData
+from aiohttp import ClientSession, FormData
 from tests.functional.settings import auth_test_settings
 
 
 @pytest.mark.asyncio
-async def test_signup(aiohttp_client1, random_creds):
+async def test_signup(aiohttp_client1: ClientSession, random_creds: dict[str, str]):
+
     creds = {
         "login": random_creds["username"],
         "email": f'{random_creds["username"]}@example.com',
@@ -20,11 +22,11 @@ async def test_signup(aiohttp_client1, random_creds):
         json=creds,
         )
 
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
 
 
 @pytest.mark.asyncio
-async def test_login(aiohttp_client1, random_creds):
+async def test_login(aiohttp_client1: ClientSession, random_creds: dict[str, str]):
     data = FormData()
     data.add_field('username', random_creds["username"])
     data.add_field('password', random_creds["password"])
@@ -34,13 +36,13 @@ async def test_login(aiohttp_client1, random_creds):
         data=data,
         )
 
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
     assert resp.cookies.get("access_token", None) is not None
     assert resp.cookies.get("refresh_token", None) is not None
 
 
 @pytest.mark.asyncio
-async def test_refresh_tokens(aiohttp_client1):
+async def test_refresh_tokens(aiohttp_client1: ClientSession):
     old_access = aiohttp_client1 \
         .cookie_jar \
         .filter_cookies("http://localhost") \
@@ -54,7 +56,7 @@ async def test_refresh_tokens(aiohttp_client1):
     resp = await aiohttp_client1.post(
         f"{auth_test_settings.root_path}/refresh"
         )
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
 
     new_access = aiohttp_client1 \
         .cookie_jar \
@@ -70,11 +72,11 @@ async def test_refresh_tokens(aiohttp_client1):
 
 
 @pytest.mark.asyncio
-async def test_update_name(aiohttp_client1):
+async def test_update_name(aiohttp_client1: ClientSession):
     resp = await aiohttp_client1.get(
         f"{auth_test_settings.root_path}/users/me"
         )
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
     old_user = await resp.json()
 
     user_update = {
@@ -84,23 +86,23 @@ async def test_update_name(aiohttp_client1):
         f"{auth_test_settings.root_path}/users",
         json=user_update,
         )
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
 
     resp = await aiohttp_client1.get(
         f"{auth_test_settings.root_path}/users/me"
         )
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
     new_user = await resp.json()
 
     assert new_user["first_name"] != old_user["first_name"]
 
 
 @pytest.mark.asyncio
-async def test_logout(aiohttp_client1):
+async def test_logout(aiohttp_client1: ClientSession):
     resp = await aiohttp_client1.post(
         f"{auth_test_settings.root_path}/logout"
         )
-    assert resp.status == 200
+    assert resp.status == HTTPStatus.OK
 
     assert aiohttp_client1 \
         .cookie_jar \
@@ -114,4 +116,4 @@ async def test_logout(aiohttp_client1):
     resp = await aiohttp_client1.get(
         f"{auth_test_settings.root_path}/users/me"
         )
-    assert resp.status == 401
+    assert resp.status == HTTPStatus.UNAUTHORIZED

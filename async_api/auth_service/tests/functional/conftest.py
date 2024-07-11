@@ -88,28 +88,28 @@ async def async_session(async_connection: AsyncConnection):
         yield session
 
 
-@pytest_asyncio.fixture(scope='module')
-async def test_user(aiohttp_client):
-    """
-    Creates test_user which would be checked
-    """
-    user_creds = {
-        "login": "john",
-        "email": "john@example.com",
-        "first_name": "John",
-        "last_name": "Doe",
-        "password": "securepassword123"
-    }
-    url = Path(f'{auth_test_settings.root_path}') / "signup"
-
-    async with aiohttp_client.post(url, json=user_creds) as resp:
-        resp.raise_for_status()
-
-
 @pytest_asyncio.fixture(scope="module")
 def random_creds():
     faker = Faker()
     return {"username": faker.user_name(), "password": faker.password()}
+
+
+# @pytest_asyncio.fixture(scope='module')
+# async def test_user(aiohttp_client):
+#     """
+#     Creates test_user which would be checked
+#     """
+#     user_creds = {
+#         "login": "john",
+#         "email": "john@example.com",
+#         "first_name": "John",
+#         "last_name": "Doe",
+#         "password": "securepassword123"
+#     }
+#     url = Path(f'{auth_test_settings.root_path}') / "signup"
+
+#     async with aiohttp_client.post(url, json=user_creds) as resp:
+#         resp.raise_for_status()
 
 
 # @pytest_asyncio.fixture(scope='function')
