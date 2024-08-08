@@ -1,0 +1,98 @@
+version: '1.0'
+services:
+  elasticsearch_db:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: Elasticsearch_test
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_db:/data
+    ports:
+      - 9200:9200
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      movies:
+        aliases:
+          - elasticsearch_db
+
+  redis_db:
+    image: redis:latest
+    container_name: Redis_test
+    ports:
+      - 6380:6379
+    volumes:
+      - redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      movies:
+        aliases:
+          - redis_db
+  
+  api:
+    container_name: API_test
+    build:
+      context: ../..//api/
+    image: api:latest
+    pull_policy: never
+    restart: always
+    volumes:
+      - ./:/usr/local/api/
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      elasticsearch_db:
+        condition: service_healthy
+        restart: true
+      redis_db:
+        condition: service_healthy
+        restart: true
+    networks:
+      movies:
+        aliases:
+          - api
+    
+  tests:
+    container_name: Tests
+    build:
+      context: ./
+    volumes:
+      - ./:/usr/local/api/
+    depends_on:
+      elasticsearch_db:
+        condition: service_healthy
+        restart: true
+      redis_db:
+        condition: service_healthy
+        restart: true
+    networks:
+      movies:
+        aliases:
+          - tests
+    
+
+
+volumes:
+  elasticsearch_db:
+  redis_db:
+
+networks:
+  movies:
+    driver: bridge
