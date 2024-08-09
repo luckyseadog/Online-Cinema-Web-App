@@ -1,4 +1,4 @@
-version: '1.0'
+version: "1.0"
 services:
   elasticsearch_db:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
@@ -43,7 +43,7 @@ services:
       movies:
         aliases:
           - redis_db
-  
+
   api:
     container_name: API_test
     build:
@@ -52,7 +52,7 @@ services:
     pull_policy: never
     restart: always
     volumes:
-      - ./:/usr/local/api/
+      - ../../api/:/app/
     expose:
       - "8000"
     ports:
@@ -73,8 +73,10 @@ services:
     container_name: Tests
     build:
       context: ./
+    pull_policy: never
+    restart: always
     volumes:
-      - ./:/usr/local/api/
+      - ./tests/funcrional/:/tests/funcrional/
     depends_on:
       elasticsearch_db:
         condition: service_healthy
@@ -86,8 +88,6 @@ services:
       movies:
         aliases:
           - tests
-    
-
 
 volumes:
   elasticsearch_db:
