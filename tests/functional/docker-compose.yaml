@@ -47,7 +47,7 @@ services:
   api:
     container_name: API_test
     build:
-      context: ../..//api/
+      context: ../../api/
     image: api:latest
     pull_policy: never
     restart: always
@@ -68,7 +68,7 @@ services:
       movies:
         aliases:
           - api
-    
+
   tests:
     container_name: Tests
     build:
