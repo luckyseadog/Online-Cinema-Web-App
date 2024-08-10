@@ -3,19 +3,26 @@ from typing import Any
 
 import aiohttp
 import pytest
-from elasticsearch import AsyncElasticsearch
-from elasticsearch.helpers import async_bulk
 
 from core.settings import test_settings
 from src.models import Film
 
-#  Название теста должно начинаться со слова `test_`
-#  Любой тест с асинхронными вызовами нужно оборачивать декоратором `pytest.mark.asyncio`,
-#               который следит за запуском и работой цикла событий.
 
-
-@pytest.mark.asyncio
-async def test_search() -> None:
+@pytest.mark.parametrize(
+    'query_data, expected_answer',
+    [
+        (
+                {'query': 'The Star'},
+                {'status': 200, 'length': 10}
+        ),
+        (
+                {'query': 'Mashed potato'},
+                {'status': 404, 'length': 1}
+        )
+    ]
+)
+@pytest.mark.asyncio(scope='session')
+async def test_search(es_write_data, make_get_request, query_data, expected_answer) -> None:
     # 1. Генерируем данные для ES
 
     es_data = [
@@ -42,35 +49,19 @@ async def test_search() -> None:
     ]
     bulk_query: list[dict[str, Any]] = []
     for row in es_data:
-        data: dict[str, Any] = {"_index": "movies", "_id": row["uuid"]}
+        data: dict[str, Any] = {"_index": test_settings.es_index, "_id": row[test_settings.es_id_field]}
         data.update({"_source": row})
         bulk_query.append(data)
 
     # 2. Загружаем данные в ES
 
-    es_client = AsyncElasticsearch(hosts=test_settings.elastic_dsn, verify_certs=False)
-    if await es_client.indices.exists(index=test_settings.es_index):
-        await es_client.indices.delete(index=test_settings.es_index)
-    await es_client.indices.create(index=test_settings.es_index, **test_settings.es_index_mapping)
-
-    _, errors = await async_bulk(client=es_client, actions=bulk_query, refresh="wait_for")
-
-    await es_client.close()
-
-    if errors:
-        raise Exception("Ошибка записи данных в Elasticsearch")
+    await es_write_data(bulk_query) 
 
     # 3. Запрашиваем данные из ES по API
 
-    url = test_settings.service_url + "api/v1/films/search/"
-    query_data = {"query": "Star"}
-    session = aiohttp.ClientSession()
-    async with session.get(url, params=query_data) as response:
-        body = await response.json()
-        status = response.status
-    await session.close()
+    body, status = await make_get_request('films/search/', query_data)
 
     # 4. Проверяем ответ
 
-    assert status == 200
-    assert len(body) == 10
+    assert status == expected_answer['status']
+    assert len(body) == expected_answer['length']
