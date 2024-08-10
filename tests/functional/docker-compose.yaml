@@ -76,7 +76,7 @@ services:
     pull_policy: never
     restart: always
     volumes:
-      - ./tests/funcrional/:/tests/funcrional/
+      - .:/app
     depends_on:
       elasticsearch_db:
         condition: service_healthy

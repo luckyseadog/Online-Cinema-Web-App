@@ -3,4 +3,5 @@ set -eo pipefail +x
 
 python -m utils.wait_for_es
 python -m utils.wait_for_redis
-pytest ./src
+
+python -m pytest
