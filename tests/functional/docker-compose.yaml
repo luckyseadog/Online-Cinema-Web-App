@@ -11,6 +11,7 @@ services:
       memlock:
         soft: -1
         hard: -1
+    mem_limit: 0.5GB
     volumes:
       - elasticsearch_db:/data
     ports:
@@ -74,7 +75,6 @@ services:
     build:
       context: ./
     pull_policy: never
-    restart: always
     volumes:
       - .:/app
     depends_on:
