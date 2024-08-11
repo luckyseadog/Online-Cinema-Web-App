@@ -1,16 +1,10 @@
 import uuid
 from typing import Any
 
-import aiohttp
 import pytest
 
 from core.settings import test_settings
 from src.models import Film
-
-
-#  Название теста должно начинаться со слова `test_`
-#  Любой тест с асинхронными вызовами нужно оборачивать декоратором `pytest.mark.asyncio`,
-#               который следит за запуском и работой цикла событий.
 
 
 @pytest.mark.parametrize(
@@ -20,8 +14,10 @@ from src.models import Film
         ({"query": "Mashed potato"}, {"status": 404, "length": 1}),
     ],
 )
-@pytest.mark.asyncio
-async def test_search(es_write_data, query_data: dict[str, str], expected_answer: dict[str, int]) -> None:
+@pytest.mark.asyncio(scope="session")
+async def test_search(
+    es_write_data, make_get_request, query_data: dict[str, str], expected_answer: dict[str, int]
+) -> None:
     # 1. Генерируем данные для ES
 
     es_data = [
@@ -48,7 +44,7 @@ async def test_search(es_write_data, query_data: dict[str, str], expected_answer
     ]
     bulk_query: list[dict[str, Any]] = []
     for row in es_data:
-        data: dict[str, Any] = {"_index": "movies", "_id": row["uuid"]}
+        data: dict[str, Any] = {"_index": test_settings.es_index, "_id": row[test_settings.es_id_field]}
         data.update({"_source": row})
         bulk_query.append(data)
 
@@ -58,14 +54,8 @@ async def test_search(es_write_data, query_data: dict[str, str], expected_answer
 
     # 3. Запрашиваем данные из ES по API
 
-    url = test_settings.service_url + "api/v1/films/search/"
-    session = aiohttp.ClientSession()
-    async with session.get(url, params=query_data) as response:
-        body = await response.json()
-        status = response.status
-    await session.close()
+    body, status = await make_get_request("films/search/", query_data)
 
     # 4. Проверяем ответ
-
-    assert status == expected_answer.get("status")
-    assert len(body) == expected_answer.get("length")
+    assert status == expected_answer["status"]
+    assert len(body) == expected_answer["length"]
