@@ -1,5 +1,5 @@
 from collections.abc import AsyncGenerator, Iterable, Callable, Coroutine
-from typing import Any
+from typing import Any, Optional
 
 import pytest_asyncio
 from aiohttp import ClientSession
@@ -50,7 +50,7 @@ async def aio_session() -> AsyncGenerator[ClientSession, Any]:
 
 @pytest_asyncio.fixture(name="make_get_request")
 def make_get_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any, Any, tuple[Any, int]]]:
-    async def inner(endpoint: str, query_data: dict[str, str]) -> tuple[Any, int]:
+    async def inner(endpoint: str, query_data: Optional[dict[str, str]] = None) -> tuple[Any, int]:
         url = test_settings.service_url + f"api/v1/{endpoint}"
         async with aio_session.get(url, params=query_data) as response:
             body = await response.json()
