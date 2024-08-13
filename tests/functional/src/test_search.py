@@ -1,22 +1,30 @@
 import uuid
+from collections.abc import Callable, Coroutine
 from typing import Any
 
 import pytest
-
 from core.settings import test_settings
 from src.models import Film
 
 
 @pytest.mark.parametrize(
-    "query_data, expected_answer",
+    ("query_data", "expected_answer"),
     [
         ({"query": "The Star"}, {"status": 200, "length": 10}),
-        ({"query": "Mashed potato"}, {"status": 404, "length": 1}),
+        ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 200, "length": 5}),
+        ({"query": "Mashed potato"}, {"status": 409, "length": 1}),
+        ({"sort": "qwerty"}, {"status": 409, "length": 1}),
+        ({"page_number": "0"}, {"status": 422, "length": 1}),
+        ({"page_size": "0"}, {"status": 422, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
 async def test_search(
-    es_write_data, make_get_request, query_data: dict[str, str], expected_answer: dict[str, int]
+    es_write_data: Callable[..., Coroutine[Any, Any, None]],
+    make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
+    es_clear_data: Callable[..., Coroutine[Any, Any, None]],
+    query_data: dict[str, str],
+    expected_answer: dict[str, int],
 ) -> None:
     # 1. Генерируем данные для ES
 
@@ -44,13 +52,13 @@ async def test_search(
     ]
     bulk_query: list[dict[str, Any]] = []
     for row in es_data:
-        data: dict[str, Any] = {"_index": test_settings.es_index, "_id": row[test_settings.es_id_field]}
+        data: dict[str, Any] = {"_index": test_settings.es_index_movies, "_id": row[test_settings.es_id_field]}
         data.update({"_source": row})
         bulk_query.append(data)
 
     # 2. Загружаем данные в ES
 
-    await es_write_data(bulk_query)
+    await es_write_data(bulk_query, test_settings.es_index_movies, test_settings.es_index_mapping_movies)
 
     # 3. Запрашиваем данные из ES по API
 
@@ -59,3 +67,16 @@ async def test_search(
     # 4. Проверяем ответ
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
+
+    # 5. Запрашиваем данные из Redis по API
+
+    body, status = await make_get_request("films/search/", query_data)
+
+    # 6. Проверяем ответ
+
+    assert status == expected_answer["status"]
+    assert len(body) == expected_answer["length"]
+
+    # 7. Очищаем данные в ES
+
+    await es_clear_data((test_settings.es_index_movies,))
