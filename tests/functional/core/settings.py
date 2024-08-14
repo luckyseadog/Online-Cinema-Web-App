@@ -1,9 +1,10 @@
 from pathlib import Path
 from typing import Any
 
-from testdata.es_mapping import GENRE_SCHEMES_INDEX_ES, MOVIES_SCHEMES_INDEX_ES, PERSON_SCHEMES_INDEX_ES
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from testdata.es_mapping import GENRE_SCHEMES_INDEX_ES, MOVIES_SCHEMES_INDEX_ES, PERSON_SCHEMES_INDEX_ES
 
 
 BASE_DIRECTORY = Path()

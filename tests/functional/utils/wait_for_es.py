@@ -10,4 +10,5 @@ if __name__ == "__main__":
     while True:
         if es_client.ping():
             break
+
         time.sleep(1)
