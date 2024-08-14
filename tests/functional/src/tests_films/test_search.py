@@ -13,8 +13,8 @@ from src.models import Film
     [
         ({"query": "The Star"}, {"status": 200, "length": 10}),
         ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 200, "length": 5}),
-        ({"query": "Mashed potato"}, {"status": 409, "length": 1}),
-        ({"sort": "qwerty"}, {"status": 409, "length": 1}),
+        ({"query": "Mashed potato"}, {"status": 400, "length": 1}),
+        ({"sort": "qwerty"}, {"status": 400, "length": 1}),
         ({"page_number": 0}, {"status": 422, "length": 1}),
         ({"page_size": 0}, {"status": 422, "length": 1}),
     ],
@@ -66,18 +66,19 @@ async def test_search(
     body, status = await make_get_request("films/search/", query_data)
 
     # 4. Проверяем ответ
+
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
 
-    # 5. Запрашиваем данные из Redis по API
+    # 5. Очищаем данные в ES
+
+    await es_clear_data((test_settings.es_index_movies,))
+
+    # 6. Запрашиваем данные из Redis по API
 
     body, status = await make_get_request("films/search/", query_data)
 
-    # 6. Проверяем ответ
+    # 7. Проверяем ответ
 
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
-
-    # 7. Очищаем данные в ES
-
-    await es_clear_data((test_settings.es_index_movies,))

@@ -11,11 +11,11 @@ from src.models import Person
     ("query_data", "expected_answer"),
     [
         ("ef86b8ff-3c82-4d31-ad8e-72b69f4e3f9w", {"status": 200, "length": 3}),
-        ("qwerty", {"status": 409, "length": 1}),
+        ("qwerty", {"status": 400, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
-async def test_search(
+async def test_person_by_id(
     es_write_data: Callable[..., Coroutine[Any, Any, None]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     es_clear_data: Callable[..., Coroutine[Any, Any, None]],
@@ -53,15 +53,15 @@ async def test_search(
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
 
-    # 5. Запрашиваем данные из Redis по API
+    # 5. Очищаем данные в ES
+
+    await es_clear_data((test_settings.es_index_persons,))
+
+    # 6. Запрашиваем данные из Redis по API
 
     body, status = await make_get_request(f"persons/{query_data}")
 
-    # 6. Проверяем ответ
+    # 7. Проверяем ответ
 
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
-
-    # 7. Очищаем данные в ES
-
-    await es_clear_data((test_settings.es_index_persons,))

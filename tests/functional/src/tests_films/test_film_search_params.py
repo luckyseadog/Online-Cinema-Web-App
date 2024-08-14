@@ -16,14 +16,14 @@ from src.models import Film
             {"genre": "fb111f22-121e-44a7-b78f-b19191810fbq", "sort": "imdb_rating", "page_number": 1, "page_size": 5},
             {"status": 200, "length": 5},
         ),
-        ({"sort": "qwerty"}, {"status": 409, "length": 1}),
-        ({"genre": "", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 409, "length": 1}),
+        ({"sort": "qwerty"}, {"status": 400, "length": 1}),
+        ({"genre": "", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 400, "length": 1}),
         ({"page_number": 0}, {"status": 422, "length": 1}),
         ({"page_size": 0}, {"status": 422, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
-async def test_search(
+async def test_film_search_params(
     es_write_data: Callable[..., Coroutine[Any, Any, None]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     es_clear_data: Callable[..., Coroutine[Any, Any, None]],
@@ -73,15 +73,15 @@ async def test_search(
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
 
-    # 5. Запрашиваем данные из Redis по API
+    # 5. Очищаем данные в ES
+
+    await es_clear_data((test_settings.es_index_movies,))
+
+    # 6. Запрашиваем данные из Redis по API
 
     body, status = await make_get_request("films/", query_data)
 
-    # 6. Проверяем ответ
+    # 7. Проверяем ответ
 
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
-
-    # 7. Очищаем данные в ES
-
-    await es_clear_data((test_settings.es_index_movies,))

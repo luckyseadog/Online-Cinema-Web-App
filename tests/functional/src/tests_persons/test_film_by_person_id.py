@@ -21,11 +21,11 @@ from src.models import Film
             },
             {"status": 200, "length": 11},
         ),
-        ({"person_id": "qwerty"}, {"status": 409, "length": 1}),
+        ({"person_id": "qwerty"}, {"status": 400, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
-async def test_search(
+async def test_film_by_person_id(
     es_write_data: Callable[..., Coroutine[Any, Any, None]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     es_clear_data: Callable[..., Coroutine[Any, Any, None]],
@@ -68,22 +68,22 @@ async def test_search(
 
     # 3. Запрашиваем данные из ES по API
 
-    body, status = await make_get_request(f"persons/{query_data.get("person_id")}/film", query_data)
+    body, status = await make_get_request(f"persons/{query_data.get('person_id')}/film", query_data)
 
     # 4. Проверяем ответ
 
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
 
-    # 5. Запрашиваем данные из Redis по API
+    # 5. Очищаем данные в ES
 
-    body, status = await make_get_request(f"persons/{query_data.get("person_id")}/film", query_data)
+    await es_clear_data((test_settings.es_index_movies,))
 
-    # 6. Проверяем ответ
+    # 6. Запрашиваем данные из Redis по API
+
+    body, status = await make_get_request(f"persons/{query_data.get('person_id')}/film", query_data)
+
+    # 7. Проверяем ответ
 
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
-
-    # 7. Очищаем данные в ES
-
-    await es_clear_data((test_settings.es_index_movies,))

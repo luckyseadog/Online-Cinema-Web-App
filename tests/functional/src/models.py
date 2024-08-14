@@ -3,12 +3,12 @@ from typing import TypedDict
 from pydantic import BaseModel
 
 
-class GenresTD(TypedDict):
+class FilmGenre(TypedDict):
     uuid: str
     name: str
 
 
-class PersonTD(TypedDict):
+class FilmPerson(TypedDict):
     uuid: str
     full_name: str
 
@@ -18,10 +18,10 @@ class Film(BaseModel):
     title: str
     imdb_rating: float | None
     description: str | None
-    genres: list[GenresTD]
-    actors: list[PersonTD]
-    writers: list[PersonTD]
-    directors: list[PersonTD]
+    genres: list[FilmGenre]
+    actors: list[FilmPerson]
+    writers: list[FilmPerson]
+    directors: list[FilmPerson]
 
 
 class Genre(BaseModel):
@@ -31,7 +31,7 @@ class Genre(BaseModel):
     films: list[str]
 
 
-class FilmPersonTD(TypedDict):
+class PersonFilm(TypedDict):
     uuid: str
     roles: list[str]
 
@@ -39,4 +39,4 @@ class FilmPersonTD(TypedDict):
 class Person(BaseModel):
     uuid: str
     full_name: str
-    films: list[FilmPersonTD]
+    films: list[PersonFilm]
