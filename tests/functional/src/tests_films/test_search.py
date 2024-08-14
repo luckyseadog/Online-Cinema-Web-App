@@ -11,15 +11,12 @@ from src.models import Film
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({}, {"status": 200, "length": 10}),
-        (
-            {"genre": "fb111f22-121e-44a7-b78f-b19191810fbq", "sort": "imdb_rating", "page_number": 1, "page_size": 5},
-            {"status": 200, "length": 5},
-        ),
+        ({"query": "The Star"}, {"status": 200, "length": 10}),
+        ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 200, "length": 5}),
+        ({"query": "Mashed potato"}, {"status": 409, "length": 1}),
         ({"sort": "qwerty"}, {"status": 409, "length": 1}),
-        ({"genre": "", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 409, "length": 1}),
-        ({"page_number": "0"}, {"status": 422, "length": 1}),
-        ({"page_size": "0"}, {"status": 422, "length": 1}),
+        ({"page_number": 0}, {"status": 422, "length": 1}),
+        ({"page_size": 0}, {"status": 422, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
@@ -32,7 +29,7 @@ async def test_search(
 ) -> None:
     # 1. Генерируем данные для ES
 
-    es_films = [
+    es_data = [
         Film(
             uuid=str(uuid.uuid4()),
             imdb_rating=8.5,
@@ -54,28 +51,27 @@ async def test_search(
         ).model_dump()
         for _ in range(60)
     ]
-    bulk_query_films: list[dict[str, Any]] = []
-    for row in es_films:
+    bulk_query: list[dict[str, Any]] = []
+    for row in es_data:
         data: dict[str, Any] = {"_index": test_settings.es_index_movies, "_id": row[test_settings.es_id_field]}
         data.update({"_source": row})
-        bulk_query_films.append(data)
+        bulk_query.append(data)
 
     # 2. Загружаем данные в ES
 
-    await es_write_data(bulk_query_films, test_settings.es_index_movies, test_settings.es_index_mapping_movies)
+    await es_write_data(bulk_query, test_settings.es_index_movies, test_settings.es_index_mapping_movies)
 
     # 3. Запрашиваем данные из ES по API
 
-    body, status = await make_get_request("films/", query_data)
+    body, status = await make_get_request("films/search/", query_data)
 
     # 4. Проверяем ответ
-
     assert status == expected_answer["status"]
     assert len(body) == expected_answer["length"]
 
     # 5. Запрашиваем данные из Redis по API
 
-    body, status = await make_get_request("films/", query_data)
+    body, status = await make_get_request("films/search/", query_data)
 
     # 6. Проверяем ответ
 
