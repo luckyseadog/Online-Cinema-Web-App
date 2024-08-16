@@ -1,4 +1,5 @@
 import uuid
+import http
 from collections.abc import Callable, Coroutine
 from typing import Any
 
@@ -11,7 +12,7 @@ from src.models import Film
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({"person_id": "ef86b8ff-3c82-4d31-ad8e-72b69f4e3f95"}, {"status": 200, "length": 10}),
+        ({"person_id": "ef86b8ff-3c82-4d31-ad8e-72b69f4e3f95"}, {"status": http.HTTPStatus.OK, "length": 10}),
         (
             {
                 "person_id": "ef86b8ff-3c82-4d31-ad8e-72b69f4e3f95",
@@ -19,9 +20,9 @@ from src.models import Film
                 "page_number": 2,
                 "page_size": 11,
             },
-            {"status": 200, "length": 11},
+            {"status": http.HTTPStatus.OK, "length": 11},
         ),
-        ({"person_id": "qwerty"}, {"status": 400, "length": 1}),
+        ({"person_id": "qwerty"}, {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")

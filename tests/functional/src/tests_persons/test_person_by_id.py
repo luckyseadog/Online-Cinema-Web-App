@@ -1,3 +1,4 @@
+import http
 from collections.abc import Callable, Coroutine
 from typing import Any
 
@@ -10,8 +11,8 @@ from src.models import Person
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ("ef86b8ff-3c82-4d31-ad8e-72b69f4e3f9w", {"status": 200, "length": 3}),
-        ("qwerty", {"status": 400, "length": 1}),
+        ("ef86b8ff-3c82-4d31-ad8e-72b69f4e3f9w", {"status": http.HTTPStatus.OK, "length": 3}),
+        ("qwerty", {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")

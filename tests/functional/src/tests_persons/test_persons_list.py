@@ -1,3 +1,4 @@
+import http
 import uuid
 from collections.abc import Callable, Coroutine
 from typing import Any
@@ -11,10 +12,10 @@ from src.models import Person
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({}, {"status": 200, "length": 10}),
-        ({"page_number": 2, "page_size": 5}, {"status": 200, "length": 5}),
-        ({"page_number": 0}, {"status": 422, "length": 1}),
-        ({"page_size": 0}, {"status": 422, "length": 1}),
+        ({}, {"status": http.HTTPStatus.OK, "length": 10}),
+        ({"page_number": 2, "page_size": 5}, {"status": http.HTTPStatus.OK, "length": 5}),
+        ({"page_number": 0}, {"status": http.HTTPStatus.UNPROCESSABLE_ENTITY, "length": 1}),
+        ({"page_size": 0}, {"status": http.HTTPStatus.UNPROCESSABLE_ENTITY, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
