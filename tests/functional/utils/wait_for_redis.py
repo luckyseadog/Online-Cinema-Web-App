@@ -1,14 +1,16 @@
-import time
+import backoff
 
-from redis import Redis
+from redis import Redis, ConnectionError
 
 from core.settings import test_settings
 
 
-if __name__ == "__main__":
-    r = Redis(host=test_settings.redis_host, port=test_settings.redis_port)
-    while True:
-        if r.ping():  # pyright: ignore[reportUnknownMemberType]
-            break
+@backoff.on_exception(backoff.expo, ConnectionError, max_tries=10)
+def wait_for_redis(redis_client: Redis):
+    if not redis_client.ping():
+        raise ConnectionError("Elasticsearch is not running.")
 
-        time.sleep(1)
+
+if __name__ == "__main__":
+    redis_client = Redis(host=test_settings.redis_host, port=test_settings.redis_port)
+    wait_for_redis(redis_client)

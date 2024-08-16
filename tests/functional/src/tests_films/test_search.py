@@ -1,4 +1,5 @@
 import uuid
+import http
 from collections.abc import Callable, Coroutine
 from typing import Any
 
@@ -11,12 +12,12 @@ from src.models import Film
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({"query": "The Star"}, {"status": 200, "length": 10}),
-        ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": 200, "length": 5}),
-        ({"query": "Mashed potato"}, {"status": 400, "length": 1}),
-        ({"sort": "qwerty"}, {"status": 400, "length": 1}),
-        ({"page_number": 0}, {"status": 422, "length": 1}),
-        ({"page_size": 0}, {"status": 422, "length": 1}),
+        ({"query": "The Star"}, {"status": http.HTTPStatus.OK, "length": 10}),
+        ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": http.HTTPStatus.OK, "length": 5}),
+        ({"query": "Mashed potato"}, {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
+        ({"sort": "qwerty"}, {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
+        ({"page_number": 0}, {"status": http.HTTPStatus.UNPROCESSABLE_ENTITY, "length": 1}),
+        ({"page_size": 0}, {"status": http.HTTPStatus.UNPROCESSABLE_ENTITY, "length": 1}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
