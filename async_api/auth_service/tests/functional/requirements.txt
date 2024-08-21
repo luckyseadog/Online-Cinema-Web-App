@@ -1,0 +1,10 @@
+aiohttp==3.9.5
+asyncpg==0.28.0
+passlib==1.7.4
+psycopg==3.1.18
+pydantic==2.7.2
+pydantic-settings==2.1.0
+pytest==7.4.3
+pytest-asyncio==0.21.1
+redis==5.0.4
+SQLAlchemy==2.0.30
