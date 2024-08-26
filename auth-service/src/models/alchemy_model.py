@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List
 
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        Table)
+                        Table, UUID)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -25,7 +25,7 @@ user_right = Table(
 class User(Base):
     __tablename__ = "user"
 
-    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     login: Mapped[str] = mapped_column(String(60), unique=True, nullable=False, index=True)
     password: Mapped[str] = mapped_column(String(60), nullable=False)
     first_name: Mapped[str] = mapped_column(String(60), nullable=False)
@@ -48,7 +48,7 @@ class User(Base):
 class Right(Base):
     __tablename__ = "right"
 
-    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] =  mapped_column(String(60), unique=True, nullable=False, index=True)
     description: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -65,8 +65,8 @@ class Right(Base):
 class History(Base):
     __tablename__ = "history"
 
-    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = mapped_column(Integer, ForeignKey("user.id"))
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = mapped_column(UUID, ForeignKey("user.id"))
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
     action: Mapped[Action] = mapped_column(Integer, nullable=False)
     browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
