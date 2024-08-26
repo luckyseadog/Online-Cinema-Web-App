@@ -1,12 +1,11 @@
-from typing import List
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import ForeignKey
-from sqlalchemy import Table, Column, Integer, String, DateTime, Boolean
-from datetime import datetime
 import enum
+import uuid
+from datetime import datetime
+from typing import List
+
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        Table)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -26,7 +25,7 @@ user_right = Table(
 class User(Base):
     __tablename__ = "user"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     login: Mapped[str] = mapped_column(String(60), unique=True, nullable=False, index=True)
     password: Mapped[str] = mapped_column(String(60), nullable=False)
     first_name: Mapped[str] = mapped_column(String(60), nullable=False)
@@ -49,9 +48,9 @@ class User(Base):
 class Right(Base):
     __tablename__ = "right"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] =  mapped_column(String(60), unique=True, nullable=False, index=True)
-    description: Mapped[str]
+    description: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
     modified_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -66,12 +65,12 @@ class Right(Base):
 class History(Base):
     __tablename__ = "history"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(uuid.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = mapped_column(Integer, ForeignKey("user.id"))
-    ip_address: Mapped[str]
+    ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
     action: Mapped[Action] = mapped_column(Integer, nullable=False)
-    browser_info: Mapped[str]
-    system_info: Mapped[str]
+    browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
+    system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
 
     user: Mapped[User] = relationship(back_populates="histories")
