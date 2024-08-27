@@ -1,6 +1,7 @@
+aiohttp==3.10.5
 fastapi==0.111.0
 redis==5.0.4
 pydantic_settings==2.3.4
 backoff==2.2.1
-SQLAlchemy==2.0.32
+sqlalchemy[asyncio]==2.0.32
 psycopg[binary]==3.1.19
