@@ -66,7 +66,7 @@ class History(Base):
     __tablename__ = "history"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = mapped_column(UUID, ForeignKey("user.id"))
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
     action: Mapped[Action] = mapped_column(Integer, nullable=False)
     browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
