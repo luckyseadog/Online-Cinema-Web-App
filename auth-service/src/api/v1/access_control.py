@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, Request
+from fastapi import APIRouter, Depends, Request, status
 
-from src.api.v1.models.access_control import RightModel
+from src.api.v1.models.access_control import ChangeRightModel, CreateRightModel, DeleteRightModel, RightModel
 from src.services.authorization_verification_service import (
     AuthorizationVerificationService,
     get_authorization_verification_service,
@@ -22,13 +22,14 @@ rights_tags_metadata = {"name": "Права", "description": "Управлени
     summary="Создание права",
     description="Создание права",
     response_description="Право создано",
+    responses={status.HTTP_200_OK: {"model": RightModel}},
 )
 async def creation_of_right(
     request: Request,
-    right: RightModel,
+    right: CreateRightModel,
     authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
-) -> str:
+) -> RightModel:
     await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.creation_of_right(right)
 
@@ -38,9 +39,26 @@ async def creation_of_right(
 )
 async def deleting_right(
     request: Request,
-    right_name: Annotated[str, Body(title="Название права")],
+    right: DeleteRightModel,
     authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> str:
     await authorization_service.check(request.cookies.get("access_token"), ADMIN)
-    return await rights_management_service.deleting_right(right_name)
+    return await rights_management_service.deleting_right(right)
+
+
+@router.put(
+    "/change_of_right",
+    summary="Изменение права",
+    description="Изменение права",
+    response_description="Право изменено",
+    responses={status.HTTP_200_OK: {"model": RightModel}},
+)
+async def change_of_right(
+    request: Request,
+    right: ChangeRightModel,
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> RightModel:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.change_of_right(right)
