@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Body, Depends, Request
 
 from src.api.v1.models.access_control import RightModel
 from src.services.authorization_verification_service import (
@@ -22,7 +22,6 @@ rights_tags_metadata = {"name": "Права", "description": "Управлени
     summary="Создание права",
     description="Создание права",
     response_description="Право создано",
-    tags=["Права"],
 )
 async def creation_of_right(
     request: Request,
@@ -32,3 +31,16 @@ async def creation_of_right(
 ) -> str:
     await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.creation_of_right(right)
+
+
+@router.delete(
+    "/deleting_right", summary="Удаление права", description="Удаление права", response_description="Право удалено"
+)
+async def deleting_right(
+    request: Request,
+    right_name: Annotated[str, Body(title="Название права")],
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> str:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.deleting_right(right_name)

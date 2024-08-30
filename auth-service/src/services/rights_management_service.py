@@ -30,6 +30,17 @@ class RightsManagement:
         else:
             raise AlreadyExistError(ErrorBody(massage=f"Право с названием '{right.name}' уже существует"))
 
+    async def deleting_right(self, right_name: str) -> str:
+        stmt = select(Right).where(Right.name == right_name)
+        try:
+            right = (await self.session.scalars(stmt)).one()
+        except NoResultFound:
+            raise AlreadyExistError(ErrorBody(massage=f"Право с названием '{right_name}' не существует"))
+        else:
+            await self.session.delete(right)
+            await self.session.commit()
+            return f"Право с названием '{right.name}' удалено"
+
 
 @lru_cache
 def get_rights_management_service(
