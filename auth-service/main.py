@@ -2,20 +2,15 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, status
-from fastapi.responses import ORJSONResponse
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
 from src.api.v1 import access_control
 from src.core.config import configs
 from src.db import redis
-
-
-# tags_metadata = [
-#     films.films_tags_metadata,
-#     genres.genres_tags_metadata,
-#     persons.persons_tags_metadata,
-# ]
+from src.models.errors import ErrorBody
+from src.services.custom_error import AlreadyExistError
 
 
 @asynccontextmanager
@@ -25,7 +20,9 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis.redis.close()
 
 
-responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {}}
+tags_metadata = [access_control.rights_tags_metadata]
+
+responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {"model": ErrorBody}}
 
 app = FastAPI(
     title=configs.project_name,
@@ -34,21 +31,19 @@ app = FastAPI(
     docs_url="/api/openapi",
     openapi_url="/api/openapi.json",
     redoc_url="/api/redoc",
-    # openapi_tags=tags_metadata,
+    openapi_tags=tags_metadata,
     default_response_class=ORJSONResponse,
     responses=responses,
     lifespan=lifespan,
 )
 
 
-# @app.exception_handler(ContentError)
-# async def edo_fatal_error_handler(request: Request, exc: ContentError) -> JSONResponse:
-#     return JSONResponse(
-#         status_code=status.HTTP_400_BAD_REQUEST,
-#         content={"message": exc.message},
-#     )
+@app.exception_handler(AlreadyExistError)
+async def edo_fatal_error_handler(request: Request, exc: AlreadyExistError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_412_PRECONDITION_FAILED,
+        content=exc.response.model_dump(),
+    )
 
 
-# app.include_router(films.router, prefix="/api/v1/films")
-# app.include_router(genres.router, prefix="/api/v1/genres")
 app.include_router(access_control.router, prefix="/auth/v1/access_control")

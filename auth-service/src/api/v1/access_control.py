@@ -10,17 +10,19 @@ from src.services.authorization_verification_service import (
 from src.services.rights_management_service import RightsManagement, get_rights_management_service
 
 
+ADMIN = "admin"
+
 router = APIRouter()
 
-ADMIN = "admin"
+rights_tags_metadata = {"name": "Права", "description": "Управление правами."}
 
 
 @router.post(
     "/creation_of_right",
     summary="Создание права",
     description="Создание права",
-    # response_description="Список найденных жанров",
-    # tags=["Жанры"],
+    response_description="Право создано",
+    tags=["Права"],
 )
 async def creation_of_right(
     request: Request,

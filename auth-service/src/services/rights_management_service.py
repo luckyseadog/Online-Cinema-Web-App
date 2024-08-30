@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
@@ -10,6 +10,7 @@ from src.api.v1.models.access_control import RightModel
 from src.db.postgres_db import get_session
 from src.db.redis import get_redis
 from src.models.alchemy_model import Right
+from src.services.custom_error import AlreadyExistError, ErrorBody
 from src.services.redis_service import RedisService
 
 
@@ -21,16 +22,13 @@ class RightsManagement:
     async def creation_of_right(self, right: RightModel) -> str:
         stmt = select(Right.name).where(Right.name == right.name)
         try:
-            (await self.session.scalars(stmt)).fetchall()
+            (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            raise HTTPException(
-                status_code=status.HTTP_412_PRECONDITION_FAILED,
-                detail=f"Право с названием '{right.name}' уже существует",
-            )
-
-        self.session.add(Right(**right.model_dump()))
-        await self.session.commit()
-        return f"Право с названием '{right.name}' создано"
+            self.session.add(Right(**right.model_dump()))
+            await self.session.commit()
+            return f"Право с названием '{right.name}' создано"
+        else:
+            raise AlreadyExistError(ErrorBody(massage=f"Право с названием '{right.name}' уже существует"))
 
 
 @lru_cache
