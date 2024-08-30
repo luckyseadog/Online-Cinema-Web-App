@@ -22,6 +22,10 @@ class ChangeRightModel(BaseModel):
 
 
 class RightModel(BaseModel):
-    id: UUID
-    name: str
-    description: str | None
+    id: UUID = Field(description="Идентификатор права", title="Идентификатор")
+    name: str = Field(description="Название права", title="Название")
+    description: str | None = Field(description="Описание права", title="Описание")
+
+
+class RightsModel(BaseModel):
+    rights: list[RightModel] = Field(description="Список прав", title="Список прав")

@@ -6,7 +6,13 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import or_, select, update
 
-from src.api.v1.models.access_control import ChangeRightModel, CreateRightModel, DeleteRightModel, RightModel
+from src.api.v1.models.access_control import (
+    ChangeRightModel,
+    CreateRightModel,
+    DeleteRightModel,
+    RightModel,
+    RightsModel,
+)
 from src.db.postgres_db import get_session
 from src.db.redis import get_redis
 from src.models.alchemy_model import Right
@@ -63,6 +69,14 @@ class RightsManagement:
         else:
             await self.session.commit()
             return RightModel(id=right_.id, name=right_.name, description=right_.description)
+
+    async def get_all_rights(self) -> RightsModel:
+        return RightsModel(
+            rights=[
+                RightModel(id=right.id, name=right.name, description=right.description)
+                for right in (await self.session.scalars(select(Right))).fetchall()
+            ]
+        )
 
 
 @lru_cache
