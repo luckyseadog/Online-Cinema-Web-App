@@ -4,9 +4,15 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import select
+from sqlalchemy.sql import or_, select, update
 
-from src.api.v1.models.access_control import RightModel
+from src.api.v1.models.access_control import (
+    ChangeRightModel,
+    CreateRightModel,
+    DeleteRightModel,
+    RightModel,
+    RightsModel,
+)
 from src.db.postgres_db import get_session
 from src.db.redis import get_redis
 from src.models.alchemy_model import Right
@@ -19,16 +25,58 @@ class RightsManagement:
         self.redis = redis
         self.session = session
 
-    async def creation_of_right(self, right: RightModel) -> str:
-        stmt = select(Right.name).where(Right.name == right.name)
+    async def creation_of_right(self, right: CreateRightModel) -> RightModel:
+        stmt = select(Right).where(Right.name == right.name)
         try:
             (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            self.session.add(Right(**right.model_dump()))
+            right_ = Right(**right.model_dump())
+            self.session.add(right_)
             await self.session.commit()
-            return f"Право с названием '{right.name}' создано"
+            await self.session.refresh(right_)
+            return RightModel(id=right_.id, name=right_.name, description=right_.description)
         else:
             raise AlreadyExistError(ErrorBody(massage=f"Право с названием '{right.name}' уже существует"))
+
+    async def deleting_right(self, right: DeleteRightModel) -> str:
+        if not right.model_dump(exclude_none=True):
+            raise AlreadyExistError(ErrorBody(massage="Недостаточно информации"))
+
+        stmt = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
+        try:
+            right_ = (await self.session.scalars(stmt)).one()
+        except NoResultFound:
+            raise AlreadyExistError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
+        else:
+            await self.session.delete(right_)
+            await self.session.commit()
+            return f"Право '{right.name or right.id}' удалено"
+
+    async def change_of_right(self, right: ChangeRightModel) -> RightModel:
+        if not right.model_dump(exclude_none=True):
+            raise AlreadyExistError(ErrorBody(massage="Недостаточно информации"))
+
+        stmt = (
+            update(Right)
+            .where(or_(Right.name == right.current_name, Right.id == right.id))
+            .values(**right.model_dump(exclude_none=True, exclude={"id", "current_name"}))
+            .returning(Right)
+        )
+        try:
+            right_ = (await self.session.scalars(stmt)).one()
+        except NoResultFound:
+            raise AlreadyExistError(ErrorBody(massage=f"Право '{right.current_name or right.id}' не существует"))
+        else:
+            await self.session.commit()
+            return RightModel(id=right_.id, name=right_.name, description=right_.description)
+
+    async def get_all_rights(self) -> RightsModel:
+        return RightsModel(
+            rights=[
+                RightModel(id=right.id, name=right.name, description=right.description)
+                for right in (await self.session.scalars(select(Right))).fetchall()
+            ]
+        )
 
 
 @lru_cache

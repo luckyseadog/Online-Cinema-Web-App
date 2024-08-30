@@ -24,6 +24,7 @@ tags_metadata = [access_control.rights_tags_metadata]
 
 responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {"model": ErrorBody}}
 
+
 app = FastAPI(
     title=configs.project_name,
     description="",
