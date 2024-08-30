@@ -2,22 +2,20 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, Request, status
-from fastapi.responses import ORJSONResponse, JSONResponse
+from fastapi import FastAPI, status
+from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
-from api.v1 import films, genres
-from core.config import configs
-from api.v1 import persons
-from db import redis
-from services.errors import ContentError
+from src.api.v1 import access_control
+from src.core.config import configs
+from src.db import redis
 
 
-tags_metadata = [
-    films.films_tags_metadata,
-    genres.genres_tags_metadata,
-    persons.persons_tags_metadata,
-]
+# tags_metadata = [
+#     films.films_tags_metadata,
+#     genres.genres_tags_metadata,
+#     persons.persons_tags_metadata,
+# ]
 
 
 @asynccontextmanager
@@ -27,15 +25,18 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis.redis.close()
 
 
+responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {}}
+
 app = FastAPI(
     title=configs.project_name,
     description="",
     version="1.0.0",
     docs_url="/api/openapi",
     openapi_url="/api/openapi.json",
-    openapi_tags=tags_metadata,
     redoc_url="/api/redoc",
+    # openapi_tags=tags_metadata,
     default_response_class=ORJSONResponse,
+    responses=responses,
     lifespan=lifespan,
 )
 
@@ -50,4 +51,4 @@ app = FastAPI(
 
 # app.include_router(films.router, prefix="/api/v1/films")
 # app.include_router(genres.router, prefix="/api/v1/genres")
-# app.include_router(persons.router, prefix="/api/v1/persons")
+app.include_router(access_control.router, prefix="/auth/v1/access_control")
