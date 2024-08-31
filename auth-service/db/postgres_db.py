@@ -2,8 +2,8 @@ from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from src.core.config import configs
-from src.models.alchemy_model import Base
+from core.config import configs
+from models.alchemy_model import Base
 
 
 engine = create_async_engine(configs.postgres_dsn, echo=True)
