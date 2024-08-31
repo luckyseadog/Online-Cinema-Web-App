@@ -18,7 +18,8 @@ from api.v1.models.access_control import (
 from db.postgres_db import get_session
 from db.redis import get_redis
 from models.alchemy_model import Right, User
-from services.custom_error import ErrorBody, ResponseError
+from models.errors import ErrorBody
+from services.custom_error import ResponseError
 from services.redis_service import RedisService
 
 
@@ -120,6 +121,51 @@ class RightsManagement:
             rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights],
         )
         await self.session.commit()
+        # TODO: добавление права в redis
+        return result
+
+    async def take_away_right(self, right: SearchRightModel, user: UserModel) -> ResponseUserModel:
+        if not right.model_dump(exclude_none=True) or not user.model_dump(exclude_none=True):
+            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+
+        stmt_right = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
+        try:
+            right_ = (await self.session.scalars(stmt_right)).one()
+        except NoResultFound:
+            raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
+
+        stmt_user = select(User).where(or_(User.id == user.id, User.login == user.login, User.email == user.email))
+        try:
+            user_ = (await self.session.scalars(stmt_user)).one()
+        except NoResultFound:
+            raise ResponseError(
+                ErrorBody(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
+            )
+
+        try:
+            user_.rights.remove(right_)
+        except ValueError:
+            raise ResponseError(
+                ErrorBody(
+                    massage=(
+                        f"Пользователь '{user.id or user.login or user.email}' "
+                        f"не имеет право '{right.name or right.id}'"
+                    )
+                )
+            )
+
+        stmt_rights = select(Right).where(Right.id.in_(user_.rights))
+        rights = (await self.session.scalars(stmt_rights)).fetchall()
+        result = ResponseUserModel(
+            id=user_.id,
+            login=user_.login,
+            first_name=user_.first_name,
+            last_name=user_.last_name,
+            email=user_.email,
+            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights],
+        )
+        await self.session.commit()
+        # TODO: удаление права из redis
         return result
 
 
