@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.core.logger import LOGGING
+from core.logger import LOGGING
 
 
 logging_config.dictConfig(LOGGING)

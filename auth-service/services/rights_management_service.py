@@ -6,18 +6,18 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import or_, select, update
 
-from src.api.v1.models.access_control import (
+from api.v1.models.access_control import (
     ChangeRightModel,
     CreateRightModel,
     DeleteRightModel,
     RightModel,
     RightsModel,
 )
-from src.db.postgres_db import get_session
-from src.db.redis import get_redis
-from src.models.alchemy_model import Right
-from src.services.custom_error import AlreadyExistError, ErrorBody
-from src.services.redis_service import RedisService
+from db.postgres_db import get_session
+from db.redis import get_redis
+from models.alchemy_model import Right
+from services.custom_error import AlreadyExistError, ErrorBody
+from services.redis_service import RedisService
 
 
 class RightsManagement:

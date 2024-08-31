@@ -2,18 +2,18 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 
-from src.api.v1.models.access_control import (
+from api.v1.models.access_control import (
     ChangeRightModel,
     CreateRightModel,
     DeleteRightModel,
     RightModel,
     RightsModel,
 )
-from src.services.authorization_verification_service import (
+from services.authorization_verification_service import (
     AuthorizationVerificationService,
     get_authorization_verification_service,
 )
-from src.services.rights_management_service import RightsManagement, get_rights_management_service
+from services.rights_management_service import RightsManagement, get_rights_management_service
 
 
 ADMIN = "admin"

@@ -1,4 +1,4 @@
-from src.models.errors import ErrorBody
+from models.errors import ErrorBody
 
 
 class AlreadyExistError(Exception):

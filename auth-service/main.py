@@ -6,11 +6,11 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
-from src.api.v1 import access_control
-from src.core.config import configs
-from src.db import redis
-from src.models.errors import ErrorBody
-from src.services.custom_error import AlreadyExistError
+from api.v1 import access_control
+from core.config import configs
+from db import redis
+from models.errors import ErrorBody
+from services.custom_error import AlreadyExistError
 
 
 @asynccontextmanager

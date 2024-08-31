@@ -2,7 +2,8 @@ from functools import lru_cache
 
 
 class AuthorizationVerificationService:
-    async def check(self, token: str | None, rigth: str | None): ...
+    async def check(self, token: str | None, rigth: str | None):
+        ...
 
 
 @lru_cache
