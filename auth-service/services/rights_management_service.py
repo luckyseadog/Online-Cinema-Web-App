@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import or_, select, update
 
 from api.v1.models.access_control import (
@@ -17,7 +18,7 @@ from api.v1.models.access_control import (
 )
 from db.postgres_db import get_session
 from db.redis import get_redis
-from models.alchemy_model import Right, User
+from models.alchemy_model import RightOrm, UserOrm
 from models.errors import ErrorBody
 from services.custom_error import ResponseError
 from services.redis_service import RedisService
@@ -29,11 +30,11 @@ class RightsManagement:
         self.session = session
 
     async def creation_of_right(self, right: CreateRightModel) -> RightModel:
-        stmt = select(Right).where(Right.name == right.name)
+        stmt = select(RightOrm).where(RightOrm.name == right.name)
         try:
             (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            right_ = Right(**right.model_dump())
+            right_ = RightOrm(**right.model_dump())
             self.session.add(right_)
             await self.session.commit()
             await self.session.refresh(right_)
@@ -45,7 +46,7 @@ class RightsManagement:
         if not right.model_dump(exclude_none=True):
             raise ResponseError(ErrorBody(massage="Недостаточно информации"))
 
-        stmt = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
+        stmt = select(RightOrm).where(or_(RightOrm.name == right.name, RightOrm.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt)).one()
         except NoResultFound:
@@ -60,10 +61,10 @@ class RightsManagement:
             raise ResponseError(ErrorBody(massage="Недостаточно информации"))
 
         stmt = (
-            update(Right)
-            .where(or_(Right.name == right.current_name, Right.id == right.id))
+            update(RightOrm)
+            .where(or_(RightOrm.name == right.current_name, RightOrm.id == right.id))
             .values(**right.model_dump(exclude_none=True, exclude={"id", "current_name"}))
-            .returning(Right)
+            .returning(RightOrm)
         )
         try:
             right_ = (await self.session.scalars(stmt)).one()
@@ -77,7 +78,7 @@ class RightsManagement:
         return RightsModel(
             rights=[
                 RightModel(id=right.id, name=right.name, description=right.description)
-                for right in (await self.session.scalars(select(Right))).fetchall()
+                for right in (await self.session.scalars(select(RightOrm))).fetchall()
             ]
         )
 
@@ -85,13 +86,17 @@ class RightsManagement:
         if not right.model_dump(exclude_none=True) or not user.model_dump(exclude_none=True):
             raise ResponseError(ErrorBody(massage="Недостаточно информации"))
 
-        stmt_right = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
+        stmt_right = select(RightOrm).where(or_(RightOrm.name == right.name, RightOrm.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt_right)).one()
         except NoResultFound:
             raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
 
-        stmt_user = select(User).where(or_(User.id == user.id, User.login == user.login, User.email == user.email))
+        stmt_user = (
+            select(UserOrm)
+            .options(selectinload(UserOrm.rights))
+            .where(or_(UserOrm.id == user.id, UserOrm.login == user.login, UserOrm.email == user.email))
+        )
         try:
             user_ = (await self.session.scalars(stmt_user)).one()
         except NoResultFound:
@@ -110,15 +115,13 @@ class RightsManagement:
             )
 
         user_.rights.append(right_)
-        stmt_rights = select(Right).where(Right.id.in_(user_.rights))
-        rights = (await self.session.scalars(stmt_rights)).fetchall()
         result = ResponseUserModel(
             id=user_.id,
             login=user_.login,
             first_name=user_.first_name,
             last_name=user_.last_name,
             email=user_.email,
-            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights],
+            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in user_.rights],
         )
         await self.session.commit()
         # TODO: добавление права в redis
@@ -128,13 +131,17 @@ class RightsManagement:
         if not right.model_dump(exclude_none=True) or not user.model_dump(exclude_none=True):
             raise ResponseError(ErrorBody(massage="Недостаточно информации"))
 
-        stmt_right = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
+        stmt_right = select(RightOrm).where(or_(RightOrm.name == right.name, RightOrm.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt_right)).one()
         except NoResultFound:
             raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
 
-        stmt_user = select(User).where(or_(User.id == user.id, User.login == user.login, User.email == user.email))
+        stmt_user = (
+            select(UserOrm)
+            .options(selectinload(UserOrm.rights))
+            .where(or_(UserOrm.id == user.id, UserOrm.login == user.login, UserOrm.email == user.email))
+        )
         try:
             user_ = (await self.session.scalars(stmt_user)).one()
         except NoResultFound:
@@ -154,19 +161,37 @@ class RightsManagement:
                 )
             )
 
-        stmt_rights = select(Right).where(Right.id.in_(user_.rights))
-        rights = (await self.session.scalars(stmt_rights)).fetchall()
         result = ResponseUserModel(
             id=user_.id,
             login=user_.login,
             first_name=user_.first_name,
             last_name=user_.last_name,
             email=user_.email,
-            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights],
+            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in user_.rights],
         )
         await self.session.commit()
         # TODO: удаление права из redis
         return result
+
+    async def get_rights_user(self, user: UserModel) -> RightsModel:
+        if not user.model_dump(exclude_none=True):
+            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+
+        stmt = (
+            select(UserOrm)
+            .options(selectinload(UserOrm.rights))
+            .where(or_(UserOrm.id == user.id, UserOrm.login == user.login, UserOrm.email == user.email))
+        )
+        try:
+            rights = (await self.session.scalars(stmt)).unique().one()
+        except NoResultFound:
+            raise ResponseError(
+                ErrorBody(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
+            )
+
+        return RightsModel(
+            rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights.rights]
+        )
 
 
 @lru_cache

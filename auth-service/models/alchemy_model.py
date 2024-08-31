@@ -23,7 +23,7 @@ user_right = Table(
 )
 
 
-class User(Base):
+class UserOrm(Base):
     __tablename__ = "user"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -36,14 +36,14 @@ class User(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
     modified_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
-    histories: Mapped[list["History"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    rights: Mapped[list["Right"]] = relationship(secondary=user_right, back_populates="users")
+    histories: Mapped[list["HistoryOrm"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    rights: Mapped[list["RightOrm"]] = relationship(secondary=user_right, back_populates="users")
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, login={self.login!r}, name={self.first_name!r})"
 
 
-class Right(Base):
+class RightOrm(Base):
     __tablename__ = "right"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -52,13 +52,13 @@ class Right(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
     modified_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
-    users: Mapped[list[User]] = relationship(secondary=user_right, back_populates="rights")
+    users: Mapped[list[UserOrm]] = relationship(secondary=user_right, back_populates="rights")
 
     def __repr__(self) -> str:
         return f"Right(id={self.id!r}, name={self.name!r})"
 
 
-class History(Base):
+class HistoryOrm(Base):
     __tablename__ = "history"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -69,4 +69,4 @@ class History(Base):
     system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
 
-    user: Mapped[User] = relationship(back_populates="histories")
+    user: Mapped[UserOrm] = relationship(back_populates="histories")

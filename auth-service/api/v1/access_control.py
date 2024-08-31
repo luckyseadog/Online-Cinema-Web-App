@@ -122,3 +122,20 @@ async def take_away_right(
 ) -> ResponseUserModel:
     await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.take_away_right(right, user)
+
+
+@router.post(
+    "/rights_user",
+    summary="Получить права пользователя",
+    description="Получить права пользователя",
+    response_description="Права пользователя",
+    responses={status.HTTP_200_OK: {"model": RightsModel}},
+)
+async def get_rights_user(
+    request: Request,
+    user: Annotated[UserModel, Body(title="Юзер")],
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> RightsModel:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.get_rights_user(user)
