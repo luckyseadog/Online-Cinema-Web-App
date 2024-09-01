@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import or_, select, update
@@ -56,8 +56,8 @@ class RightsManagement:
             await self.session.commit()
             return f"Право '{right.name or right.id}' удалено"
 
-    async def change_of_right(self, right: ChangeRightModel) -> RightModel:
-        if not right.model_dump(exclude_none=True):
+    async def change_of_right(self, right_old: SearchRightModel, right_new: ChangeRightModel) -> RightModel:
+        if not right_old.model_dump(exclude_none=True) or not right_new.model_dump(exclude_none=True):
             raise ResponseError(ErrorBody(massage="Недостаточно информации"))
 
         stmt = (
@@ -69,7 +69,9 @@ class RightsManagement:
         try:
             right_ = (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            raise ResponseError(ErrorBody(massage=f"Право '{right.current_name or right.id}' не существует"))
+            raise ResponseError(ErrorBody(massage=f"Право '{right_old.name or right_old.id}' не существует"))
+        except IntegrityError:
+            raise ResponseError(ErrorBody(massage=f"Право с названием '{right_new.name}' уже существует"))
         else:
             await self.session.commit()
             return RightModel(id=right_.id, name=right_.name, description=right_.description)

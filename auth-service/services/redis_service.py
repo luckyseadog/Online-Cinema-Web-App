@@ -28,3 +28,4 @@ class RedisService:
             pickle.dumps((value,), protocol=pickle.HIGHEST_PROTOCOL),
             # configs.redis_cache_expire_in_seconds,
         )
+
