@@ -21,10 +21,11 @@ class RedisService:
         result = pickle.loads(data)[0]  # pyright: ignore[reportUnknownArgumentType]
         return DEFAULT_REDIS if result is None else result
 
-    @backoff.on_exception(backoff.expo, ConnectionError)
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
     async def set(self, prefix_general: str, prefix_local: str, key: str, value: Any) -> None:
         await self.redis.set(  # pyright: ignore[reportUnknownMemberType]
             f"{prefix_general}_{prefix_local}:{key}",
             pickle.dumps((value,), protocol=pickle.HIGHEST_PROTOCOL),
             # configs.redis_cache_expire_in_seconds,
         )
+
