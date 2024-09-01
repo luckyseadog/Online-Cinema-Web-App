@@ -9,7 +9,6 @@ from api.v1.models import (
     UpdateAccountModel,
     LoginModel,
     ActualTokensModel,
-    RefreshTokensModel,
     AccountHistoryModel,
     HistoryModel,
 )
@@ -71,7 +70,7 @@ async def account_login(
     if not (user := await user_service.get_user(data.login)) or not password_service.check_password(data.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверный логин или пароль")
     # Сгеренить новые токены
-    access_token = await authorize.create_access_token(subject=user.id)
+    access_token = await authorize.create_access_token(subject=user.id.__str__())
     refresh_token = await authorize.create_refresh_token(subject=access_token)
     # Записать рефреш-токен в Redis
     await redis.set(user.id, 'refresh_token', refresh_token, access_token)  # TODO: Переписать на новый RedisStorage
@@ -87,6 +86,8 @@ async def account_login(
     )
     await user_service.save_history(history)
     # Отдать токены
+    await authorize.set_access_cookies(access_token)
+    await authorize.set_refresh_cookies(refresh_token)
     return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
 
 
@@ -102,16 +103,29 @@ async def account_login(
 )
 async def token_refresh(
     request: Request,
-    data: RefreshTokensModel,
+    redis: Annotated[RedisService, Depends(get_redis)],  # TODO: Переписать на новый RedisStorage
     authorize: AuthJWT = Depends(auth_dep)
 ) -> ActualTokensModel:
     # Проверка токена на корректность и просрочку
+    await authorize.jwt_refresh_token_required()
+    # Вытащить Access токен из Refresh
+    current_access_token = await authorize.get_jwt_subject()
+    # Достать из Access информацию по юзеру
+    access_token_data = await authorize._verified_token(current_access_token)
+    user_id = access_token_data.get("sub")
     # Сгенерить новые токены
+    new_access_token = await authorize.create_access_token(subject=user_id)
+    new_refresh_token = await authorize.create_refresh_token(subject=new_access_token)
     # Удалить старый рефреш
+    #await redis.delete_refresh_token(user_id, authorize._token)  # TODO: Переписать на новый RedisStorage
     # Добавить новый рефреш
+    #await redis.set_refresh_token(user_id, new_refresh_token)  # TODO: Переписать на новый RedisStorage
     # Добавить старый аксес (как блокировка)
+    #await redis.set_access_token(user_id, new_access_token)  # TODO: Переписать на новый RedisStorage
     # Отдать новые токены
-    return ...
+    await authorize.set_access_cookies(new_access_token)
+    await authorize.set_refresh_cookies(new_refresh_token)
+    return ActualTokensModel(access_token=new_access_token, refresh_token=new_refresh_token)
 
 
 @router.get(
@@ -123,16 +137,21 @@ async def token_refresh(
 )
 async def token_logout(
     request: Request,
-    refresh_token: Annotated[str | None, Cookie()],
     authorize: AuthJWT = Depends(auth_dep)
 ) -> dict:
-    await authorize.jwt_required()
-    current_user = await authorize.get_jwt_subject()
-    # Доставать refresh
     # Проверить токен на корректность и просрочку
+    await authorize.jwt_required()
+    access_token = authorize._token
+    current_user = await authorize.get_jwt_subject()
+    # Достать refresh
+    await authorize.jwt_refresh_token_required()
+    refresh_token = authorize._token
     # Удалить рефреш из Redis
+    #await redis.delete_refresh_token(user_id, refresh_token)  # TODO: Переписать на новый RedisStorage
     # Добавить аксес в Redis (как блокировка)
+    #await redis.set_access_token(user_id, access_token)  # TODO: Переписать на новый RedisStorage
     # Отдать ответ о выходе из системы
+    await authorize.unset_jwt_cookies()
     return {"user": current_user, "token": refresh_token}
 
 
@@ -145,8 +164,10 @@ async def token_logout(
 )
 async def user_logout(
     request: Request,
+    authorize: AuthJWT = Depends(auth_dep)
 ) -> None:
     # Проверить токен на корректность и просрочку
+    await authorize.jwt_required()
     # Достать все рефреш из Redis
     # Достать из рефреш аксесы
     # Удалить все рефреш из Redis

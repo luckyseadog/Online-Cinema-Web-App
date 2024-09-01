@@ -33,10 +33,6 @@ class ActualTokensModel(BaseModel):
     refresh_token: str = Field(description="Токен обновления", title="Refresh Token")
 
 
-class RefreshTokensModel(BaseModel):
-    refresh_token: str = Field(description="Токен обновления", title="Refresh Token")
-
-
 class HistoryModel(BaseModel):
     user_id: UUID = Field(description="ID пользователя", title="User ID")
     ip_address: str = Field(description="IP устройства", title="IP Adress")

@@ -33,6 +33,8 @@ class Configs(BaseSettings):
 
 class JWTConfig(BaseSettings):
     authjwt_secret_key: str = Field(default="secret", alias="JWT_SECRET_KEY")
+    authjwt_token_location: set = {"cookies"}
+    authjwt_cookie_csrf_protect: bool = False
 
 
 configs = Configs()
