@@ -31,4 +31,9 @@ class Configs(BaseSettings):
         return f"postgresql+psycopg://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_name}"
 
 
+class JWTConfig(BaseSettings):
+    authjwt_secret_key: str = Field(default="secret", alias="JWT_SECRET_KEY")
+
+
 configs = Configs()
+jwt_config = JWTConfig()

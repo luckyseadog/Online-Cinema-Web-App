@@ -1,12 +1,13 @@
 import enum
 import uuid
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, Table, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.sql import func
 
 
-class Base(DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
@@ -23,7 +24,7 @@ user_right = Table(
 )
 
 
-class UserOrm(Base):
+class User(Base):
     __tablename__ = "user"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -36,14 +37,14 @@ class UserOrm(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
     modified_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
-    histories: Mapped[list["HistoryOrm"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    rights: Mapped[list["RightOrm"]] = relationship(secondary=user_right, back_populates="users")
+    histories: Mapped[list["History"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    rights: Mapped[list["Right"]] = relationship(secondary=user_right, back_populates="users")
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, login={self.login!r}, name={self.first_name!r})"
 
 
-class RightOrm(Base):
+class Right(Base):
     __tablename__ = "right"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -52,21 +53,21 @@ class RightOrm(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
     modified_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
-    users: Mapped[list[UserOrm]] = relationship(secondary=user_right, back_populates="rights")
+    users: Mapped[list[User]] = relationship(secondary=user_right, back_populates="rights")
 
     def __repr__(self) -> str:
         return f"Right(id={self.id!r}, name={self.name!r})"
 
 
-class HistoryOrm(Base):
+class History(Base):
     __tablename__ = "history"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
-    action: Mapped[Action] = mapped_column(Integer, nullable=False)
+    action: Mapped[Action] = mapped_column(Enum(Action), nullable=False)
     browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
     system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
 
-    user: Mapped[UserOrm] = relationship(back_populates="histories")
+    user: Mapped[User] = relationship(back_populates="histories")

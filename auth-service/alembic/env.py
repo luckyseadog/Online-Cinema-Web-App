@@ -6,6 +6,9 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
+import alembic_postgresql_enum
+
+from core.config import configs as app_config
 
 load_dotenv()
 
@@ -13,7 +16,7 @@ load_dotenv()
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("DB_URL", os.environ["DB_URL"])
+config.set_main_option("sqlalchemy.url", f"{app_config.postgres_dsn}")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

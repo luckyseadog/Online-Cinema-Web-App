@@ -4,9 +4,10 @@ from typing import Any
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from redis.asyncio import Redis
 
-from api.v1 import access_control
+from api.v1 import access_control, auth
 from core.config import configs
 from db import redis
 from models.errors import ErrorBody
@@ -20,7 +21,10 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis.redis.close()
 
 
-tags_metadata = [access_control.rights_tags_metadata]
+tags_metadata = [
+    auth.auth_tags_metadata,
+    access_control.rights_tags_metadata
+]
 
 responses: dict[str | int, Any] = {
     status.HTTP_421_MISDIRECTED_REQUEST: {"model": ErrorBody},
@@ -49,4 +53,10 @@ async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSO
     )
 
 
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+
+
+app.include_router(auth.router, prefix="/auth/v1/auth")
 app.include_router(access_control.router, prefix="/auth/v1/access_control")
