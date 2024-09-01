@@ -3,21 +3,15 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Request, status
-from fastapi.responses import ORJSONResponse, JSONResponse
+from fastapi.responses import JSONResponse, ORJSONResponse
+from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from redis.asyncio import Redis
 
-from api.v1 import films, genres
+from api.v1 import access_control, auth
 from core.config import configs
-from api.v1 import persons
 from db import redis
-from services.errors import ContentError
-
-
-tags_metadata = [
-    films.films_tags_metadata,
-    genres.genres_tags_metadata,
-    persons.persons_tags_metadata,
-]
+from models.errors import ErrorBody
+from services.custom_error import ResponseError
 
 
 @asynccontextmanager
@@ -27,27 +21,42 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis.redis.close()
 
 
+tags_metadata = [
+    auth.auth_tags_metadata,
+    access_control.rights_tags_metadata
+]
+
+responses: dict[str | int, Any] = {
+    status.HTTP_421_MISDIRECTED_REQUEST: {"model": ErrorBody},
+}
+
+
 app = FastAPI(
     title=configs.project_name,
     description="",
     version="1.0.0",
     docs_url="/api/openapi",
     openapi_url="/api/openapi.json",
-    openapi_tags=tags_metadata,
     redoc_url="/api/redoc",
+    openapi_tags=tags_metadata,
     default_response_class=ORJSONResponse,
+    responses=responses,
     lifespan=lifespan,
 )
 
 
-# @app.exception_handler(ContentError)
-# async def edo_fatal_error_handler(request: Request, exc: ContentError) -> JSONResponse:
-#     return JSONResponse(
-#         status_code=status.HTTP_400_BAD_REQUEST,
-#         content={"message": exc.message},
-#     )
+@app.exception_handler(ResponseError)
+async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_421_MISDIRECTED_REQUEST,
+        content=exc.response.model_dump(),
+    )
 
 
-# app.include_router(films.router, prefix="/api/v1/films")
-# app.include_router(genres.router, prefix="/api/v1/genres")
-# app.include_router(persons.router, prefix="/api/v1/persons")
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+
+
+app.include_router(auth.router, prefix="/auth/v1/auth")
+app.include_router(access_control.router, prefix="/auth/v1/access_control")

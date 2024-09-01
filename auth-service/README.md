@@ -5,8 +5,3 @@
 * alembic revision -m "Some change in a table" - создать миграцию
 * alembic history --verbose - посмотреть историю
 
-# ENVs
-
-В файле **alembic.ini** нужно заменить **sqlalchemy.url**
-
-В файле **postgres_db.py** нужно заменить **dsn**
