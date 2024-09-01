@@ -1,6 +1,8 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, Request, status
+from fastapi.param_functions import Query
 
 from api.v1.models.access_control import (
     ChangeRightModel,
@@ -10,10 +12,6 @@ from api.v1.models.access_control import (
     RightsModel,
     SearchRightModel,
     UserModel,
-)
-from services.authorization_verification_service import (
-    AuthorizationVerificationService,
-    get_authorization_verification_service,
 )
 from services.rights_management_service import RightsManagement, get_rights_management_service
 
@@ -35,10 +33,8 @@ rights_tags_metadata = {"name": "Права", "description": "Управлени
 async def creation_of_right(
     request: Request,
     right: CreateRightModel,
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> RightModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.creation_of_right(right)
 
 
@@ -48,10 +44,8 @@ async def creation_of_right(
 async def deleting_right(
     request: Request,
     right: SearchRightModel,
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> str:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.deleting_right(right)
 
 
@@ -70,10 +64,8 @@ async def change_of_right(
     right_new: Annotated[
         ChangeRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Новый данные права")
     ],
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> RightModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.change_of_right(right_old, right_new)
 
 
@@ -86,10 +78,8 @@ async def change_of_right(
 )
 async def get_all_rights(
     request: Request,
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> RightsModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.get_all_rights()
 
 
@@ -104,10 +94,8 @@ async def assign_user_right(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> ResponseUserModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.assign_user_right(right, user)
 
 
@@ -122,25 +110,23 @@ async def take_away_right(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> ResponseUserModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.take_away_right(right, user)
 
 
-@router.post(
+@router.get(
     "/rights_user",
     summary="Получить права пользователя",
-    description="Получить права пользователя",
+    description="Минимум один параметр должен быть заполнен.",
     response_description="Права пользователя",
     responses={status.HTTP_200_OK: {"model": RightsModel}},
 )
 async def get_rights_user(
     request: Request,
-    user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    user_id: Annotated[UUID | None, Query(description="Идентификатор юзера", title="Идентификатор")] = None,
+    login: Annotated[str | None, Query(description="Логин юзера", title="Логин")] = None,
+    email: Annotated[str | None, Query(description="Email юзера", title="Email")] = None,
 ) -> RightsModel:
-    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
-    return await rights_management_service.get_rights_user(user)
+    return await rights_management_service.get_rights_user(user_id, login, email)

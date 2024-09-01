@@ -2,9 +2,9 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
+from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
-from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from redis.asyncio import Redis
 
 from api.v1 import access_control, auth
@@ -23,7 +23,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
 
 tags_metadata = [
     auth.auth_tags_metadata,
-    access_control.rights_tags_metadata
+    access_control.rights_tags_metadata,
 ]
 
 responses: dict[str | int, Any] = {
@@ -49,7 +49,7 @@ app = FastAPI(
 async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_421_MISDIRECTED_REQUEST,
-        content=exc.response.model_dump(),
+        content=exc.massage.model_dump(),
     )
 
 
