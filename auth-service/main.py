@@ -4,13 +4,14 @@ from typing import Any
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from redis.asyncio import Redis
 
 from api.v1 import access_control, auth
 from core.config import configs
 from db import redis
 from models.errors import ErrorBody
-from services.custom_error import AlreadyExistError
+from services.custom_error import ResponseError
 
 
 @asynccontextmanager
@@ -25,7 +26,9 @@ tags_metadata = [
     access_control.rights_tags_metadata
 ]
 
-responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {"model": ErrorBody}}
+responses: dict[str | int, Any] = {
+    status.HTTP_421_MISDIRECTED_REQUEST: {"model": ErrorBody},
+}
 
 
 app = FastAPI(
@@ -42,12 +45,17 @@ app = FastAPI(
 )
 
 
-@app.exception_handler(AlreadyExistError)
-async def edo_fatal_error_handler(request: Request, exc: AlreadyExistError) -> JSONResponse:
+@app.exception_handler(ResponseError)
+async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSONResponse:
     return JSONResponse(
-        status_code=status.HTTP_412_PRECONDITION_FAILED,
+        status_code=status.HTTP_421_MISDIRECTED_REQUEST,
         content=exc.response.model_dump(),
     )
+
+
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
 app.include_router(auth.router, prefix="/auth/v1/auth")

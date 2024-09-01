@@ -1,13 +1,15 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 
 from api.v1.models.access_control import (
     ChangeRightModel,
     CreateRightModel,
-    DeleteRightModel,
+    ResponseUserModel,
     RightModel,
     RightsModel,
+    SearchRightModel,
+    UserModel,
 )
 from services.authorization_verification_service import (
     AuthorizationVerificationService,
@@ -45,7 +47,7 @@ async def creation_of_right(
 )
 async def deleting_right(
     request: Request,
-    right: DeleteRightModel,
+    right: SearchRightModel,
     authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
     rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
 ) -> str:
@@ -84,3 +86,56 @@ async def get_all_rights(
 ) -> RightsModel:
     await authorization_service.check(request.cookies.get("access_token"), ADMIN)
     return await rights_management_service.get_all_rights()
+
+
+@router.post(
+    "/assign_user_right",
+    summary="Назначить пользователю право",
+    description="Назначить пользователю право",
+    response_description="Пользователь и его права",
+    responses={status.HTTP_200_OK: {"model": ResponseUserModel}},
+)
+async def assign_user_right(
+    request: Request,
+    right: Annotated[SearchRightModel, Body(title="Право")],
+    user: Annotated[UserModel, Body(title="Юзер")],
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> ResponseUserModel:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.assign_user_right(right, user)
+
+
+@router.delete(
+    "/take_away_right",
+    summary="Отобрать у  пользователя право",
+    description="Отобрать у  пользователя право",
+    response_description="Пользователь и его права",
+    responses={status.HTTP_200_OK: {"model": ResponseUserModel}},
+)
+async def take_away_right(
+    request: Request,
+    right: Annotated[SearchRightModel, Body(title="Право")],
+    user: Annotated[UserModel, Body(title="Юзер")],
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> ResponseUserModel:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.take_away_right(right, user)
+
+
+@router.post(
+    "/rights_user",
+    summary="Получить права пользователя",
+    description="Получить права пользователя",
+    response_description="Права пользователя",
+    responses={status.HTTP_200_OK: {"model": RightsModel}},
+)
+async def get_rights_user(
+    request: Request,
+    user: Annotated[UserModel, Body(title="Юзер")],
+    authorization_service: Annotated[AuthorizationVerificationService, Depends(get_authorization_verification_service)],
+    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+) -> RightsModel:
+    await authorization_service.check(request.cookies.get("access_token"), ADMIN)
+    return await rights_management_service.get_rights_user(user)

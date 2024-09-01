@@ -29,6 +29,12 @@ class UserService:
         result = result.scalars().first()
         return result
 
+    async def get_user_by_id(self, id_: str) -> User | None:
+        stmt = select(User).where(User.id == id_)
+        result = await self.session.execute(stmt)
+        result = result.scalars().first()
+        return result
+
     async def create_user(self, data: AccountModel) -> User:
         user = User(**data.model_dump())
         user.password = self.password.compute_hash(user.password)

@@ -1,6 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Cookie
+from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
+from async_fastapi_jwt_auth import AuthJWT
 
 from api.v1.models import (
     AccountModel,
@@ -14,12 +16,18 @@ from api.v1.models import (
 from models.alchemy_model import Action
 from services.user_service import UserService, get_user_service
 from services.password_service import PasswordService, get_password_service
-from services.token_service import AccessTokenService, RefreshTokenService, get_access_token_service, get_refresh_token_service
 from services.redis_service import RedisService
 from db.redis import get_redis
+from core.config import jwt_config
 
 router = APIRouter()
+auth_dep = AuthJWTBearer()
 auth_tags_metadata = {"name": "Авторизация", "description": "Авторизация в API."}
+
+
+@AuthJWT.load_config
+def get_config():
+    return jwt_config
 
 
 @router.post(
@@ -56,23 +64,20 @@ async def account_login(
     data: LoginModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     password_service: Annotated[PasswordService, Depends(get_password_service)],
-    access_token_service: Annotated[AccessTokenService, Depends(get_access_token_service)],
-    refresh_token_service: Annotated[RefreshTokenService, Depends(get_refresh_token_service)],
-    redis: Annotated[RedisService, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],  # TODO: Переписать на новый RedisStorage
+    authorize: AuthJWT = Depends(auth_dep)
 ) -> ActualTokensModel:
     # Проверить введённые данные
-    # Сгеренить новые токены
-    # Записать логин в БД
-    # Записать рефреш-токен в Redis
-    # Записать права в Redis
-    # Отдать токены
     if not (user := await user_service.get_user(data.login)) or not password_service.check_password(data.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверный логин или пароль")
-    print(user.__dict__)
-    access_token, _ = access_token_service.generate_token('1', '2')
-    refresh_token, _ = refresh_token_service.generate_token('1', '2', access_token)
-    await redis.set(user.id, 'refresh_token', refresh_token, access_token)
-    await redis.set(user.id, 'rights', '', await user.awaitable_attrs.rights)
+    # Сгеренить новые токены
+    access_token = await authorize.create_access_token(subject=user.id)
+    refresh_token = await authorize.create_refresh_token(subject=access_token)
+    # Записать рефреш-токен в Redis
+    await redis.set(user.id, 'refresh_token', refresh_token, access_token)  # TODO: Переписать на новый RedisStorage
+    # Записать права в Redis
+    await redis.set(user.id, 'rights', '', await user.awaitable_attrs.rights)  # TODO: Переписать на новый RedisStorage
+    # Записать логин в БД
     history = HistoryModel(
         user_id=user.id,
         ip_address=request.client.host,
@@ -81,6 +86,7 @@ async def account_login(
         system_info=request.headers.get('sec-ch-ua-platform')
     )
     await user_service.save_history(history)
+    # Отдать токены
     return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
 
 
@@ -97,6 +103,7 @@ async def account_login(
 async def token_refresh(
     request: Request,
     data: RefreshTokensModel,
+    authorize: AuthJWT = Depends(auth_dep)
 ) -> ActualTokensModel:
     # Проверка токена на корректность и просрочку
     # Сгенерить новые токены
@@ -116,12 +123,17 @@ async def token_refresh(
 )
 async def token_logout(
     request: Request,
-) -> None:
+    refresh_token: Annotated[str | None, Cookie()],
+    authorize: AuthJWT = Depends(auth_dep)
+) -> dict:
+    await authorize.jwt_required()
+    current_user = await authorize.get_jwt_subject()
+    # Доставать refresh
     # Проверить токен на корректность и просрочку
     # Удалить рефреш из Redis
     # Добавить аксес в Redis (как блокировка)
     # Отдать ответ о выходе из системы
-    return ...
+    return {"user": current_user, "token": refresh_token}
 
 
 @router.get(
@@ -175,8 +187,8 @@ async def account_update(
 )
 async def account_history(
     request: Request,
-) -> list:
+) -> list[AccountHistoryModel]:
     # Проверить токен на корректность и просрочку
     # Получить историю входов в аккаунт из БД
     # Отдать историю входов в аккаунт
-    return [request.client, request.headers.items()]
+    return ...
