@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
-from api.v1 import access_control
+from api.v1 import access_control, auth
 from core.config import configs
 from db import redis
 from models.errors import ErrorBody
@@ -20,7 +20,10 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis.redis.close()
 
 
-tags_metadata = [access_control.rights_tags_metadata]
+tags_metadata = [
+    auth.auth_tags_metadata,
+    access_control.rights_tags_metadata
+]
 
 responses: dict[str | int, Any] = {status.HTTP_412_PRECONDITION_FAILED: {"model": ErrorBody}}
 
@@ -47,4 +50,5 @@ async def edo_fatal_error_handler(request: Request, exc: AlreadyExistError) -> J
     )
 
 
+app.include_router(auth.router, prefix="/auth/v1/auth")
 app.include_router(access_control.router, prefix="/auth/v1/access_control")

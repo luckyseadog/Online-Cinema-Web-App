@@ -4,7 +4,7 @@ from hashlib import pbkdf2_hmac
 
 
 APP_ITERS = 100_000
-SALT = "<salt>"
+SALT = b"<salt>"
 
 
 class PasswordService:

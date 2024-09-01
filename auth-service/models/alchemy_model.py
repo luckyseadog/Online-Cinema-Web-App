@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, Integer, String, Table, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -64,7 +64,7 @@ class History(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
-    action: Mapped[Action] = mapped_column(Integer, nullable=False)
+    action: Mapped[Action] = mapped_column(Enum(Action), nullable=False)
     browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
     system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
