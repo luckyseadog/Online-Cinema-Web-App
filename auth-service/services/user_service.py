@@ -27,7 +27,6 @@ class UserService:
         stmt = select(User).where(User.login == login)
         result = await self.session.execute(stmt)
         result = result.scalars().first()
-        print(result)
         return result
 
     async def create_user(self, data: AccountModel) -> User:

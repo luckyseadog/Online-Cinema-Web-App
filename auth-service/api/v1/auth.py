@@ -72,7 +72,7 @@ async def account_login(
     access_token, _ = access_token_service.generate_token('1', '2')
     refresh_token, _ = refresh_token_service.generate_token('1', '2', access_token)
     await redis.set(user.id, 'refresh_token', refresh_token, access_token)
-    await redis.set(user.id, 'rights', '', [])
+    await redis.set(user.id, 'rights', '', await user.awaitable_attrs.rights)
     history = HistoryModel(
         user_id=user.id,
         ip_address=request.client.host,

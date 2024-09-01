@@ -2,11 +2,12 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, Integer, String, Table, Enum
+from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, Table, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-class Base(DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
