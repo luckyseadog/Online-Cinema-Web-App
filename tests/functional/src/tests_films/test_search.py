@@ -1,5 +1,5 @@
-import uuid
 import http
+import uuid
 from collections.abc import Callable, Coroutine
 from typing import Any
 
@@ -13,7 +13,10 @@ from src.models import Film
     ("query_data", "expected_answer"),
     [
         ({"query": "The Star"}, {"status": http.HTTPStatus.OK, "length": 10}),
-        ({"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5}, {"status": http.HTTPStatus.OK, "length": 5}),
+        (
+            {"query": "The Star", "sort": "imdb_rating", "page_number": 1, "page_size": 5},
+            {"status": http.HTTPStatus.OK, "length": 5},
+        ),
         ({"query": "Mashed potato"}, {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
         ({"sort": "qwerty"}, {"status": http.HTTPStatus.BAD_REQUEST, "length": 1}),
         ({"page_number": 0}, {"status": http.HTTPStatus.UNPROCESSABLE_ENTITY, "length": 1}),

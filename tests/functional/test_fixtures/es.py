@@ -1,4 +1,4 @@
-from collections.abc import AsyncGenerator, Iterable, Callable, Coroutine
+from collections.abc import AsyncGenerator, Callable, Coroutine, Iterable
 from typing import Any
 
 import pytest_asyncio
