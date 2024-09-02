@@ -5,6 +5,12 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ Europe/Moscow
 
+RUN apt update && apt install \
+    gcc \
+    libpq-dev \
+    libc-dev \
+    --no-install-recommends -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY ./requirements.txt .

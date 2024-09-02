@@ -35,6 +35,12 @@ class TestSettings(BaseSettings):
     service_host: str = Field(default="127.0.0.1", alias="SERVICE_HOST")
     service_port: int = Field(default=8000, alias="SERVICE_PORT")
 
+    pg_name: str = Field(alias="POSTGRES_DB", serialization_alias="DB_NAME")
+    pg_user: str = Field(alias="POSTGRES_USER", serialization_alias="DB_USER")
+    pg_password: str = Field("", alias="POSTGRES_PASSWORD", serialization_alias="DB_PASSWORD")
+    pg_host: str = Field("", alias="POSTGRES_HOST", serialization_alias="DB_HOST")
+    pg_port: int = Field(5432, alias="POSTGRES_PORT", serialization_alias="DB_PORT")
+
     @property
     def elastic_dsn(self) -> str:
         return f"http://{self.es_host}:{self.es_port}/"
@@ -42,6 +48,16 @@ class TestSettings(BaseSettings):
     @property
     def service_url(self) -> str:
         return f"http://{self.service_host}:{self.service_port}/"
+
+    @property
+    def postgres_dsn(self) -> dict[str, str | int]:
+        return {
+            "dbname": self.pg_name,
+            "user": self.pg_user,
+            "password": self.pg_password,
+            "host": self.pg_host,
+            "port": self.pg_port,
+        }
 
 
 test_settings = TestSettings()
