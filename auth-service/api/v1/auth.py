@@ -15,7 +15,7 @@ from api.v1.models import (
 from models.alchemy_model import Action
 from services.user_service import UserService, get_user_service
 from services.password_service import PasswordService, get_password_service
-from services.redis import RedisStorage, get_redis
+from services.redis_service import RedisService, get_redis
 from core.config import jwt_config
 
 router = APIRouter()
@@ -62,7 +62,7 @@ async def login(
     data: LoginModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     password_service: Annotated[PasswordService, Depends(get_password_service)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
     # Проверить введённые данные
@@ -103,7 +103,7 @@ async def login(
 )
 async def refresh(
     request: Request,
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
     # Проверка токена на корректность и просрочку
@@ -146,7 +146,7 @@ async def refresh(
 )
 async def logout(
     request: Request,
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> None:
     # Проверить токен на корректность и просрочку
@@ -173,7 +173,7 @@ async def logout(
 )
 async def logout_all(
     request: Request,
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> None:
     # Проверить токен на корректность и просрочку
@@ -204,7 +204,7 @@ async def logout_all(
 async def update(
     request: Request,
     data: AccountModel,
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> SecureAccountModel:
@@ -233,7 +233,7 @@ async def update(
 async def history(
     request: Request,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> list[AccountHistoryModel]:
     # Проверить токен на корректность и просрочку

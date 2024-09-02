@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
@@ -13,6 +13,7 @@ from api.v1.models.auth import (
 from db.postgres_db import get_session
 from models.alchemy_model import User, History, Action
 from services.password_service import get_password_service, PasswordService
+from services.custom_error import ResponseError
 
 
 class UserService:
@@ -48,7 +49,10 @@ class UserService:
             if key == 'password':
                 value = self.password.compute_hash(value)
             setattr(user, key, value)
-        await self.session.commit()
+        try:
+            await self.session.commit()
+        except IntegrityError as e:
+            raise ResponseError(e.args[0].split('DETAIL:  ')[1])
         await self.session.refresh(user)
         return user
 

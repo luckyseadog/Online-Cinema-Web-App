@@ -4,8 +4,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
 from async_fastapi_jwt_auth import AuthJWT
 
-from services.redis import RedisStorage, get_redis
-from services.rights_management_service import RightsManagement, get_rights_management_service
+from services.redis_service import RedisService, get_redis
+from services.rights_management_service import RightsManagementService, get_rights_management_service
 from api.v1.models.access_control import (
     ChangeRightModel,
     CreateRightModel,
@@ -34,8 +34,8 @@ async def create(
     request: Request,
     right: CreateRightModel,
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightModel:
     # Проверка токена
     await authorize.jwt_required()
@@ -63,8 +63,8 @@ async def delete(
     request: Request,
     right: SearchRightModel,
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> str:
     # Проверка токена
     await authorize.jwt_required()
@@ -98,8 +98,8 @@ async def update(
         ChangeRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Новый данные права")
     ],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightModel:
     # Проверка токена
     await authorize.jwt_required()
@@ -127,8 +127,8 @@ async def update(
 async def get_all(
     request: Request,
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightsModel:
     # Проверка токена
     await authorize.jwt_required()
@@ -157,8 +157,8 @@ async def assign(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ResponseUserModel:
     # Проверка токена
@@ -188,9 +188,9 @@ async def take_away(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
+    redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> ResponseUserModel:
     # Проверка токена
     await authorize.jwt_required()
@@ -210,7 +210,7 @@ async def take_away(
 @router.post(
     "/rights/get_user_rights",
     summary="Получить права пользователя",
-    description="Получить права пользователя",
+    description="Минимум один параметр должен быть заполнен.",
     response_description="Права пользователя",
     responses={status.HTTP_200_OK: {"model": RightsModel}},
     tags=["Права"],
@@ -219,8 +219,8 @@ async def get_user_rights(
     request: Request,
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisStorage, Depends(get_redis)],
-    rights_management_service: Annotated[RightsManagement, Depends(get_rights_management_service)],
+    redis: Annotated[RedisService, Depends(get_redis)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightsModel:
     # Проверка токена
     await authorize.jwt_required()
