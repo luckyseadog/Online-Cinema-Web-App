@@ -12,7 +12,7 @@ from redis.exceptions import ConnectionError as RedisConnectionError
 redis: Redis | None = None
 
 
-class RedisStorage:
+class RedisService:
     def __init__(self, redis_instance: Redis) -> None:
         self._redis = redis_instance
 
@@ -115,5 +115,5 @@ class RedisStorage:
 
 
 @lru_cache
-def get_redis() -> RedisStorage:
-    return RedisStorage(cast(Redis, redis))
+def get_redis() -> RedisService:
+    return RedisService(cast(Redis, redis))

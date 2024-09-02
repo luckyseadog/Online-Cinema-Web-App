@@ -19,14 +19,14 @@ from api.v1.models.access_control import (
 from db.postgres_db import get_session
 from models.alchemy_model import Right, User
 from services.custom_error import ResponseError
-from services.redis import RedisStorage, get_redis
+from services.redis_service import RedisService, get_redis
 
 
 NOT_ENOUGH_INFO = "Недостаточно информации"
 
 
-class RightsManagement:
-    def __init__(self, redis: RedisStorage, session: AsyncSession) -> None:
+class RightsManagementService:
+    def __init__(self, redis: RedisService, session: AsyncSession) -> None:
         self.redis = redis
         self.session = session
 
@@ -210,6 +210,6 @@ class RightsManagement:
 
 @lru_cache
 def get_rights_management_service(
-    redis: Annotated[RedisStorage, Depends(get_redis)], postgres: Annotated[AsyncSession, Depends(get_session)]
-) -> RightsManagement:
-    return RightsManagement(redis, postgres)
+    redis: Annotated[RedisService, Depends(get_redis)], postgres: Annotated[AsyncSession, Depends(get_session)]
+) -> RightsManagementService:
+    return RightsManagementService(redis, postgres)
