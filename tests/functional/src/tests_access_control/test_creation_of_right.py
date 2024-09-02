@@ -1,48 +1,52 @@
+import http
 from collections.abc import Callable, Coroutine
 from typing import Any
 
 import pytest
 
-from testdata.alchemy_model import User
+from src.models_access_control import CreateRightModel, ErrorBody, RightModel
 
 
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ("ef86b8ff-3c82-4d31-ad8e-72b69f4e3f9w", "ef86b8ff-3c82-4d31-ad8e-72b69f4e3f9w"),
+        ({"name": "admi"}, {"status": (http.HTTPStatus.OK, http.HTTPStatus.MISDIRECTED_REQUEST), "length": (3, 1)}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
 async def test_creation_of_right(
     create_database: Callable[[], Coroutine[Any, Any, None]],
     drop_database: Callable[[], Coroutine[Any, Any, None]],
-    # es_write_data: Callable[..., Coroutine[Any, Any, None]],
-    # make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
-    # es_clear_data: Callable[..., Coroutine[Any, Any, None]],
+    make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     query_data: dict[str, str],
-    expected_answer: dict[str, int],
+    expected_answer: dict[str, tuple[int, int]],
 ) -> None:
     # 1. Создаем таблицы в базе данных
 
     await create_database()
-    
-    # 2. Генерируем данные для БД
 
-    user = User(
-        id="3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        login="login",
-        password="",
-        first_name="first_name",
-        last_name="last_name",
-        email="first_name@gmail.com",
-    )
+    # 2. Генерируем данные
 
-    # 3. Идем в auth api
+    right = CreateRightModel(name=query_data["name"])
 
-    # 4. Стираем таблицы  в базе данных
+    # 3. Создаем право в бд через auth api
+
+    body, status = await make_post_request("access_control/creation_of_right/", json=right.model_dump())
+
+    # 4. Проверяем ответ
+
+    assert status == expected_answer["status"][0]
+    assert len(RightModel(**body).model_dump()) == expected_answer["length"][0]
+
+    # 5. Пытаемся повторно создать право в бд через auth api
+
+    body, status = await make_post_request("access_control/creation_of_right/", json=right.model_dump())
+
+    # 6. Проверяем ответ
+
+    assert status == expected_answer["status"][1]
+    assert len(ErrorBody(**body).model_dump()) == expected_answer["length"][1]
+
+    # 7. Стираем таблицы  в базе данных
 
     await drop_database()
-
-    # 5. Проверяем ответ
-
-    assert query_data == expected_answer

@@ -35,6 +35,9 @@ class TestSettings(BaseSettings):
     service_host: str = Field(default="127.0.0.1", alias="SERVICE_HOST")
     service_port: int = Field(default=8000, alias="SERVICE_PORT")
 
+    service_host_auth: str = Field(default="127.0.0.1", alias="SERVICE_HOST_AUTH")
+    service_port_auth: int = Field(default=8080, alias="SERVICE_PORT_AUTH")
+
     pg_name: str = Field(default="", alias="POSTGRES_DB", serialization_alias="DB_NAME")
     pg_user: str = Field(default="", alias="POSTGRES_USER", serialization_alias="DB_USER")
     pg_password: str = Field(default="", alias="POSTGRES_PASSWORD", serialization_alias="DB_PASSWORD")
@@ -48,6 +51,10 @@ class TestSettings(BaseSettings):
     @property
     def service_url(self) -> str:
         return f"http://{self.service_host}:{self.service_port}/"
+
+    @property
+    def service_url_auth(self) -> str:
+        return f"http://{self.service_host_auth}:{self.service_port_auth}/"
 
     @property
     def postgres_dsn(self) -> dict[str, str | int]:
