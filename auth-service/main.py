@@ -9,21 +9,21 @@ from redis.asyncio import Redis
 
 from api.v1 import access_control, auth
 from core.config import configs
-from db import redis
 from models.errors import ErrorBody
 from services.custom_error import ResponseError
+from services import redis_service
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
-    redis.redis = Redis(host=configs.redis_host, port=configs.redis_port)
+    redis_service.redis = Redis(host=configs.redis_host, port=configs.redis_port)
     yield
-    await redis.redis.close()
+    await redis_service.redis.close()
 
 
 tags_metadata = [
     auth.auth_tags_metadata,
-    access_control.rights_tags_metadata
+    access_control.rights_tags_metadata,
 ]
 
 responses: dict[str | int, Any] = {
@@ -49,7 +49,7 @@ app = FastAPI(
 async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_421_MISDIRECTED_REQUEST,
-        content=exc.response.model_dump(),
+        content=exc.message.model_dump(),
     )
 
 
