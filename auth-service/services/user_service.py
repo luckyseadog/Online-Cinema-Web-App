@@ -11,15 +11,12 @@ from api.v1.models.auth import (
     HistoryModel,
 )
 from db.postgres_db import get_session
-from db.redis import get_redis
-from models.alchemy_model import User, History
-from services.redis_service import RedisService
+from models.alchemy_model import User, History, Action
 from services.password_service import get_password_service, PasswordService
 
 
 class UserService:
-    def __init__(self, redis: RedisService, session: AsyncSession, password: PasswordService) -> None:
-        self.redis = redis
+    def __init__(self, session: AsyncSession, password: PasswordService) -> None:
         self.session = session
         self.password = password
 
@@ -48,6 +45,8 @@ class UserService:
         if user is None:
             raise NoResultFound(f"User with id '{user_id}' not found")
         for key, value in data.model_dump().items():
+            if key == 'password':
+                value = self.password.compute_hash(value)
             setattr(user, key, value)
         await self.session.commit()
         await self.session.refresh(user)
@@ -60,9 +59,16 @@ class UserService:
         await self.session.refresh(history)
         return history
 
+    async def get_user_login_history(self, user_id: int) -> list[History]:
+        stmt = select(History).where(History.user_id == user_id, History.action == Action.LOGIN)
+        result = await self.session.execute(stmt)
+        result = result.scalars().all()
+        return result
+
 
 @lru_cache
 def get_user_service(
-    redis: Annotated[RedisService, Depends(get_redis)], postgres: Annotated[AsyncSession, Depends(get_session)], password: Annotated[PasswordService, Depends(get_password_service)],
+    postgres: Annotated[AsyncSession, Depends(get_session)],
+    password: Annotated[PasswordService, Depends(get_password_service)],
 ) -> UserService:
-    return UserService(redis, postgres, password)
+    return UserService(postgres, password)
