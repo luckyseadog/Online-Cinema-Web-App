@@ -26,6 +26,9 @@ class Configs(BaseSettings):
     redis_host: str = Field(default="127.0.0.1", alias="REDIS_HOST")
     redis_port: int = Field(default=6379, alias="REDIS_PORT")
 
+    access_token_min: int = Field(default=30, alias="ACCESS_TOKEN_MIN")
+    refresh_token_min: int = Field(default=2 * 7 * 24 * 60, alias="REFRESH_TOKEN_MIN")
+
     @property
     def postgres_dsn(self) -> str:
         return f"postgresql+psycopg://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_name}"
@@ -33,6 +36,8 @@ class Configs(BaseSettings):
 
 class JWTConfig(BaseSettings):
     authjwt_secret_key: str = Field(default="secret", alias="JWT_SECRET_KEY")
+    authjwt_token_location: set = {"cookies"}
+    authjwt_cookie_csrf_protect: bool = False
 
 
 configs = Configs()
