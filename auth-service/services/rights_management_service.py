@@ -17,19 +17,21 @@ from api.v1.models.access_control import (
     UserModel,
 )
 from db.postgres_db import get_session
-from db.redis import get_redis
 from models.alchemy_model import Right, User
-from models.errors import ErrorBody
 from services.custom_error import ResponseError
-from services.redis_service import RedisService
+from services.redis import RedisStorage, get_redis
+
+
+NOT_ENOUGH_INFO = "Недостаточно информации"
 
 
 class RightsManagement:
-    def __init__(self, redis: RedisService, session: AsyncSession) -> None:
+    def __init__(self, redis: RedisStorage, session: AsyncSession) -> None:
         self.redis = redis
         self.session = session
 
-    async def creation_of_right(self, right: CreateRightModel) -> RightModel:
+    async def create_right(self, right: CreateRightModel) -> RightModel:
+        """Создание права в системе"""
         stmt = select(Right).where(Right.name == right.name)
         try:
             (await self.session.scalars(stmt)).one()
@@ -40,43 +42,46 @@ class RightsManagement:
             await self.session.refresh(right_)
             return RightModel(id=right_.id, name=right_.name, description=right_.description)
         else:
-            raise ResponseError(ErrorBody(massage=f"Право с названием '{right.name}' уже существует"))
+            raise ResponseError(massage=f"Право с названием '{right.name}' уже существует")
 
-    async def deleting_right(self, right: SearchRightModel) -> str:
+    async def delete_right(self, right: SearchRightModel) -> str:
+        """Удаление права в системе"""
         if not right.model_dump(exclude_none=True):
-            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+            raise ResponseError(massage=NOT_ENOUGH_INFO)
 
         stmt = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
+            raise ResponseError(massage=f"Право '{right.name or right.id}' не существует")
         else:
             await self.session.delete(right_)
             await self.session.commit()
             return f"Право '{right.name or right.id}' удалено"
 
-    async def change_of_right(self, right_old: SearchRightModel, right_new: ChangeRightModel) -> RightModel:
+    async def change_right(self, right_old: SearchRightModel, right_new: ChangeRightModel) -> RightModel:
+        """Изменение свойств права в системе"""
         if not right_old.model_dump(exclude_none=True) or not right_new.model_dump(exclude_none=True):
-            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+            raise ResponseError(massage=NOT_ENOUGH_INFO)
 
         stmt = (
             update(Right)
-            .where(or_(Right.name == right.current_name, Right.id == right.id))
-            .values(**right.model_dump(exclude_none=True, exclude={"id", "current_name"}))
+            .where(or_(Right.name == right_old.name, Right.id == right_old.id))
+            .values(**right_new.model_dump(exclude_none=True, exclude={"id", "current_name"}))
             .returning(Right)
         )
         try:
             right_ = (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            raise ResponseError(ErrorBody(massage=f"Право '{right_old.name or right_old.id}' не существует"))
+            raise ResponseError(massage=f"Право '{right_old.name or right_old.id}' не существует")
         except IntegrityError:
-            raise ResponseError(ErrorBody(massage=f"Право с названием '{right_new.name}' уже существует"))
+            raise ResponseError(massage=f"Право с названием '{right_new.name}' уже существует")
         else:
             await self.session.commit()
             return RightModel(id=right_.id, name=right_.name, description=right_.description)
 
     async def get_all_rights(self) -> RightsModel:
+        """Выгрузка всех прав"""
         return RightsModel(
             rights=[
                 RightModel(id=right.id, name=right.name, description=right.description)
@@ -84,15 +89,24 @@ class RightsManagement:
             ]
         )
 
+    async def get_admin_right(self):
+        """Выгрузка права 'admin'"""
+        try:
+            right_ = (await self.session.scalars(select(Right).where(Right.name == "admin"))).one()
+        except NoResultFound:
+            raise ResponseError(massage="Право 'admin' не существует")
+        return right_
+
     async def assign_user_right(self, right: SearchRightModel, user: UserModel) -> ResponseUserModel:
+        """Назначение права пользователю"""
         if not right.model_dump(exclude_none=True) or not user.model_dump(exclude_none=True):
-            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+            raise ResponseError(massage=NOT_ENOUGH_INFO)
 
         stmt_right = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt_right)).one()
         except NoResultFound:
-            raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
+            raise ResponseError(massage=f"Право '{right.name or right.id}' не существует")
 
         stmt_user = (
             select(User)
@@ -102,17 +116,13 @@ class RightsManagement:
         try:
             user_ = (await self.session.scalars(stmt_user)).one()
         except NoResultFound:
-            raise ResponseError(
-                ErrorBody(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
-            )
+            raise ResponseError(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
 
         if right_ in user_.rights:
             raise ResponseError(
-                ErrorBody(
-                    massage=(
-                        f"Пользователь '{user.id or user.login or user.email}' "
-                        f"уже имеет право '{right.name or right.id}'"
-                    )
+                massage=(
+                    f"Пользователь '{user.id or user.login or user.email}' "
+                    f"уже имеет право '{right.name or right.id}'"
                 )
             )
 
@@ -126,18 +136,19 @@ class RightsManagement:
             rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in user_.rights],
         )
         await self.session.commit()
-        # TODO: добавление права в redis
+        await self.redis.add_user_right(user_.id, right_.id)
         return result
 
     async def take_away_right(self, right: SearchRightModel, user: UserModel) -> ResponseUserModel:
+        """Отъём права у пользователя"""
         if not right.model_dump(exclude_none=True) or not user.model_dump(exclude_none=True):
-            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+            raise ResponseError(massage=NOT_ENOUGH_INFO)
 
         stmt_right = select(Right).where(or_(Right.name == right.name, Right.id == right.id))
         try:
             right_ = (await self.session.scalars(stmt_right)).one()
         except NoResultFound:
-            raise ResponseError(ErrorBody(massage=f"Право '{right.name or right.id}' не существует"))
+            raise ResponseError(massage=f"Право '{right.name or right.id}' не существует")
 
         stmt_user = (
             select(User)
@@ -147,19 +158,15 @@ class RightsManagement:
         try:
             user_ = (await self.session.scalars(stmt_user)).one()
         except NoResultFound:
-            raise ResponseError(
-                ErrorBody(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
-            )
+            raise ResponseError(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
 
         try:
             user_.rights.remove(right_)
         except ValueError:
             raise ResponseError(
-                ErrorBody(
-                    massage=(
-                        f"Пользователь '{user.id or user.login or user.email}' "
-                        f"не имеет право '{right.name or right.id}'"
-                    )
+                massage=(
+                    f"Пользователь '{user.id or user.login or user.email}' "
+                    f"не имеет право '{right.name or right.id}'"
                 )
             )
 
@@ -172,12 +179,13 @@ class RightsManagement:
             rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in user_.rights],
         )
         await self.session.commit()
-        # TODO: удаление права из redis
+        await self.redis.delete_user_right(user_.id, right_.id)
         return result
 
-    async def get_rights_user(self, user: UserModel) -> RightsModel:
+    async def get_user_rights(self, user: UserModel) -> RightsModel:
+        """Выгрузка всех прав пользователя"""
         if not user.model_dump(exclude_none=True):
-            raise ResponseError(ErrorBody(massage="Недостаточно информации"))
+            raise ResponseError(massage=NOT_ENOUGH_INFO)
 
         stmt = (
             select(User)
@@ -187,9 +195,7 @@ class RightsManagement:
         try:
             rights = (await self.session.scalars(stmt)).unique().one()
         except NoResultFound:
-            raise ResponseError(
-                ErrorBody(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
-            )
+            raise ResponseError(massage=f"Пользователь '{user.id or user.login or user.email}' не существует")
 
         return RightsModel(
             rights=[RightModel(id=right.id, name=right.name, description=right.description) for right in rights.rights]
@@ -198,6 +204,6 @@ class RightsManagement:
 
 @lru_cache
 def get_rights_management_service(
-    redis: Annotated[RedisService, Depends(get_redis)], postgres: Annotated[AsyncSession, Depends(get_session)]
+    redis: Annotated[RedisStorage, Depends(get_redis)], postgres: Annotated[AsyncSession, Depends(get_session)]
 ) -> RightsManagement:
     return RightsManagement(redis, postgres)

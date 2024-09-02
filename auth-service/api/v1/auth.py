@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status, Cookie
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
 from async_fastapi_jwt_auth import AuthJWT
 
 from api.v1.models import (
     AccountModel,
-    UpdateAccountModel,
+    SecureAccountModel,
     LoginModel,
     ActualTokensModel,
     AccountHistoryModel,
@@ -15,8 +15,7 @@ from api.v1.models import (
 from models.alchemy_model import Action
 from services.user_service import UserService, get_user_service
 from services.password_service import PasswordService, get_password_service
-from services.redis_service import RedisService
-from db.redis import get_redis
+from services.redis import RedisStorage, get_redis
 from core.config import jwt_config
 
 router = APIRouter()
@@ -41,11 +40,11 @@ async def account_register(
     request: Request,
     data: AccountModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
-) -> AccountModel:
+) -> SecureAccountModel:
     if await user_service.get_user(data.login):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Логин уже занят")
     user = await user_service.create_user(data)
-    return AccountModel(**user.__dict__)
+    return SecureAccountModel(**user.__dict__)
 
 
 @router.post(
@@ -63,8 +62,8 @@ async def account_login(
     data: LoginModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     password_service: Annotated[PasswordService, Depends(get_password_service)],
-    redis: Annotated[RedisService, Depends(get_redis)],  # TODO: Переписать на новый RedisStorage
-    authorize: AuthJWT = Depends(auth_dep)
+    redis: Annotated[RedisStorage, Depends(get_redis)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
     # Проверить введённые данные
     if not (user := await user_service.get_user(data.login)) or not password_service.check_password(data.password, user.password):
@@ -73,18 +72,19 @@ async def account_login(
     access_token = await authorize.create_access_token(subject=user.id.__str__())
     refresh_token = await authorize.create_refresh_token(subject=access_token)
     # Записать рефреш-токен в Redis
-    await redis.set(user.id, 'refresh_token', refresh_token, access_token)  # TODO: Переписать на новый RedisStorage
+    await redis.add_valid_refresh(user.id, refresh_token, access_token)
     # Записать права в Redis
-    await redis.set(user.id, 'rights', '', await user.awaitable_attrs.rights)  # TODO: Переписать на новый RedisStorage
+    await redis.add_user_right(user.id, [right.id for right in await user.awaitable_attrs.rights])
     # Записать логин в БД
-    history = HistoryModel(
-        user_id=user.id,
-        ip_address=request.client.host,
-        action=Action.LOGIN,
-        browser_info=request.headers.get('user-agent'),
-        system_info=request.headers.get('sec-ch-ua-platform')
+    await user_service.save_history(
+        HistoryModel(
+            user_id=user.id,
+            ip_address=request.client.host,
+            action=Action.LOGIN,
+            browser_info=request.headers.get('user-agent'),
+            system_info=request.headers.get('sec-ch-ua-platform')
+        )
     )
-    await user_service.save_history(history)
     # Отдать токены
     await authorize.set_access_cookies(access_token)
     await authorize.set_refresh_cookies(refresh_token)
@@ -103,25 +103,31 @@ async def account_login(
 )
 async def token_refresh(
     request: Request,
-    redis: Annotated[RedisService, Depends(get_redis)],  # TODO: Переписать на новый RedisStorage
-    authorize: AuthJWT = Depends(auth_dep)
+    redis: Annotated[RedisStorage, Depends(get_redis)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
     # Проверка токена на корректность и просрочку
     await authorize.jwt_refresh_token_required()
     # Вытащить Access токен из Refresh
     current_access_token = await authorize.get_jwt_subject()
     # Достать из Access информацию по юзеру
-    access_token_data = await authorize._verified_token(current_access_token)
+    try:
+        # Изменить допустимую просрочку на срок годности Refresh токена
+        authorize._decode_leeway = authorize._refresh_token_expires
+        access_token_data = await authorize._verified_token(current_access_token)
+    finally:
+        # Вернуть допустимую просрочку к 0 в любом сценарии
+        authorize._decode_leeway = 0
     user_id = access_token_data.get("sub")
     # Сгенерить новые токены
     new_access_token = await authorize.create_access_token(subject=user_id)
     new_refresh_token = await authorize.create_refresh_token(subject=new_access_token)
     # Удалить старый рефреш
-    #await redis.delete_refresh_token(user_id, authorize._token)  # TODO: Переписать на новый RedisStorage
+    await redis.delete_refresh(user_id, authorize._token)
     # Добавить новый рефреш
-    #await redis.set_refresh_token(user_id, new_refresh_token)  # TODO: Переписать на новый RedisStorage
+    await redis.add_valid_refresh(user_id, new_refresh_token, current_access_token)
     # Добавить старый аксес (как блокировка)
-    #await redis.set_access_token(user_id, new_access_token)  # TODO: Переписать на новый RedisStorage
+    await redis.add_banned_access(user_id, new_access_token, user_id)
     # Отдать новые токены
     await authorize.set_access_cookies(new_access_token)
     await authorize.set_refresh_cookies(new_refresh_token)
@@ -137,22 +143,22 @@ async def token_refresh(
 )
 async def token_logout(
     request: Request,
-    authorize: AuthJWT = Depends(auth_dep)
-) -> dict:
+    redis: Annotated[RedisStorage, Depends(get_redis)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
+) -> None:
     # Проверить токен на корректность и просрочку
     await authorize.jwt_required()
     access_token = authorize._token
-    current_user = await authorize.get_jwt_subject()
+    user_id = await authorize.get_jwt_subject()
     # Достать refresh
     await authorize.jwt_refresh_token_required()
     refresh_token = authorize._token
     # Удалить рефреш из Redis
-    #await redis.delete_refresh_token(user_id, refresh_token)  # TODO: Переписать на новый RedisStorage
+    await redis.delete_refresh(user_id, refresh_token)
     # Добавить аксес в Redis (как блокировка)
-    #await redis.set_access_token(user_id, access_token)  # TODO: Переписать на новый RedisStorage
+    await redis.add_banned_access(user_id, access_token, user_id)
     # Отдать ответ о выходе из системы
     await authorize.unset_jwt_cookies()
-    return {"user": current_user, "token": refresh_token}
 
 
 @router.get(
@@ -164,16 +170,19 @@ async def token_logout(
 )
 async def user_logout(
     request: Request,
-    authorize: AuthJWT = Depends(auth_dep)
+    redis: Annotated[RedisStorage, Depends(get_redis)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> None:
     # Проверить токен на корректность и просрочку
     await authorize.jwt_required()
-    # Достать все рефреш из Redis
-    # Достать из рефреш аксесы
-    # Удалить все рефреш из Redis
+    user_id = await authorize.get_jwt_subject()
+    # Удалить все рефреш из Redis и достать все Access
+    all_user_access_tokens = await redis.delete_all_refresh(user_id)
     # Добавить все аксесы в Redis (как блокировка)
+    for token in all_user_access_tokens:
+        await redis.add_banned_access(user_id, token, user_id)
     # Отдать ответ о выходе из системы
-    return ...
+    await authorize.unset_jwt_cookies()
 
 
 @router.patch(
@@ -188,12 +197,16 @@ async def user_logout(
 )
 async def account_update(
     request: Request,
-    data: UpdateAccountModel,
+    data: AccountModel,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> AccountModel:
     # Проверить токен на корректность и просрочку
+    await authorize.jwt_required()
     # Обновить данные аккаунта в БД
+    user = await user_service.update_user(await authorize.get_jwt_subject(), data)
     # Отдать данные аккаунта
-    return ...
+    return AccountModel(**user.__dict__)
 
 
 @router.get(
@@ -208,8 +221,12 @@ async def account_update(
 )
 async def account_history(
     request: Request,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> list[AccountHistoryModel]:
     # Проверить токен на корректность и просрочку
+    await authorize.jwt_required()
     # Получить историю входов в аккаунт из БД
+    user_login_history = await user_service.get_user_login_history(await authorize.get_jwt_subject())
     # Отдать историю входов в аккаунт
-    return ...
+    return [AccountHistoryModel(**history.__dict__) for history in user_login_history]

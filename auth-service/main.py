@@ -9,9 +9,9 @@ from redis.asyncio import Redis
 
 from api.v1 import access_control, auth
 from core.config import configs
-from db import redis
 from models.errors import ErrorBody
 from services.custom_error import ResponseError
+from services import redis
 
 
 @asynccontextmanager

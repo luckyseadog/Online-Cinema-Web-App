@@ -15,9 +15,8 @@ class AccountModel(BaseModel):
     email: str = Field(description="Почта пользователя", title="Email Address")
 
 
-class UpdateAccountModel(BaseModel):
+class SecureAccountModel(BaseModel):
     login: str | None = Field(description="Логин пользователя", title="Login")
-    password: str | None = Field(description="Пароль пользователя", title="Password")
     first_name: str | None = Field(description="Имя пользователя", title="First Name")
     last_name: str | None = Field(description="Фамилия пользователя", title="Last Name")
     email: str | None = Field(description="Почта пользователя", title="Email Address")
@@ -44,6 +43,5 @@ class HistoryModel(BaseModel):
 class AccountHistoryModel(BaseModel):
     created_at: datetime = Field(description="Дата действия", title="Created At")
     ip_address: str = Field(description="IP устройства", title="IP Adress")
-    action: Action = Field(description="Действие", title="Action")
     browser_info: str = Field(description="Описание браузера", title="Browser Info")
     system_info: str = Field(description="Описание системы", title="System Info")
