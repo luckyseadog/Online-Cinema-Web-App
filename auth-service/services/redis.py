@@ -61,7 +61,7 @@ class RedisStorage:
         """Удаляет из Redis запись с ключем в формате '{user_id}:refresh:{token_hash}' и возвращает её значение"""
         token_hash = self._compute_hash(token)
         deleted_token_data = pickle.loads(await self._redis.get(f'{user_id}:refresh:{token_hash}'))[0]
-        self._redis.delete(f'{user_id}:refresh:{token_hash}')
+        await self._redis.delete(f'{user_id}:refresh:{token_hash}')
         return deleted_token_data
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
@@ -102,6 +102,16 @@ class RedisStorage:
             f'{user_id}:rights',
             pickle.dumps(right, protocol=pickle.HIGHEST_PROTOCOL),
         )
+
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
+    async def delete_right(self, right: str):
+        """Удаляет из всех зписей в Redis с ключем в формате '*rights*' значение right"""
+        keys = await self._redis.keys(pattern='*rights*')
+        for key in keys:
+            await self._redis.srem(
+                key,
+                pickle.dumps(right, protocol=pickle.HIGHEST_PROTOCOL),
+            )
 
 
 @lru_cache
