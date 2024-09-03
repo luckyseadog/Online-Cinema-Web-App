@@ -17,10 +17,7 @@ def create_admin_right(session: Session) -> Right:
     if admin_right:
         raise typer.Exit
     else:
-        admin_right = Right(
-            name=admin_config.right_name,
-            description="admin right allows everything"
-        )
+        admin_right = Right(name=admin_config.right_name, description="admin right allows everything")
         session.add(admin_right)
 
     return admin_right
