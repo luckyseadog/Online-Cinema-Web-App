@@ -7,3 +7,8 @@ class AccountModel(BaseModel):
     first_name: str
     last_name: str
     email: str
+
+
+class LoginModel(BaseModel):
+    login: str
+    password: str

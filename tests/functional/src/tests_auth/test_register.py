@@ -3,22 +3,21 @@ from collections.abc import Callable, Coroutine
 from typing import Any
 
 import pytest
-from aiohttp import ClientSession
 
-from core.settings import test_settings
 from src.models_auth import AccountModel
 
 
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({"login": "Petr"}, {"status": (http.HTTPStatus.OK, http.HTTPStatus.CONFLICT), "length": (4, 1)}),
+        ({"login": "register"}, {"status": (http.HTTPStatus.OK, http.HTTPStatus.CONFLICT), "length": (4, 1)}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
 async def test_register(
     create_database: Callable[[], Coroutine[Any, Any, None]],
     drop_database: Callable[[], Coroutine[Any, Any, None]],
+    make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     query_data: dict[str, str],
     expected_answer: dict[str, tuple[int, int]],
 ) -> None:
@@ -30,7 +29,7 @@ async def test_register(
 
     account = AccountModel(
         login=query_data["login"],
-        password="password",  # noqa: S106
+        password="password",
         first_name="first_name",
         last_name="last_name",
         email="email",
@@ -38,10 +37,7 @@ async def test_register(
 
     # 3. Создаем аккаунт в бд через auth api
 
-    url = test_settings.service_url_auth + "auth/v1/auth/register/"
-    async with ClientSession() as aio_session, aio_session.post(url, json=account.model_dump()) as response:
-        body = await response.json()
-        status = response.status
+    body, status = await make_post_request("auth/register/", json=account.model_dump())
 
     # 4. Проверяем ответ
 
@@ -50,10 +46,7 @@ async def test_register(
 
     # 5. Пытаемся повторно создать аккаунт в бд через auth api
 
-    url = test_settings.service_url_auth + "auth/v1/auth/register/"
-    async with ClientSession() as aio_session, aio_session.post(url, json=account.model_dump()) as response:
-        body = await response.json()
-        status = response.status
+    body, status = await make_post_request("auth/register/", json=account.model_dump())
 
     # 6. Проверяем ответ
 

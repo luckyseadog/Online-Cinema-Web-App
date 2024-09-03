@@ -20,7 +20,7 @@ def async_session(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
-@pytest_asyncio.fixture(name="pg_session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
+@pytest_asyncio.fixture(name="pg_session", scope="session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
 async def pg_session(async_session: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, Any]:
     async with async_session() as session:
         yield session
