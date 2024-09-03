@@ -26,3 +26,9 @@ class SearchRightModel(BaseModel):
 class ChangeRightModel(BaseModel):
     name: str | None = Field(default=None)
     description: str | None = Field(default=None)
+
+
+class UserModel(BaseModel):
+    id: UUID | None = Field(default=None)
+    login: str | None = Field(default=None)
+    email: str | None = Field(default=None)
