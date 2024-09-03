@@ -35,10 +35,24 @@ class Configs(BaseSettings):
 
 
 class JWTConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
+
     authjwt_secret_key: str = Field(default="secret", alias="JWT_SECRET_KEY")
     authjwt_token_location: set[str] = {"cookies"}
     authjwt_cookie_csrf_protect: bool = False
 
 
+class AdminConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
+
+    username: str = Field(default="admin", alias="ADMIN_USERNAME")
+    password: str = Field(default="admin", alias="ADMIN_PASSWORD")
+    right_name: str = Field(default="admin", alias="ADMIN_RIGHT_NAME")
+    first_name: str = Field(default="admin", alias="ADMIN_FRIST_NAME")
+    last_name: str = Field(default="admin", alias="ADMIN_LAST_NAME")
+    email: str = Field(default="admin", alias="ADMIN_EMAIL")
+
+
 configs = Configs()
 jwt_config = JWTConfig()
+admin_config = AdminConfig()
