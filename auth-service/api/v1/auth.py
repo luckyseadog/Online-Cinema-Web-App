@@ -16,7 +16,7 @@ from models.alchemy_model import Action
 from services.user_service import UserService, get_user_service
 from services.password_service import PasswordService, get_password_service
 from services.redis_service import RedisService, get_redis
-from core.config import jwt_config
+from core.config import JWTConfig, jwt_config
 
 router = APIRouter()
 auth_dep = AuthJWTBearer()
@@ -24,7 +24,7 @@ auth_tags_metadata = {"name": "Авторизация", "description": "Авто
 
 
 @AuthJWT.load_config
-def get_config():
+def get_config() -> JWTConfig:
     return jwt_config
 
 
