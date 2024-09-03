@@ -12,10 +12,10 @@ ps = get_password_service()
 app = typer.Typer()
 
 
-def create_admin_right(session: Session):
+def create_admin_right(session: Session) -> Right:
     admin_right = session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
     if admin_right:
-        raise typer.Exit()
+        raise typer.Exit
     else:
         admin_right = Right(
             name=admin_config.right_name,
@@ -26,10 +26,10 @@ def create_admin_right(session: Session):
     return admin_right
 
 
-def creaete_admin_user(session: Session):
+def creaete_admin_user(session: Session) -> User:
     admin_user = session.scalars(select(User).where(User.login == admin_config.username)).first()
     if admin_user:
-        raise typer.Exit()
+        raise typer.Exit
     else:
         admin_user = User(
             login=admin_config.username,
@@ -44,7 +44,7 @@ def creaete_admin_user(session: Session):
 
 
 @app.command()
-def create_admin():
+def create_admin() -> None:
     with Session(engine) as pg_session:
         admin_right = create_admin_right(pg_session)
         admin_user = creaete_admin_user(pg_session)
@@ -53,7 +53,7 @@ def create_admin():
 
 
 @app.command()
-def delete_admin():
+def delete_admin() -> None:
     with Session(engine) as session:
         admin_right = session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
         session.delete(admin_right)
