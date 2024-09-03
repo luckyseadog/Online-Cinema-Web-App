@@ -1,6 +1,5 @@
 import backoff
-
-from redis import Redis, ConnectionError
+from redis import ConnectionError, Redis
 
 from core.settings import test_settings
 

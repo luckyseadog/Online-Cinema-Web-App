@@ -43,6 +43,7 @@ def make_put_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any,
 
     return inner
 
+
 @pytest_asyncio.fixture(name="make_patch_request")
 def make_patch_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]]:
     async def inner(**kwargs: Any) -> tuple[Any, int, SimpleCookie]:
@@ -56,9 +57,10 @@ def make_patch_request(aio_session: ClientSession) -> Callable[..., Coroutine[An
     return inner
 
 
-
 @pytest_asyncio.fixture(name="make_delete_request")
-def make_delete_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]]:
+def make_delete_request(
+    aio_session: ClientSession,
+) -> Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]]:
     async def inner(**kwargs: Any) -> tuple[Any, int, SimpleCookie]:
         async with aio_session.delete(**kwargs) as response:
             body = await response.json()
@@ -68,4 +70,3 @@ def make_delete_request(aio_session: ClientSession) -> Callable[..., Coroutine[A
         return body, status, cookies
 
     return inner
-
