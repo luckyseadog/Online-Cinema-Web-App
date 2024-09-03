@@ -58,7 +58,7 @@
 
 #     # 3. Запрашиваем данные из ES по API
 
-#     body, status = await make_get_request(f"films/{query_data}")
+#     body, status = await make_get_request(url=f"{test_settings.service_url}api/v1/films/{query_data}")
 
 #     # 4. Проверяем ответ
 
@@ -71,7 +71,7 @@
 
 #     # 6. Запрашиваем данные из Redis по API
 
-#     body, status = await make_get_request(f"films/{query_data}")
+#     body, status = await make_get_request(url=f"{test_settings.service_url}api/v1/films/{query_data}")
 
 #     # 7. Проверяем ответ
 

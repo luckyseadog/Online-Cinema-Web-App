@@ -5,6 +5,7 @@ from typing import Any
 
 import pytest
 
+from core.settings import test_settings
 from src.models_auth import AccountModel
 
 
@@ -38,7 +39,9 @@ async def test_register(
 
     # 3. Создаем аккаунт в бд через auth api
 
-    body, status, _ = await make_post_request("auth/register/", json=account.model_dump())
+    body, status, _ = await make_post_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/register/", json=account.model_dump()
+    )
 
     # 4. Проверяем ответ
 
@@ -47,7 +50,9 @@ async def test_register(
 
     # 5. Пытаемся повторно создать аккаунт в бд через auth api
 
-    body, status, _ = await make_post_request("auth/register/", json=account.model_dump())
+    body, status, _ = await make_post_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/register/", json=account.model_dump()
+    )
 
     # 6. Проверяем ответ
 

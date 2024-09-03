@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from core.settings import test_settings
 from src.models_auth import AccountModel, LoginModel
 from testdata.alchemy_model import User
 
@@ -61,7 +62,9 @@ async def test_login(
     # 4. Логинимся
 
     body, status, _ = await make_post_request(
-        "auth/login/", json=login.model_dump(), headers={"user-agent": "test", "sec-ch-ua-platform": "test"}
+        url=f"{test_settings.service_url_auth}auth/v1/auth/login/",
+        json=login.model_dump(),
+        headers={"user-agent": "test", "sec-ch-ua-platform": "test"},
     )
 
     # 5. Проверяем ответ

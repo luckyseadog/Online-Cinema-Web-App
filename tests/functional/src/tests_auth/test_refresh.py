@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from core.settings import test_settings
 from src.models_auth import AccountModel, LoginModel
 from testdata.alchemy_model import User
 
@@ -62,12 +63,16 @@ async def test_refresh(
     # 4. Логинимся
 
     _, _, cookies = await make_post_request(
-        "auth/login/", json=login.model_dump(), headers={"user-agent": "test", "sec-ch-ua-platform": "test"}
+        url=f"{test_settings.service_url_auth}auth/v1/auth/login/",
+        json=login.model_dump(),
+        headers={"user-agent": "test", "sec-ch-ua-platform": "test"},
     )
 
     # 5. Запрашиваем актуальный токен
 
-    body, status, _ = await make_post_request("auth/refresh/", cookies=cookies)
+    body, status, _ = await make_post_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/refresh/", cookies=cookies
+    )
 
     # 6. Проверяем ответ
 
@@ -76,11 +81,13 @@ async def test_refresh(
 
     # 7. Логаут
 
-    await make_post_request("auth/logout/", cookies=cookies)
+    await make_post_request(url=f"{test_settings.service_url_auth}auth/v1/auth/logout/", cookies=cookies)
 
     # 8. Запрашиваем актуальный токен после логаута
 
-    body, status, _ = await make_post_request("auth/refresh/", cookies=cookies)
+    body, status, _ = await make_post_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/refresh/", cookies=cookies
+    )
 
     # 9. Проверяем ответ
 
