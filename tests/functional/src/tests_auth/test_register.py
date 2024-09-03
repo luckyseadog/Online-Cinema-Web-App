@@ -1,5 +1,6 @@
 import http
 from collections.abc import Callable, Coroutine
+from http.cookies import SimpleCookie
 from typing import Any
 
 import pytest
@@ -17,7 +18,7 @@ from src.models_auth import AccountModel
 async def test_register(
     create_database: Callable[[], Coroutine[Any, Any, None]],
     drop_database: Callable[[], Coroutine[Any, Any, None]],
-    make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
+    make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     query_data: dict[str, str],
     expected_answer: dict[str, tuple[int, int]],
 ) -> None:
@@ -37,7 +38,7 @@ async def test_register(
 
     # 3. Создаем аккаунт в бд через auth api
 
-    body, status = await make_post_request("auth/register/", json=account.model_dump())
+    body, status, _ = await make_post_request("auth/register/", json=account.model_dump())
 
     # 4. Проверяем ответ
 
@@ -46,7 +47,7 @@ async def test_register(
 
     # 5. Пытаемся повторно создать аккаунт в бд через auth api
 
-    body, status = await make_post_request("auth/register/", json=account.model_dump())
+    body, status, _ = await make_post_request("auth/register/", json=account.model_dump())
 
     # 6. Проверяем ответ
 
