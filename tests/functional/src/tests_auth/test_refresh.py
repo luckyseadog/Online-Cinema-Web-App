@@ -21,7 +21,7 @@ SALT = b"<salt>"
     ("query_data", "expected_answer"),
     [
         (
-            {"name": "login", "password": "password", "login": True},
+            {"name": "login", "password": "password"},
             {"status": (HTTPStatus.OK, HTTPStatus.UNAUTHORIZED), "length": (2, 1)},
         ),
     ],
