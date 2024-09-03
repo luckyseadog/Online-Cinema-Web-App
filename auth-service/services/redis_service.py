@@ -1,7 +1,7 @@
 import hashlib
 import pickle
 from functools import lru_cache
-from typing import Any, cast
+from typing import cast
 from uuid import UUID
 
 import backoff
@@ -40,12 +40,12 @@ class RedisService:
         token_value = await self._redis.get(f"{user_id}:{token_type}:{token_hash}")
         return True if token_value is not None else False
 
-    async def add_banned_access(self, user_id: UUID, token: str, data: str):
+    async def add_banned_access(self, user_id: UUID, token: str, data: str) -> None:
         """Добавляет в Redis запись с ключем в формате '{user_id}:access:{token_hash}'"""
         time_to_exp = configs.access_token_min * 60
         return await self._add_token(user_id, "access", token, data, time_to_exp)
 
-    async def add_valid_refresh(self, user_id: UUID, token: str, data: str):
+    async def add_valid_refresh(self, user_id: UUID, token: str, data: str) -> None:
         """Добавляет в Redis запись с ключем в формате '{user_id}:refresh:{token_hash}'"""
         time_to_exp = configs.refresh_token_min * 60
         return await self._add_token(user_id, "refresh", token, data, time_to_exp)
@@ -73,15 +73,18 @@ class RedisService:
         deleted_tokens_data = [pickle.loads(await self._redis.get(key))[0] for key in keys]
         if keys:
             await self._redis.delete(*keys)
+
         return deleted_tokens_data
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
-    async def add_user_right(self, user_id: UUID, data: list[UUID] | UUID)  -> None:
+    async def add_user_right(self, user_id: UUID, data: list[UUID] | UUID) -> None:
         """Добавляет в Redis запись с ключем в формате '{user_id}:rights' или добавляет в него значение right"""
         if not data:
-            return None
+            return
+
         if not isinstance(data, list):
             data = [data]
+
         data = [pickle.dumps(right, protocol=pickle.HIGHEST_PROTOCOL) for right in data]
         await self._redis.sadd(f"{user_id}:rights", *data)
 

@@ -1,12 +1,9 @@
 from typing import Annotated
-from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
-from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
 from async_fastapi_jwt_auth import AuthJWT
+from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 
-from services.redis_service import RedisService, get_redis
-from services.rights_management_service import RightsManagementService, get_rights_management_service
 from api.v1.models.access_control import (
     ChangeRightModel,
     CreateRightModel,
@@ -16,6 +13,9 @@ from api.v1.models.access_control import (
     SearchRightModel,
     UserModel,
 )
+from services.redis_service import RedisService, get_redis
+from services.rights_management_service import RightsManagementService, get_rights_management_service
+
 
 router = APIRouter()
 auth_dep = AuthJWTBearer()
@@ -44,11 +44,13 @@ async def create(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Создание права и ответ пользователю
     return await rights_management_service.create(right)
 
@@ -73,11 +75,13 @@ async def delete(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Удаление права и ответ пользователю
     return await rights_management_service.delete(right)
 
@@ -108,11 +112,13 @@ async def update(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Изменение права и ответ пользователю
     return await rights_management_service.update(right_old, right_new)
 
@@ -137,11 +143,13 @@ async def get_all(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Выгрузка всех прав и ответ пользователю
     return await rights_management_service.get_all()
 
@@ -168,11 +176,13 @@ async def assign(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Назначение права и ответ пользователю
     return await rights_management_service.assign(right, user)
 
@@ -199,11 +209,13 @@ async def take_away(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Отъём права и ответ пользователю
     return await rights_management_service.take_away(right, user)
 
@@ -229,10 +241,12 @@ async def get_user_rights(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Проверка наличия у пользователя прав админа
     user_rights = await redis.get_user_rights(user_id)
     admin_right = await rights_management_service.get_admin_right()
     if admin_right.id not in user_rights:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
+
     # Отъём права и ответ пользователю
     return await rights_management_service.get_user_rights(user)

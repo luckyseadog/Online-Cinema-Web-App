@@ -1,14 +1,11 @@
-import os
 from logging.config import fileConfig
 
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
-import alembic_postgresql_enum
-
 from core.config import configs as app_config
+
 
 load_dotenv()
 

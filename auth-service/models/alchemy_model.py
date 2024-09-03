@@ -1,9 +1,9 @@
 import enum
 import uuid
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, Table, Enum
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import UUID, Boolean, Column, DateTime, Enum, ForeignKey, String, Table
 from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 
@@ -19,8 +19,8 @@ class Action(enum.Enum):
 user_right = Table(
     "user_right",
     Base.metadata,
-    Column("user_id", ForeignKey("user.id"), primary_key=True),  # pyright: ignore[reportUnknownArgumentType]
-    Column("right_id", ForeignKey("right.id"), primary_key=True),  # pyright: ignore[reportUnknownArgumentType]
+    Column("user_id", ForeignKey("user.id"), primary_key=True),
+    Column("right_id", ForeignKey("right.id"), primary_key=True),
 )
 
 

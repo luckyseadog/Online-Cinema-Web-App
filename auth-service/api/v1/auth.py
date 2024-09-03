@@ -1,22 +1,23 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
 from async_fastapi_jwt_auth import AuthJWT
+from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from api.v1.models import (
-    AccountModel,
-    SecureAccountModel,
-    LoginModel,
-    ActualTokensModel,
     AccountHistoryModel,
+    AccountModel,
+    ActualTokensModel,
     HistoryModel,
+    LoginModel,
+    SecureAccountModel,
 )
+from core.config import JWTConfig, jwt_config
 from models.alchemy_model import Action
-from services.user_service import UserService, get_user_service
 from services.password_service import PasswordService, get_password_service
 from services.redis_service import RedisService, get_redis
-from core.config import JWTConfig, jwt_config
+from services.user_service import UserService, get_user_service
+
 
 router = APIRouter()
 auth_dep = AuthJWTBearer()
@@ -43,6 +44,7 @@ async def register(
 ) -> SecureAccountModel:
     if await user_service.get_user(data.login):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Логин уже занят")
+
     user = await user_service.create_user(data)
     return SecureAccountModel(**user.__dict__)
 
@@ -66,10 +68,13 @@ async def login(
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
     # Проверить введённые данные
-    if not (user := await user_service.get_user(data.login)) or not password_service.check_password(data.password, user.password):
+    if not (user := await user_service.get_user(data.login)) or not password_service.check_password(
+        data.password, user.password
+    ):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверный логин или пароль")
+
     # Сгеренить новые токены
-    access_token = await authorize.create_access_token(subject=user.id.__str__())
+    access_token = await authorize.create_access_token(subject=str(user.id))
     refresh_token = await authorize.create_refresh_token(subject=access_token)
     # Записать рефреш-токен в Redis
     await redis.add_valid_refresh(user.id, refresh_token, access_token)
@@ -81,8 +86,8 @@ async def login(
             user_id=user.id,
             ip_address=request.client.host,
             action=Action.LOGIN,
-            browser_info=request.headers.get('user-agent'),
-            system_info=request.headers.get('sec-ch-ua-platform')
+            browser_info=request.headers.get("user-agent"),
+            system_info=request.headers.get("sec-ch-ua-platform"),
         )
     )
     # Отдать токены
@@ -118,10 +123,12 @@ async def refresh(
     finally:
         # Вернуть допустимую просрочку к 0 в любом сценарии
         authorize._decode_leeway = 0
+
     user_id = access_token_data.get("sub")
     # Проверить Refresh на logout
     if not await redis.check_valid_refresh(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Сгенерить новые токены
     new_access_token = await authorize.create_access_token(subject=user_id)
     new_refresh_token = await authorize.create_refresh_token(subject=new_access_token)
@@ -182,11 +189,13 @@ async def logout_all(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Удалить все рефреш из Redis и достать все Access
     all_user_access_tokens = await redis.delete_all_refresh(user_id)
     # Добавить все аксесы в Redis (как блокировка)
     for token in all_user_access_tokens:
         await redis.add_banned_access(user_id, token, user_id)
+
     # Отдать ответ о выходе из системы
     await authorize.unset_jwt_cookies()
 
@@ -214,6 +223,7 @@ async def update(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Обновить данные аккаунта в БД
     user = await user_service.update_user(user_id, data)
     # Отдать данные аккаунта
@@ -242,6 +252,7 @@ async def history(
     # Проверить Access на logout
     if await redis.check_banned_access(user_id, authorize._token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     # Получить историю входов в аккаунт из БД
     user_login_history = await user_service.get_user_login_history(user_id)
     # Отдать историю входов в аккаунт

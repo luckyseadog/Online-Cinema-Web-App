@@ -1,6 +1,5 @@
 from functools import lru_cache
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import Depends
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -56,8 +55,9 @@ class RightsManagementService:
         except NoResultFound:
             raise ResponseError(f"Право '{right.name or right.id}' не существует")
         else:
-            if right_.name == 'admin':
+            if right_.name == "admin":
                 raise ResponseError("Нельзя удалять право админа!")
+
             await self.session.delete(right_)
             await self.session.commit()
             await self.redis.delete_right(right_.id)
@@ -67,6 +67,7 @@ class RightsManagementService:
         """Изменение свойств права в системе"""
         if not right_old.model_dump(exclude_none=True) or not right_new.model_dump(exclude_none=True):
             raise ResponseError(NOT_ENOUGH_INFO)
+
         admin_right = await self.get_admin_right()
         if right_old.id == admin_right.id or right_old.name == admin_right.name:
             raise ResponseError("Нельзя изменять право админа!")
@@ -96,12 +97,13 @@ class RightsManagementService:
             ]
         )
 
-    async def get_admin_right(self):
+    async def get_admin_right(self) -> Right:
         """Выгрузка права 'admin'"""
         try:
             right_ = (await self.session.scalars(select(Right).where(Right.name == "admin"))).one()
         except NoResultFound:
             raise ResponseError("Право 'admin' не существует")
+
         return right_
 
     async def assign(self, right: SearchRightModel, user: UserModel) -> ResponseUserModel:
@@ -126,7 +128,9 @@ class RightsManagementService:
             raise ResponseError(f"Пользователь '{user.id or user.login or user.email}' не существует")
 
         if right_ in user_.rights:
-            raise ResponseError(f"Пользователь '{user.id or user.login or user.email}' уже имеет право '{right.name or right.id}'")
+            raise ResponseError(
+                f"Пользователь '{user.id or user.login or user.email}' уже имеет право '{right.name or right.id}'"
+            )
 
         user_.rights.append(right_)
         result = ResponseUserModel(
@@ -165,7 +169,9 @@ class RightsManagementService:
         try:
             user_.rights.remove(right_)
         except ValueError:
-            raise ResponseError(f"Пользователь '{user.id or user.login or user.email}' не имеет право '{right.name or right.id}'")
+            raise ResponseError(
+                f"Пользователь '{user.id or user.login or user.email}' не имеет право '{right.name or right.id}'"
+            )
 
         result = ResponseUserModel(
             id=user_.id,
