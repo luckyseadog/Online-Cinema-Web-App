@@ -9,3 +9,4 @@ sqlalchemy[asyncio]==2.0.32
 psycopg[binary]==3.1.19
 alembic==1.13.2
 async_fastapi_jwt_auth==0.6.6
+typer==0.12.4
