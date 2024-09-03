@@ -1,32 +1,24 @@
-import os
-
 import typer
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, delete, select
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from models.alchemy_model import Right, User
 from services.password_service import get_password_service
+from core.config import configs, admin_config
 
-load_dotenv()
 
-DB_USER = os.getenv("DB_USER")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-
-engine = create_engine(f"postgresql+psycopg://{DB_USER}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+engine = create_engine(configs.postgres_dsn)
 ps = get_password_service()
 app = typer.Typer()
 
 
 def create_admin_right(session: Session):
-    admin_right = session.scalars(select(Right).where(Right.name == "admin")).first()
+    admin_right = session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
     if admin_right:
         raise typer.Exit()
     else:
         admin_right = Right(
-            name="admin",
+            name=admin_config.right_name,
             description="admin right allows everything"
         )
         session.add(admin_right)
@@ -35,16 +27,16 @@ def create_admin_right(session: Session):
 
 
 def creaete_admin_user(session: Session):
-    admin_user = session.scalars(select(User).where(User.login == "admin")).first()
+    admin_user = session.scalars(select(User).where(User.login == admin_config.username)).first()
     if admin_user:
         raise typer.Exit()
     else:
         admin_user = User(
-            login="admin",
-            password=ps.compute_hash("ADMIN_PASSWORD"),
-            first_name="admin",
-            last_name="admin",
-            email="admin@gmail.com",
+            login=admin_config.username,
+            password=ps.compute_hash(admin_config.password),
+            first_name=admin_config.first_name,
+            last_name=admin_config.last_name,
+            email=admin_config.email,
         )
         session.add(admin_user)
 
@@ -62,10 +54,12 @@ def create_admin():
 
 @app.command()
 def delete_admin():
-    with Session(engine) as pg_session:
-        pg_session.execute(delete(User).where(User.login == "admin"))
-        pg_session.execute(delete(Right).where(Right.name == "admin"))
-        pg_session.commit()
+    with Session(engine) as session:
+        admin_right = session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
+        session.delete(admin_right)
+        admin_user = session.scalars(select(User).where(User.login == admin_config.username)).first()
+        session.delete(admin_user)
+        session.commit()
 
 
 if __name__ == "__main__":
