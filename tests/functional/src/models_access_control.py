@@ -16,3 +16,5 @@ class RightModel(BaseModel):
     id: UUID
     name: str
     description: str | None
+
+
