@@ -13,10 +13,6 @@ from src.models_auth import AccountModel, LoginModel
 from testdata.alchemy_model import User
 
 
-APP_ITERS = 100_000
-SALT = b"<salt>"
-
-
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
@@ -43,7 +39,7 @@ async def test_logout(
     # 2. Генерируем данные
 
     password_enc = query_data["password"].encode("utf-8")
-    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, SALT, APP_ITERS)
+    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, test_settings.salt_password, test_settings.iters_password)
     password = urlsafe_b64encode(password_hash_bytes).decode("utf-8")
 
     login = LoginModel(login=query_data["name"], password=query_data["password"])

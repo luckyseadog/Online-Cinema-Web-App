@@ -16,18 +16,15 @@ from testdata.alchemy_model import User
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        (
-            {"name": "login", "password": "password"},
-            {"status": HTTPStatus.OK, "length": None},
-        ),
+        ({"name": "login", "password": "password"}, {"status": HTTPStatus.OK, "length": 4}),
     ],
 )
 @pytest.mark.asyncio(scope="session")
-async def test_logout_all(
+async def test_update(
     create_database: Callable[[], Coroutine[Any, Any, None]],
     drop_database: Callable[[], Coroutine[Any, Any, None]],
     make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
-    make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
+    make_patch_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     pg_session: AsyncSession,
     query_data: dict[str, str],
     expected_answer: dict[str, int],
@@ -52,6 +49,17 @@ async def test_logout_all(
         email="email",
     )
 
+    password_enc = b"password_update"
+    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, test_settings.salt_password, test_settings.iters_password)
+    password_update = urlsafe_b64encode(password_hash_bytes).decode("utf-8")
+
+    account_update = AccountModel(
+        login=f"{query_data["name"]}_update",
+        password=password_update,
+        first_name="first_name_update",
+        last_name="last_name_update",
+        email="email_update",
+    )
     # 3. Создаем пользователя в бд
 
     pg_session.add(User(**account.model_dump()))
@@ -65,16 +73,16 @@ async def test_logout_all(
         headers={"user-agent": "test", "sec-ch-ua-platform": "test"},
     )
 
-    # 5. Разлогиниваемся
+    # 5. Обновляем данные
 
-    body, status = await make_get_request(
-        url=f"{test_settings.service_url_auth}auth/v1/auth/logout_all/", cookies=cookies
+    body, status, _ = await make_patch_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/update/", json=account_update.model_dump(), cookies=cookies
     )
 
     # 6. Проверяем ответ
 
     assert status == expected_answer["status"]
-    assert body is expected_answer["length"]
+    assert len(body) == expected_answer["length"]
 
     # 7. Стираем таблицы  в базе данных
 
