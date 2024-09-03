@@ -20,6 +20,7 @@ from db.postgres_db import get_session
 from models.alchemy_model import Right, User
 from services.custom_error import ResponseError
 from services.redis_service import RedisService, get_redis
+from core.config import admin_config
 
 
 NOT_ENOUGH_INFO = "Недостаточно информации"
@@ -55,8 +56,8 @@ class RightsManagementService:
         except NoResultFound:
             raise ResponseError(f"Право '{right.name or right.id}' не существует")
         else:
-            if right_.name == 'admin':
-                raise ResponseError("Нельзя удалять право админа!")
+            if right_.name == admin_config.right_name:
+                raise ResponseError("Нельзя удалять право Администратора!")
             await self.session.delete(right_)
             await self.session.commit()
             await self.redis.delete_right(right_.id)
@@ -68,7 +69,7 @@ class RightsManagementService:
             raise ResponseError(NOT_ENOUGH_INFO)
         admin_right = await self.get_admin_right()
         if right_old.id == admin_right.id or right_old.name == admin_right.name:
-            raise ResponseError("Нельзя изменять право админа!")
+            raise ResponseError("Нельзя изменять право Администратора!")
 
         stmt = (
             update(Right)
@@ -96,11 +97,11 @@ class RightsManagementService:
         )
 
     async def get_admin_right(self):
-        """Выгрузка права 'admin'"""
+        """Выгрузка права Администратора"""
         try:
-            right_ = (await self.session.scalars(select(Right).where(Right.name == "admin"))).one()
+            right_ = (await self.session.scalars(select(Right).where(Right.name == admin_config.right_name))).one()
         except NoResultFound:
-            raise ResponseError("Право 'admin' не существует")
+            raise ResponseError("Право Администратора не существует")
         return right_
 
     async def assign(self, right: SearchRightModel, user: UserModel) -> ResponseUserModel:
