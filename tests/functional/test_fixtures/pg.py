@@ -12,7 +12,7 @@ from testdata.alchemy_model import Base
 
 @pytest_asyncio.fixture(name="engine", scope="session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
 def engine() -> AsyncEngine:
-    return create_async_engine(test_settings.postgres_url, echo=True)
+    return create_async_engine(test_settings.postgres_url)
 
 
 @pytest_asyncio.fixture(name="async_session", scope="session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
@@ -20,16 +20,10 @@ def async_session(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
-@pytest_asyncio.fixture(name="session", scope="session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
-async def session(async_session: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, None]:
+@pytest_asyncio.fixture(name="pg_session")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
+async def pg_session(async_session: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession, Any]:
     async with async_session() as session:
         yield session
-
-
-@pytest_asyncio.fixture(name="purge_database")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]
-async def purge_database(engine: AsyncEngine) -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest_asyncio.fixture(name="create_database")  # pyright: ignore[reportUntypedFunctionDecorator, reportUnknownMemberType]

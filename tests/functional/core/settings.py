@@ -36,7 +36,7 @@ class TestSettings(BaseSettings):
     service_port: int = Field(default=8000, alias="SERVICE_PORT")
 
     service_host_auth: str = Field(default="127.0.0.1", alias="SERVICE_HOST_AUTH")
-    service_port_auth: int = Field(default=8080, alias="SERVICE_PORT_AUTH")
+    service_port_auth: int = Field(default=8000, alias="SERVICE_PORT_AUTH")
 
     pg_name: str = Field(default="", alias="POSTGRES_DB", serialization_alias="DB_NAME")
     pg_user: str = Field(default="", alias="POSTGRES_USER", serialization_alias="DB_USER")

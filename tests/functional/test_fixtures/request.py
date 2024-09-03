@@ -18,16 +18,3 @@ def make_get_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any,
         return body, status
 
     return inner
-
-
-@pytest_asyncio.fixture(name="make_post_request")
-def make_post_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any, Any, tuple[Any, int]]]:
-    async def inner(endpoint: str, **kwargs: Any) -> tuple[Any, int]:
-        url = test_settings.service_url_auth + f"auth/v1/{endpoint}"
-        async with aio_session.post(url, **kwargs) as response:
-            body = await response.json()
-            status = response.status
-
-        return body, status
-
-    return inner
