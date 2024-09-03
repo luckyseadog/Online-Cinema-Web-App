@@ -21,3 +21,8 @@ class RightModel(BaseModel):
 class SearchRightModel(BaseModel):
     id: UUID | None = Field(default=None)
     name: str | None = Field(default=None)
+
+
+class ChangeRightModel(BaseModel):
+    name: str | None = Field(default=None)
+    description: str | None = Field(default=None)
