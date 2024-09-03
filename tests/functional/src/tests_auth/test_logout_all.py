@@ -17,8 +17,8 @@ from testdata.alchemy_model import User
     ("query_data", "expected_answer"),
     [
         (
-            {"name": "login", "password": "password"},
-            {"status": HTTPStatus.OK, "length": None},
+            {"name": "login", "password": "password", "iters": 5},
+            {"status": (HTTPStatus.OK, HTTPStatus.UNAUTHORIZED), "length": (None, 1)},
         ),
     ],
 )
@@ -29,8 +29,8 @@ async def test_logout_all(
     make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     pg_session: AsyncSession,
-    query_data: dict[str, str],
-    expected_answer: dict[str, int],
+    query_data: dict[str, str | int],
+    expected_answer: dict[str, tuple[int, int]],
 ) -> None:
     # 1. Создаем таблицы в базе данных
 
@@ -59,22 +59,36 @@ async def test_logout_all(
 
     # 4. Логинимся
 
-    _, _, cookies = await make_post_request(
-        url=f"{test_settings.service_url_auth}auth/v1/auth/login/",
-        json=login.model_dump(),
-        headers={"user-agent": "test", "sec-ch-ua-platform": "test"},
-    )
+    cookies: list[SimpleCookie] = []
+    for _ in range(query_data["iters"]):
+        _, _, cookie = await make_post_request(
+            url=f"{test_settings.service_url_auth}auth/v1/auth/login/",
+            json=login.model_dump(),
+            headers={"user-agent": "test", "sec-ch-ua-platform": "test"},
+        )
+        cookies.append(cookie)
 
     # 5. Разлогиниваемся
 
     body, status = await make_get_request(
-        url=f"{test_settings.service_url_auth}auth/v1/auth/logout_all/", cookies=cookies
+        url=f"{test_settings.service_url_auth}auth/v1/auth/logout_all/", cookies=cookies[0]
     )
 
     # 6. Проверяем ответ
 
-    assert status == expected_answer["status"]
-    assert body is expected_answer["length"]
+    assert status == expected_answer["status"][0]
+    assert body is expected_answer["length"][0]
+
+    # 7. Пробуем разлогиниться с другими куками
+
+    body, status = await make_get_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/logout_all/", cookies=cookies[-1]
+    )
+
+    # 6. Проверяем ответ
+
+    assert status == expected_answer["status"][1]
+    assert len(body) == expected_answer["length"][1]
 
     # 7. Стираем таблицы  в базе данных
 
