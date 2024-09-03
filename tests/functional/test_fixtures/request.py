@@ -54,3 +54,18 @@ def make_patch_request(aio_session: ClientSession) -> Callable[..., Coroutine[An
         return body, status, cookies
 
     return inner
+
+
+
+@pytest_asyncio.fixture(name="make_delete_request")
+def make_delete_request(aio_session: ClientSession) -> Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]]:
+    async def inner(**kwargs: Any) -> tuple[Any, int, SimpleCookie]:
+        async with aio_session.delete(**kwargs) as response:
+            body = await response.json()
+            status = response.status
+            cookies = response.cookies
+
+        return body, status, cookies
+
+    return inner
+

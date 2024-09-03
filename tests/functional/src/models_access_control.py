@@ -18,3 +18,6 @@ class RightModel(BaseModel):
     description: str | None
 
 
+class SearchRightModel(BaseModel):
+    id: UUID | None = Field(default=None)
+    name: str | None = Field(default=None)
