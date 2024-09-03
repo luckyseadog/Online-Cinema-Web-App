@@ -7,6 +7,7 @@ from uuid import UUID
 import backoff
 from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
+from fastapi import HTTPException, status
 
 from core.config import configs
 
@@ -62,7 +63,10 @@ class RedisService:
     async def delete_refresh(self, user_id: UUID, token: str) -> str:
         """Удаляет из Redis запись с ключем в формате '{user_id}:refresh:{token_hash}' и возвращает её значение"""
         token_hash = self._compute_hash(token)
-        deleted_token_data = pickle.loads(await self._redis.get(f"{user_id}:refresh:{token_hash}"))[0]
+        refresh_in_redis = await self._redis.get(f"{user_id}:refresh:{token_hash}")
+        if not refresh_in_redis:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        deleted_token_data = pickle.loads(refresh_in_redis)[0]
         await self._redis.delete(f"{user_id}:refresh:{token_hash}")
         return deleted_token_data
 
