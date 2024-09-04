@@ -6,6 +6,7 @@ from fastapi import Depends
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
+from sqlalchemy.orm import selectinload
 
 from api.v1.models.auth import (
     AccountModel,
@@ -23,12 +24,12 @@ class UserService:
         self.password = password
 
     async def get_user(self, login: str) -> User | None:
-        stmt = select(User).where(User.login == login)
+        stmt = select(User).options(selectinload(User.rights)).where(User.login == login)
         result = await self.session.execute(stmt)
         return result.scalars().first()
 
     async def get_user_by_id(self, id_: str) -> User | None:
-        stmt = select(User).where(User.id == id_)
+        stmt = select(User).options(selectinload(User.rights)).where(User.id == id_)
         result = await self.session.execute(stmt)
         return result.scalars().first()
 

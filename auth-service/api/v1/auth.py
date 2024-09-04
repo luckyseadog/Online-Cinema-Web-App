@@ -79,7 +79,7 @@ async def login(
     # Записать рефреш-токен в Redis
     await redis.add_valid_refresh(user.id, refresh_token, access_token)
     # Записать права в Redis
-    await redis.add_user_right(user.id, [right.id for right in await user.awaitable_attrs.rights])
+    await redis.add_user_right(user.id, [right.id for right in user.rights])
     # Записать логин в БД
     await user_service.save_history(
         HistoryModel(
@@ -135,9 +135,9 @@ async def refresh(
     # Удалить старый рефреш
     await redis.delete_refresh(user_id, authorize._token)
     # Добавить новый рефреш
-    await redis.add_valid_refresh(user_id, new_refresh_token, current_access_token)
+    await redis.add_valid_refresh(user_id, new_refresh_token, new_access_token)
     # Добавить старый аксес (как блокировка)
-    await redis.add_banned_access(user_id, new_access_token, user_id)
+    await redis.add_banned_access(user_id, current_access_token, user_id)
     # Отдать новые токены
     await authorize.set_access_cookies(new_access_token)
     await authorize.set_refresh_cookies(new_refresh_token)

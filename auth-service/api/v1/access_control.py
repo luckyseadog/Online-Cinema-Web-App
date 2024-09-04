@@ -1,8 +1,7 @@
 from typing import Annotated
 
-from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
-from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 
 from api.v1.models.access_control import (
     ChangeRightModel,
@@ -13,8 +12,9 @@ from api.v1.models.access_control import (
     SearchRightModel,
     UserModel,
 )
-from services.redis_service import RedisService, get_redis
 from services.rights_management_service import RightsManagementService, get_rights_management_service
+from jwt_auth_helpers import rights_required
+from core.config import admin_config
 
 
 router = APIRouter()
@@ -31,26 +31,12 @@ NOT_ADMIN = "Недостаточно прав"
     responses={status.HTTP_200_OK: {"model": RightModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def create(
     request: Request,
     right: CreateRightModel,
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisService, Depends(get_redis)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Создание права и ответ пользователю
     return await rights_management_service.create(right)
 
@@ -62,26 +48,12 @@ async def create(
     response_description="Право удалено",
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def delete(
     request: Request,
     right: SearchRightModel,
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisService, Depends(get_redis)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> str:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Удаление права и ответ пользователю
     return await rights_management_service.delete(right)
 
@@ -94,6 +66,7 @@ async def delete(
     responses={status.HTTP_200_OK: {"model": RightModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def update(
     request: Request,
     right_old: Annotated[
@@ -102,23 +75,8 @@ async def update(
     right_new: Annotated[
         ChangeRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Новый данные права")
     ],
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisService, Depends(get_redis)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Изменение права и ответ пользователю
     return await rights_management_service.update(right_old, right_new)
 
@@ -131,25 +89,11 @@ async def update(
     responses={status.HTTP_200_OK: {"model": RightsModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def get_all(
     request: Request,
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisService, Depends(get_redis)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightsModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Выгрузка всех прав и ответ пользователю
     return await rights_management_service.get_all()
 
@@ -162,27 +106,13 @@ async def get_all(
     responses={status.HTTP_200_OK: {"model": ResponseUserModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def assign(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
-    redis: Annotated[RedisService, Depends(get_redis)],
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ResponseUserModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Назначение права и ответ пользователю
     return await rights_management_service.assign(right, user)
 
@@ -195,27 +125,13 @@ async def assign(
     responses={status.HTTP_200_OK: {"model": ResponseUserModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def take_away(
     request: Request,
     right: Annotated[SearchRightModel, Body(description="Минимум одно поле должно быть заполненно", title="Право")],
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    redis: Annotated[RedisService, Depends(get_redis)],
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> ResponseUserModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Отъём права и ответ пользователю
     return await rights_management_service.take_away(right, user)
 
@@ -228,25 +144,11 @@ async def take_away(
     responses={status.HTTP_200_OK: {"model": RightsModel}},
     tags=["Права"],
 )
+@rights_required([admin_config.right_name])
 async def get_user_rights(
     request: Request,
     user: Annotated[UserModel, Body(description="Минимум одно поле должно быть заполненно", title="Юзер")],
-    authorize: Annotated[AuthJWT, Depends(auth_dep)],
-    redis: Annotated[RedisService, Depends(get_redis)],
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightsModel:
-    # Проверка токена
-    await authorize.jwt_required()
-    user_id = await authorize.get_jwt_subject()
-    # Проверить Access на logout
-    if await redis.check_banned_access(user_id, authorize._token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    # Проверка наличия у пользователя прав админа
-    user_rights = await redis.get_user_rights(user_id)
-    admin_right = await rights_management_service.get_admin_right()
-    if admin_right.id not in user_rights:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=NOT_ADMIN)
-
     # Отъём права и ответ пользователю
     return await rights_management_service.get_user_rights(user)

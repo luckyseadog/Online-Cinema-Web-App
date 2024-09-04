@@ -45,3 +45,8 @@ class AccountHistoryModel(BaseModel):
     ip_address: str = Field(description="IP устройства", title="IP Adress")
     browser_info: str = Field(description="Описание браузера", title="Browser Info")
     system_info: str = Field(description="Описание системы", title="System Info")
+
+
+class JWTUserModel(BaseModel):
+    id: str = Field(description="Идентификатор юзера", title="Идентификатор")
+    rights: set[UUID] = Field(description="Права юзера", title="Права")

@@ -3,10 +3,11 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Depends
 from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
+from jwt_auth_helpers import get_jwt_user_global
 from api.v1 import access_control, auth
 from core.config import configs
 from models.errors import ErrorBody
@@ -59,4 +60,4 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
 
 
 app.include_router(auth.router, prefix="/auth/v1/auth")
-app.include_router(access_control.router, prefix="/auth/v1/access_control")
+app.include_router(access_control.router, prefix="/auth/v1/access_control", dependencies=[Depends(get_jwt_user_global)])
