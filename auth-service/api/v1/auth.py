@@ -2,7 +2,7 @@ from typing import Annotated
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
 from api.v1.models import (
     AccountHistoryModel,
@@ -245,6 +245,8 @@ async def history(
     user_service: Annotated[UserService, Depends(get_user_service)],
     redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
+    page_number: Annotated[int, Query(description="Номер страницы для пагинации", ge=1)] = 1,
+    page_size: Annotated[int, Query(description="Размер страницы для пагинации", ge=1)] = 10,
 ) -> list[AccountHistoryModel]:
     # Проверить токен на корректность и просрочку
     await authorize.jwt_required()
@@ -254,6 +256,6 @@ async def history(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     # Получить историю входов в аккаунт из БД
-    user_login_history = await user_service.get_user_login_history(user_id)
+    user_login_history = await user_service.get_user_login_history(user_id, page_number, page_size)
     # Отдать историю входов в аккаунт
     return [AccountHistoryModel(**history.__dict__) for history in user_login_history]
