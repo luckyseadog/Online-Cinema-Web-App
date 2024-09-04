@@ -16,7 +16,14 @@ from testdata.alchemy_model import User
 @pytest.mark.parametrize(
     ("query_data", "expected_answer"),
     [
-        ({"name": "login", "password": "password", "iters": 5}, {"status": HTTPStatus.OK, "length": 5}),
+        (
+            {"name": "login", "password": "password", "iters": 5, "page_number": 1, "page_size": 3},
+            {"status": HTTPStatus.OK, "length": 3},
+        ),
+        (
+            {"name": "login", "password": "password", "iters": 5, "page_number": 2, "page_size": 3},
+            {"status": HTTPStatus.OK, "length": 2},
+        ),
     ],
 )
 @pytest.mark.asyncio(scope="session")
@@ -65,7 +72,11 @@ async def test_history(
 
     # 5. Получаем историю login/logout
 
-    body, status = await make_get_request(url=f"{test_settings.service_url_auth}auth/v1/auth/history/", cookies=cookies)
+    body, status = await make_get_request(
+        url=f"{test_settings.service_url_auth}auth/v1/auth/history/",
+        cookies=cookies,
+        params={"page_number": query_data["page_number"], "page_size": query_data["page_size"]},
+    )
 
     # 6. Проверяем ответ
 
