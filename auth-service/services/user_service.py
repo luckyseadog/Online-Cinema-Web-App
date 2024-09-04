@@ -66,8 +66,14 @@ class UserService:
         await self.session.refresh(history)
         return history
 
-    async def get_user_login_history(self, user_id: int) -> Sequence[History]:
-        stmt = select(History).where(History.user_id == user_id, History.action == Action.LOGIN)
+    async def get_user_login_history(self, user_id: int, page_number: int, page_size: int) -> Sequence[History]:
+        stmt = (
+            select(History)
+            .where(History.user_id == user_id, History.action == Action.LOGIN)
+            .order_by(History.created_at.desc())
+            .limit(page_size)
+            .offset((page_number - 1) * page_size)
+        )
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
