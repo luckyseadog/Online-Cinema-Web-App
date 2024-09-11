@@ -1,6 +1,6 @@
 from collections.abc import Callable, Collection, Coroutine
 from functools import wraps
-from typing import Any, ParamSpec, TypeVar, cast
+from typing import Annotated, Any, ParamSpec, TypeVar, cast
 from uuid import UUID
 
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
@@ -47,7 +47,9 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = False) -> None:
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request, redis_service: RedisService = Depends(get_redis)) -> JWTUserModel:
+    async def __call__(
+        self, request: Request, redis_service: Annotated[RedisService, Depends(get_redis)]
+    ) -> JWTUserModel:
         authorize = AuthJWT(req=request)
         # Достаём Access Token и проверяем его на коректность
         await authorize.jwt_optional()
@@ -64,7 +66,7 @@ class JWTBearer(HTTPBearer):
 
 
 async def get_all_rights(
-    rights_management_service: RightsManagementService = Depends(get_rights_management_service),
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
 ) -> RightsModel:
     # Кладём все права из базы в request для дальнейших проверок
     # Это делается так для упрощения взаимоедействия сервисом прав через функционал Depends FastAPi
@@ -72,7 +74,9 @@ async def get_all_rights(
 
 
 async def get_jwt_user_global(
-    request: Request, user: JWTUserModel = Depends(JWTBearer()), all_rights: RightsModel = Depends(get_all_rights)
+    request: Request,
+    user: Annotated[JWTUserModel, Depends(JWTBearer())],
+    all_rights: Annotated[RightsModel, Depends(get_all_rights)],
 ) -> None:
     # Кладём в request все права и пользователя токена с его правами
     request.all_rights = all_rights
