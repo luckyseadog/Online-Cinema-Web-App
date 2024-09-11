@@ -61,6 +61,7 @@ class Right(Base):
 
 class History(Base):
     __tablename__ = "history"
+    __table_args__ = ({"postgresql_partition_by": "RANGE (created_at)"},)
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))

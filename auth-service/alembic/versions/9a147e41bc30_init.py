@@ -54,7 +54,7 @@ def upgrade() -> None:
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("ip_address", sa.String(length=60), nullable=False),
-        sa.Column("action", postgresql.ENUM("LOGIN", "LOGOUT", name="action", create_type=False), nullable=False),
+        sa.Column("action", postgresql.ENUM("LOGIN", "LOGOUT", name="action"), nullable=False),
         sa.Column("browser_info", sa.String(length=256), nullable=True),
         sa.Column("system_info", sa.String(length=256), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),

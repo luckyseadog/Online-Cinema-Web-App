@@ -1,7 +1,6 @@
 from typing import Annotated
 
-from async_fastapi_jwt_auth import AuthJWT
-from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
+from async_fastapi_jwt_auth.auth_jwt import AuthJWT, AuthJWTBearer
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
 from api.v1.models import (
