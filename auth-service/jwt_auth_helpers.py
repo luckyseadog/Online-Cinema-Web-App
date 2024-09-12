@@ -36,6 +36,7 @@ def rights_required(
                 or any(right not in user.rights for right in required_rights_uuids)
             ):
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
+
             return await function(*args, **kwargs)
 
         return wrapper
