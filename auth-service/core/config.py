@@ -53,6 +53,23 @@ class AdminConfig(BaseSettings):
     email: str = Field(default="admin", alias="ADMIN_EMAIL")
 
 
+class OAuthConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
+
+    yandex_scope: str = Field(default=r"login:email%20login:info", alias="YANDEX_SCOPE")
+    yandex_state: str = Field(default=r"123qwe", alias="YANDEX_STATE")
+    yandex_client_id: str = Field(default=r"2da216bbe9af4bc8a1f7caec1eec7d7a", alias="YANDEX_CLIENT_ID")
+    yandex_client_secret: str = Field(default=r"a9d8d6ff93024327ac8648eb2285703e", alias="YANDEX_CLIENT_SECRET")
+    yandex_redirect_uri: str = Field(default=r"http://127.0.0.1:90/auth/v1/oauth/ya/oauth2callback", alias="YANDEX_REDIRECT_URI")
+
+    google_scope: str = Field(default=r"https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile", alias="GOOGLE_SCOPE")
+    google_state: str = Field(default=r"123qwe", alias="GOOGLE_STATE")
+    google_client_id: str = Field(default=r"885218518483-7orcdsgm32s1mq7sphrc957a63hpj7tb.apps.googleusercontent.com", alias="GOOGLE_CLIENT_ID")
+    google_client_secret: str = Field(default=r"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", alias="GOOGLE_CLIENT_SECRET")
+    google_redirect_uri: str = Field(default=r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback", alias="GOOGLE_REDIRECT_URI")
+
+
 configs = Configs()
 jwt_config = JWTConfig()
 admin_config = AdminConfig()
+oauth_config = OAuthConfig()
