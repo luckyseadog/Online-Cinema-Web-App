@@ -41,7 +41,9 @@ class RightsManagementService:
             self.session.add(right_)
             await self.session.commit()
             await self.session.refresh(right_)
-            return RightModel(id=right_.id, name=right_.name, description=right_.description)
+            right = RightModel(id=right_.id, name=right_.name, description=right_.description)
+            await self.redis.add_right(right)
+            return right
         else:
             raise ResponseError(f"Право с названием '{right.name}' уже существует")
 
@@ -60,7 +62,7 @@ class RightsManagementService:
                 raise ResponseError("Нельзя удалять право Администратора!")
             await self.session.delete(right_)
             await self.session.commit()
-            await self.redis.delete_right(right_.id)
+            await self.redis.delete_right(right_.id, right_.name)
             return f"Право '{right.name or right.id}' удалено"
 
     async def update(self, right_old: SearchRightModel, right_new: ChangeRightModel) -> RightModel:
@@ -86,16 +88,21 @@ class RightsManagementService:
             raise ResponseError(f"Право с названием '{right_new.name}' уже существует")
         else:
             await self.session.commit()
-            return RightModel(id=right_.id, name=right_.name, description=right_.description)
+            right = RightModel(id=right_.id, name=right_.name, description=right_.description)
+            if right_new.name != right_old.name:
+                await self.redis.update_right(right)
+            return right
 
     async def get_all(self) -> RightsModel:
         """Выгрузка всех прав"""
-        return RightsModel(
+        all_rights = RightsModel(
             rights=[
                 RightModel(id=right.id, name=right.name, description=right.description)
                 for right in (await self.session.scalars(select(Right))).fetchall()
             ]
         )
+        await self.redis.set_all_rights(all_rights.rights)
+        return all_rights
 
     async def get_admin_right(self):
         """Выгрузка права Администратора"""
