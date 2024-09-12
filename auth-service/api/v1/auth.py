@@ -13,7 +13,7 @@ from api.v1.models import (
 )
 from core.config import JWTConfig, jwt_config
 from models.alchemy_model import Action
-from services.password_service import PasswordService, get_password_service
+from services.password_service import Password, PasswordService, get_password_service
 from services.redis_service import RedisService, get_redis
 from services.user_service import UserService, get_user_service
 
@@ -68,7 +68,7 @@ async def login(
 ) -> ActualTokensModel:
     # Проверить введённые данные
     if not (user := await user_service.get_user(data.login)) or not password_service.check_password(
-        data.password, user.password
+        data.password, Password(*user.password)
     ):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверный логин или пароль")
 

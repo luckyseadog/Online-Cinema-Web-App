@@ -29,6 +29,9 @@ class Configs(BaseSettings):
     access_token_min: int = Field(default=30, alias="ACCESS_TOKEN_MIN")
     refresh_token_min: int = Field(default=2 * 7 * 24 * 60, alias="REFRESH_TOKEN_MIN")
 
+    iters_password: int = Field(default=100_000, alias="ITERS_PASSWORD")
+    hash_name_password: str = Field(default="sha256", alias="HASH_NAME_PASSWORD")
+
     @property
     def postgres_dsn(self) -> str:
         return f"postgresql+psycopg://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_name}"
@@ -60,13 +63,22 @@ class OAuthConfig(BaseSettings):
     yandex_state: str = Field(default=r"123qwe", alias="YANDEX_STATE")
     yandex_client_id: str = Field(default=r"2da216bbe9af4bc8a1f7caec1eec7d7a", alias="YANDEX_CLIENT_ID")
     yandex_client_secret: str = Field(default=r"a9d8d6ff93024327ac8648eb2285703e", alias="YANDEX_CLIENT_SECRET")
-    yandex_redirect_uri: str = Field(default=r"http://127.0.0.1:90/auth/v1/oauth/ya/oauth2callback", alias="YANDEX_REDIRECT_URI")
+    yandex_redirect_uri: str = Field(
+        default=r"http://127.0.0.1:90/auth/v1/oauth/ya/oauth2callback", alias="YANDEX_REDIRECT_URI"
+    )
 
-    google_scope: str = Field(default=r"https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile", alias="GOOGLE_SCOPE")
+    google_scope: str = Field(
+        default=r"https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile",
+        alias="GOOGLE_SCOPE",
+    )
     google_state: str = Field(default=r"123qwe", alias="GOOGLE_STATE")
-    google_client_id: str = Field(default=r"885218518483-7orcdsgm32s1mq7sphrc957a63hpj7tb.apps.googleusercontent.com", alias="GOOGLE_CLIENT_ID")
+    google_client_id: str = Field(
+        default=r"885218518483-7orcdsgm32s1mq7sphrc957a63hpj7tb.apps.googleusercontent.com", alias="GOOGLE_CLIENT_ID"
+    )
     google_client_secret: str = Field(default=r"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", alias="GOOGLE_CLIENT_SECRET")
-    google_redirect_uri: str = Field(default=r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback", alias="GOOGLE_REDIRECT_URI")
+    google_redirect_uri: str = Field(
+        default=r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback", alias="GOOGLE_REDIRECT_URI"
+    )
 
 
 configs = Configs()

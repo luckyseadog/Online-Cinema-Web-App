@@ -33,7 +33,7 @@ def creaete_admin_user(
     email: str | None = None,
 ) -> User:
     name = name or admin_config.username
-    password = ps.compute_hash(password) if password else ps.compute_hash(admin_config.password)
+    password_hash = ps.compute_hash(password) if password else ps.compute_hash(admin_config.password)
     first_name = first_name or admin_config.first_name
     last_name = last_name or admin_config.last_name
     email = email or admin_config.email
@@ -52,7 +52,7 @@ def creaete_admin_user(
     else:
         admin_user = User(
             login=name,
-            password=password,
+            password=password_hash,
             first_name=first_name,
             last_name=last_name,
             email=email,

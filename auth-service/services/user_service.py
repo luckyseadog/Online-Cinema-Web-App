@@ -34,8 +34,13 @@ class UserService:
         return result.scalars().first()
 
     async def create_user(self, data: AccountModel) -> User:
-        user = User(**data.model_dump())
-        user.password = self.password.compute_hash(user.password)
+        user = User(
+            login=data.login,
+            password=self.password.compute_hash(data.password),
+            first_name=data.first_name,
+            last_name=data.last_name,
+            email=data.email,
+        )
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)
