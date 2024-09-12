@@ -11,8 +11,8 @@ from api.v1.models import (
     LoginModel,
     SecureAccountModel,
 )
-from core.config import JWTConfig, jwt_config
 from models.alchemy_model import Action
+from services.rights_management_service import RightsManagementService, get_rights_management_service
 from services.password_service import PasswordService, get_password_service
 from services.redis_service import RedisService, get_redis
 from services.user_service import UserService, get_user_service
@@ -21,11 +21,6 @@ from services.user_service import UserService, get_user_service
 router = APIRouter()
 auth_dep = AuthJWTBearer()
 auth_tags_metadata = {"name": "Авторизация", "description": "Авторизация в API."}
-
-
-@AuthJWT.load_config
-def get_config() -> JWTConfig:
-    return jwt_config
 
 
 @router.post(
@@ -63,9 +58,12 @@ async def login(
     data: LoginModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     password_service: Annotated[PasswordService, Depends(get_password_service)],
+    rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
     redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
 ) -> ActualTokensModel:
+    # Обновление всех прав в Redis
+    await rights_management_service.get_all()
     # Проверить введённые данные
     if not (user := await user_service.get_user(data.login)) or not password_service.check_password(
         data.password, user.password
