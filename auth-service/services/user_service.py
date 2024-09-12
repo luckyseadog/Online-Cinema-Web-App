@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql import select
 
 from api.v1.models.auth import (
     AccountModel,

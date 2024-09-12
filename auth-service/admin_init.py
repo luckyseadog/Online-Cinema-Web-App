@@ -25,12 +25,12 @@ def create_admin_right(session: Session) -> Right:
 
 
 def creaete_admin_user(
-    session: Session, 
-    name: str | None = None, 
+    session: Session,
+    name: str | None = None,
     password: str | None = None,
     first_name: str | None = None,
     last_name: str | None = None,
-    email: str | None = None, 
+    email: str | None = None,
 ) -> User:
     name = name or admin_config.username
     password = ps.compute_hash(password) if password else ps.compute_hash(admin_config.password)
@@ -64,11 +64,11 @@ def creaete_admin_user(
 
 @app.command()
 def create_admin(
-    name: str | None = None, 
-    password: str | None = None, 
+    name: str | None = None,
+    password: str | None = None,
     first_name: str | None = None,
     last_name: str | None = None,
-    email: str | None = None, 
+    email: str | None = None,
 ) -> None:
     with Session(engine) as pg_session:
         admin_right = pg_session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()

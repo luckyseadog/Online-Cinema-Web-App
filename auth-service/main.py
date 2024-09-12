@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
 from jwt_auth_helpers import get_jwt_user_global
-from api.v1 import access_control, auth
+from api.v1 import access_control, auth, oauth
 from core.config import configs, jwt_config, JWTConfig
 from models.errors import ErrorBody
 from services import redis_service
@@ -61,9 +61,10 @@ async def misdirected_error_handler(request: Request, exc: ResponseError) -> JSO
 
 
 @app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONResponse:
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
 app.include_router(auth.router, prefix="/auth/v1/auth")
 app.include_router(access_control.router, prefix="/auth/v1/access_control", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(oauth.router, prefix="/auth/v1/oauth")

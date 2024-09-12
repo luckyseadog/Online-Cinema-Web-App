@@ -1,7 +1,6 @@
 from typing import Annotated
 
-from async_fastapi_jwt_auth import AuthJWT
-from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
+from async_fastapi_jwt_auth.auth_jwt import AuthJWT, AuthJWTBearer
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
 from api.v1.models import (
@@ -82,10 +81,10 @@ async def login(
     await user_service.save_history(
         HistoryModel(
             user_id=user.id,
-            ip_address=request.client.host,
+            ip_address=request.client.host if request.client else "",
             action=Action.LOGIN,
-            browser_info=request.headers.get("user-agent"),
-            system_info=request.headers.get("sec-ch-ua-platform"),
+            browser_info=request.headers.get("user-agent", ""),
+            system_info=request.headers.get("sec-ch-ua-platform", ""),
         )
     )
     # Отдать токены
