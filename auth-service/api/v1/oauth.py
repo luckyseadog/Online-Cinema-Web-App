@@ -37,14 +37,11 @@ async def google_oauth(
     state: str | None = None,
 ):
     if not code:  # if we dont have google access token in Redis
-        auth_uri = ("https://accounts.google.com/o/oauth2/v2/auth?scope={}&"
-                    "access_type=offline&response_type=code&"
-                    "state={}&client_id={}&redirect_uri={}").format(
-                        oauth_config.google_scope, 
-                        oauth_config.google_state, 
-                        oauth_config.google_client_id, 
-                        oauth_config.google_redirect_uri,
-                    )
+        auth_uri = (
+            f"https://accounts.google.com/o/oauth2/v2/auth?scope={oauth_config.google_scope}&"
+            "access_type=offline&response_type=code&"
+            f"state={oauth_config.google_state}&client_id={oauth_config.google_client_id}&redirect_uri={oauth_config.google_redirect_uri}"
+        )
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
@@ -57,9 +54,7 @@ async def google_oauth(
             "redirect_uri": oauth_config.google_redirect_uri,
         }
         async with aiohttp.ClientSession() as session:
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with session.post("https://oauth2.googleapis.com/token", data=data, headers=headers) as resp:
                 tokens = await resp.json()
 
@@ -67,9 +62,7 @@ async def google_oauth(
             if not access_token:
                 raise HTTPException(status_code=500, detail=tokens)
 
-            headers = {
-                "Authorization": f"Bearer {access_token}"
-            }
+            headers = {"Authorization": f"Bearer {access_token}"}
             async with session.get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json", headers=headers) as resp:
                 user_data = await resp.json()
 
@@ -119,13 +112,10 @@ async def yandex_oauth(
     state: str | None = None,
 ):
     if not code:  # if we dont have google access token in Redis
-        auth_uri = ("https://oauth.yandex.ru/authorize?scope={}&"
-                    "response_type=code&state={}&client_id={}&redirect_uri={}").format(
-                        oauth_config.yandex_scope,
-                        oauth_config.yandex_state,
-                        oauth_config.yandex_client_id,
-                        oauth_config.yandex_redirect_uri,
-                    )
+        auth_uri = (
+            f"https://oauth.yandex.ru/authorize?scope={oauth_config.yandex_scope}&"
+            f"response_type=code&state={oauth_config.yandex_state}&client_id={oauth_config.yandex_client_id}&redirect_uri={oauth_config.yandex_redirect_uri}"
+        )
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
@@ -137,9 +127,7 @@ async def yandex_oauth(
             "grant_type": "authorization_code",
         }
         async with aiohttp.ClientSession() as session:
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with session.post("https://oauth.yandex.ru/token", data=data, headers=headers) as resp:
                 tokens = await resp.json()
 
@@ -147,9 +135,7 @@ async def yandex_oauth(
             if not access_token:
                 raise HTTPException(status_code=500)
 
-            headers = {
-                "Authorization": f"Bearer {access_token}"
-            }
+            headers = {"Authorization": f"Bearer {access_token}"}
             async with session.get("https://login.yandex.ru/info?alt=json", headers=headers) as resp:
                 user_data = await resp.json()
 
@@ -160,7 +146,7 @@ async def yandex_oauth(
                 first_name=user_data["first_name"],
                 last_name=user_data["last_name"],
                 email=user_data["default_email"],
-                password=str(uuid.uuid4())
+                password=str(uuid.uuid4()),
             )
             user = await user_service.create_user(new_user_model)
 

@@ -123,8 +123,10 @@ class RedisService:
     async def update_right(self, right: RightModel) -> None:
         """Обновляет в Redis запись с ключем 'rights' существующее значение right на новое"""
         current_rights_dict = {right[0]: right[1] for right in await self.get_all_rights()}
-        if right.id in current_rights_dict.keys():
-            await self._redis.srem("rights", pickle.dumps((right.id, current_rights_dict[right.id]), protocol=pickle.HIGHEST_PROTOCOL))
+        if right.id in current_rights_dict:
+            await self._redis.srem(
+                "rights", pickle.dumps((right.id, current_rights_dict[right.id]), protocol=pickle.HIGHEST_PROTOCOL)
+            )
         await self._redis.sadd("rights", pickle.dumps((right.id, right.name), protocol=pickle.HIGHEST_PROTOCOL))
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
