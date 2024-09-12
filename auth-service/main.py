@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from redis.asyncio import Redis
 
 from jwt_auth_helpers import get_jwt_user_global
-from api.v1 import access_control, auth
+from api.v1 import access_control, auth, oauth
 from core.config import configs
 from models.errors import ErrorBody
 from services import redis_service
@@ -61,3 +61,4 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONRe
 
 app.include_router(auth.router, prefix="/auth/v1/auth")
 app.include_router(access_control.router, prefix="/auth/v1/access_control", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(oauth.router, prefix="/auth/v1/oauth")
