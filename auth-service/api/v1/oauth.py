@@ -11,19 +11,8 @@ from models.alchemy_model import Action
 from services.redis_service import RedisService, get_redis
 from services.user_service import UserService, get_user_service
 
+from core.config import oauth_config
 from api.v1.models import AccountModel, ActualTokensModel, HistoryModel
-
-YANDEX_SCOPE = r"login:email%20login:info"
-YANDEX_STATE = r"123qwe"
-YANDEX_CLIENT_ID = r"2da216bbe9af4bc8a1f7caec1eec7d7a"
-YANDEX_CLIENT_SECRET = r"a9d8d6ff93024327ac8648eb2285703e"
-YANDEX_REDIRECT_URI = r"http://127.0.0.1:90/auth/v1/oauth/ya/oauth2callback"
-
-GOOGLE_SCOPE = r"https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile"
-GOOGLE_STATE = r"123qwe"
-GOOGLE_CLIENT_ID = r"885218518483-7orcdsgm32s1mq7sphrc957a63hpj7tb.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = r"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"
-GOOGLE_REDIRECT_URI = r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback"
 
 
 router = APIRouter()
@@ -50,17 +39,22 @@ async def google_oauth(
     if not code:  # if we dont have google access token in Redis
         auth_uri = ("https://accounts.google.com/o/oauth2/v2/auth?scope={}&"
                     "access_type=offline&response_type=code&"
-                    "state={}&client_id={}&redirect_uri={}").format(GOOGLE_SCOPE, GOOGLE_STATE, GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URI)
+                    "state={}&client_id={}&redirect_uri={}").format(
+                        oauth_config.google_scope, 
+                        oauth_config.google_state, 
+                        oauth_config.google_client_id, 
+                        oauth_config.google_redirect_uri,
+                    )
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
             raise HTTPException(status_code=400)
         data = {
             "code": code,
-            "client_id": GOOGLE_CLIENT_ID,
-            "client_secret": GOOGLE_CLIENT_SECRET,
+            "client_id": oauth_config.google_client_id,
+            "client_secret": oauth_config.google_client_secret,
             "grant_type": "authorization_code",
-            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "redirect_uri": oauth_config.google_redirect_uri,
         }
         async with aiohttp.ClientSession() as session:
             headers = {
@@ -71,7 +65,7 @@ async def google_oauth(
 
             access_token = tokens.get("access_token")
             if not access_token:
-                raise HTTPException(status_code=500)
+                raise HTTPException(status_code=500, detail=tokens)
 
             headers = {
                 "Authorization": f"Bearer {access_token}"
@@ -126,15 +120,20 @@ async def yandex_oauth(
 ):
     if not code:  # if we dont have google access token in Redis
         auth_uri = ("https://oauth.yandex.ru/authorize?scope={}&"
-                    "response_type=code&state={}&client_id={}&redirect_uri={}").format(YANDEX_SCOPE, YANDEX_STATE, YANDEX_CLIENT_ID, YANDEX_REDIRECT_URI)
+                    "response_type=code&state={}&client_id={}&redirect_uri={}").format(
+                        oauth_config.yandex_scope,
+                        oauth_config.yandex_state,
+                        oauth_config.yandex_client_id,
+                        oauth_config.yandex_redirect_uri,
+                    )
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
             raise HTTPException(status_code=400)
         data = {
             "code": code,
-            "client_id": YANDEX_CLIENT_ID,
-            "client_secret": YANDEX_CLIENT_SECRET,
+            "client_id": oauth_config.yandex_client_id,
+            "client_secret": oauth_config.yandex_client_secret,
             "grant_type": "authorization_code",
         }
         async with aiohttp.ClientSession() as session:
