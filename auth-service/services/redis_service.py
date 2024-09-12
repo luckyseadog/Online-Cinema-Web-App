@@ -10,6 +10,7 @@ from redis.exceptions import ConnectionError as RedisConnectionError
 from fastapi import HTTPException, status
 
 from core.config import configs
+from api.v1.models.access_control import RightModel
 
 
 redis: Redis | None = None
@@ -100,6 +101,33 @@ class RedisService:
         return rights
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
+    async def get_all_rights(self) -> set[tuple[UUID, str]]:
+        """Возвращает все права из Redis записи с ключем 'rights'"""
+        rights_bytes = await self._redis.smembers("rights")
+        rights = {pickle.loads(right) for right in rights_bytes}
+        return rights
+
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
+    async def set_all_rights(self, rights: list[RightModel]) -> None:
+        """Устанавливает в Redis запись с ключем 'rights' и/или заменяет её значениями rights"""
+        await self._redis.delete("rights")
+        for right in rights:
+            await self._redis.sadd("rights", pickle.dumps((right.id, right.name), protocol=pickle.HIGHEST_PROTOCOL))
+
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
+    async def add_right(self, right: RightModel) -> None:
+        """Добавляет в Redis запись с ключем 'rights' и/или добавляет в него значение right"""
+        await self._redis.sadd("rights", pickle.dumps((right.id, right.name), protocol=pickle.HIGHEST_PROTOCOL))
+
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
+    async def update_right(self, right: RightModel) -> None:
+        """Обновляет в Redis запись с ключем 'rights' существующее значение right на новое"""
+        current_rights_dict = {right[0]: right[1] for right in await self.get_all_rights()}
+        if right.id in current_rights_dict.keys():
+            await self._redis.srem("rights", pickle.dumps((right.id, current_rights_dict[right.id]), protocol=pickle.HIGHEST_PROTOCOL))
+        await self._redis.sadd("rights", pickle.dumps((right.id, right.name), protocol=pickle.HIGHEST_PROTOCOL))
+
+    @backoff.on_exception(backoff.expo, RedisConnectionError)
     async def delete_user_right(self, user_id: UUID, right: UUID) -> None:
         """Удаляет из зписи в Redis с ключем в формате '{user_id}:rights' значение right"""
         await self._redis.srem(
@@ -108,14 +136,15 @@ class RedisService:
         )
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
-    async def delete_right(self, right: UUID) -> None:
+    async def delete_right(self, right_id: UUID, right_name: str) -> None:
         """Удаляет из всех зписей в Redis с ключем в формате '*rights*' значение right"""
         keys = await self._redis.keys(pattern="*rights*")
         for key in keys:
             await self._redis.srem(
                 key,
-                pickle.dumps(right, protocol=pickle.HIGHEST_PROTOCOL),
+                pickle.dumps(right_id, protocol=pickle.HIGHEST_PROTOCOL),
             )
+        await self._redis.srem("rights", pickle.dumps((right_id, right_name), protocol=pickle.HIGHEST_PROTOCOL))
 
 
 @lru_cache

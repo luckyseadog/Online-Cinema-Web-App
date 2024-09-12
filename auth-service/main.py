@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
+from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi import FastAPI, Request, status, Depends
 from fastapi.responses import JSONResponse, ORJSONResponse
@@ -9,10 +10,15 @@ from redis.asyncio import Redis
 
 from jwt_auth_helpers import get_jwt_user_global
 from api.v1 import access_control, auth, oauth
-from core.config import configs
+from core.config import configs, jwt_config, JWTConfig
 from models.errors import ErrorBody
 from services import redis_service
 from services.custom_error import ResponseError
+
+
+@AuthJWT.load_config
+def get_config() -> JWTConfig:
+    return jwt_config
 
 
 @asynccontextmanager
