@@ -4,15 +4,14 @@ from typing import Annotated
 import aiohttp
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
-from core.config import JWTConfig, jwt_config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
+
+from api.v1.models import AccountModel, ActualTokensModel, HistoryModel
+from core.config import JWTConfig, jwt_config, oauth_config
 from models.alchemy_model import Action
 from services.redis_service import RedisService, get_redis
 from services.user_service import UserService, get_user_service
-
-from core.config import oauth_config
-from api.v1.models import AccountModel, ActualTokensModel, HistoryModel
 
 
 router = APIRouter()
@@ -46,6 +45,7 @@ async def google_oauth(
     else:
         if not state:
             raise HTTPException(status_code=400)
+
         data = {
             "code": code,
             "client_id": oauth_config.google_client_id,
@@ -120,6 +120,7 @@ async def yandex_oauth(
     else:
         if not state:
             raise HTTPException(status_code=400)
+
         data = {
             "code": code,
             "client_id": oauth_config.yandex_client_id,

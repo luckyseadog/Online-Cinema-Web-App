@@ -1,11 +1,10 @@
 import typer
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, or_, select
 from sqlalchemy.orm import Session
 
+from core.config import admin_config, configs
 from models.alchemy_model import Right, User
 from services.password_service import get_password_service
-from core.config import configs, admin_config
-from sqlalchemy import or_
 
 
 engine = create_engine(configs.postgres_dsn)

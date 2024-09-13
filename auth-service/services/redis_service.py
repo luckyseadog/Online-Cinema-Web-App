@@ -5,12 +5,12 @@ from typing import cast
 from uuid import UUID
 
 import backoff
+from fastapi import HTTPException, status
 from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
-from fastapi import HTTPException, status
 
-from core.config import configs
 from api.v1.models.access_control import RightModel
+from core.config import configs
 
 
 redis: Redis | None = None
@@ -67,6 +67,7 @@ class RedisService:
         refresh_in_redis = await self._redis.get(f"{user_id}:refresh:{token_hash}")
         if not refresh_in_redis:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
         deleted_token_data = pickle.loads(refresh_in_redis)[0]
         await self._redis.delete(f"{user_id}:refresh:{token_hash}")
         return deleted_token_data
@@ -127,6 +128,7 @@ class RedisService:
             await self._redis.srem(
                 "rights", pickle.dumps((right.id, current_rights_dict[right.id]), protocol=pickle.HIGHEST_PROTOCOL)
             )
+
         await self._redis.sadd("rights", pickle.dumps((right.id, right.name), protocol=pickle.HIGHEST_PROTOCOL))
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
@@ -146,6 +148,7 @@ class RedisService:
                 key,
                 pickle.dumps(right_id, protocol=pickle.HIGHEST_PROTOCOL),
             )
+
         await self._redis.srem("rights", pickle.dumps((right_id, right_name), protocol=pickle.HIGHEST_PROTOCOL))
 
 

@@ -12,9 +12,9 @@ from api.v1.models import (
     SecureAccountModel,
 )
 from models.alchemy_model import Action
-from services.rights_management_service import RightsManagementService, get_rights_management_service
 from services.password_service import Password, PasswordService, get_password_service
 from services.redis_service import RedisService, get_redis
+from services.rights_management_service import RightsManagementService, get_rights_management_service
 from services.user_service import UserService, get_user_service
 
 

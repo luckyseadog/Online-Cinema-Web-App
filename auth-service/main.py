@@ -4,13 +4,17 @@ from typing import Any
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
-from fastapi import FastAPI, Request, status, Depends
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.trace import get_tracer
+from opentelemetry.trace.propagation import get_current_span
 from redis.asyncio import Redis
 
-from jwt_auth_helpers import get_jwt_user_global
 from api.v1 import access_control, auth, oauth
-from core.config import configs, jwt_config, JWTConfig
+from core.config import JWTConfig, configs, jwt_config
+from core.jaeger_configure import configure_tracer
+from jwt_auth_helpers import get_jwt_user_global
 from models.errors import ErrorBody
 from services import redis_service
 from services.custom_error import ResponseError
@@ -26,6 +30,9 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     redis_service.redis = Redis(host=configs.redis_host, port=configs.redis_port)
     yield
     await redis_service.redis.close()
+
+
+configure_tracer()
 
 
 tags_metadata = [
@@ -50,6 +57,22 @@ app = FastAPI(
     responses=responses,
     lifespan=lifespan,
 )
+
+FastAPIInstrumentor.instrument_app(app)
+
+tracer = get_tracer("my.tracer.name")
+
+
+@app.middleware("http")
+@tracer.start_as_current_span(app.title)
+async def before_request(request: Request, call_next: Any) -> JSONResponse | Any:
+    response = await call_next(request)
+    request_id = request.headers.get("X-Request-Id")
+    if request_id is None:
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
+
+    get_current_span().set_attribute("http.request_id", request_id)
+    return response
 
 
 @app.exception_handler(ResponseError)
