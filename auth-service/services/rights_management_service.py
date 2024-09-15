@@ -31,13 +31,13 @@ class RightsManagementService:
         self.redis = redis
         self.session = session
 
-    async def create(self, right: CreateRightModel) -> RightModel:
+    async def create(self, create_right: CreateRightModel) -> RightModel:
         """Создание права в системе"""
-        stmt = select(Right).where(Right.name == right.name)
+        stmt = select(Right).where(Right.name == create_right.name)
         try:
             (await self.session.scalars(stmt)).one()
         except NoResultFound:
-            right_ = Right(**right.model_dump())
+            right_ = Right(**create_right.model_dump())
             self.session.add(right_)
             await self.session.commit()
             await self.session.refresh(right_)
@@ -45,7 +45,7 @@ class RightsManagementService:
             await self.redis.add_right(right)
             return right
         else:
-            raise ResponseError(f"Право с названием '{right.name}' уже существует")
+            raise ResponseError(f"Право с названием '{create_right.name}' уже существует")
 
     async def delete(self, right: SearchRightModel) -> str:
         """Удаление права в системе"""

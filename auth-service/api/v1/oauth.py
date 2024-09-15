@@ -44,8 +44,7 @@ async def google_oauth(
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
-            raise HTTPException(status_code=400)
-
+            raise HTTPException(status_code=400, detail="no state")
         data = {
             "code": code,
             "client_id": oauth_config.google_client_id,
@@ -87,10 +86,10 @@ async def google_oauth(
         await user_service.save_history(
             HistoryModel(
                 user_id=user.id,
-                ip_address=request.client.host,
+                ip_address=request.client.host if request.client else "",
                 action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent"),
-                system_info=request.headers.get("sec-ch-ua-platform") or "",
+                browser_info=request.headers.get("user-agent", ""),
+                system_info=request.headers.get("sec-ch-ua-platform", ""),
             )
         )
 
@@ -119,8 +118,7 @@ async def yandex_oauth(
         return RedirectResponse(auth_uri, status_code=302)
     else:
         if not state:
-            raise HTTPException(status_code=400)
-
+            raise HTTPException(status_code=400, detail="no state")
         data = {
             "code": code,
             "client_id": oauth_config.yandex_client_id,
@@ -134,7 +132,7 @@ async def yandex_oauth(
 
             access_token = tokens.get("access_token")
             if not access_token:
-                raise HTTPException(status_code=500)
+                raise HTTPException(status_code=500, detail=tokens)
 
             headers = {"Authorization": f"Bearer {access_token}"}
             async with session.get("https://login.yandex.ru/info?alt=json", headers=headers) as resp:
@@ -161,10 +159,10 @@ async def yandex_oauth(
         await user_service.save_history(
             HistoryModel(
                 user_id=user.id,
-                ip_address=request.client.host,
+                ip_address=request.client.host if request.client else "",
                 action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent"),
-                system_info=request.headers.get("sec-ch-ua-platform") or "",
+                browser_info=request.headers.get("user-agent", ""),
+                system_info=request.headers.get("sec-ch-ua-platform", ""),
             )
         )
 

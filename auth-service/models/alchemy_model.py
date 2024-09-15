@@ -61,10 +61,7 @@ class Right(Base):
         return f"Right(id={self.id!r}, name={self.name!r})"
 
 
-class History(Base):
-    __tablename__ = "history"
-    __table_args__ = ({"postgresql_partition_by": "RANGE (created_at)"},)
-
+class HistoryMixin:
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
@@ -73,4 +70,33 @@ class History(Base):
     system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
 
+
+class History(HistoryMixin, Base):
+    __tablename__ = "history"
+    __table_args__ = ({"postgresql_partition_by": "RANGE (created_at)"},)
+
     user: Mapped[User] = relationship(back_populates="histories", lazy="selectin")
+
+
+class History2024(HistoryMixin, Base):
+    """Partition of history"""
+
+    __tablename__ = "history_2024"
+
+
+class History2025(HistoryMixin, Base):
+    """Partition of history"""
+
+    __tablename__ = "history_2025"
+
+
+class History2026(HistoryMixin, Base):
+    """Partition of history"""
+
+    __tablename__ = "history_2026"
+
+
+class History2027(HistoryMixin, Base):
+    """Partition of history"""
+
+    __tablename__ = "history_2027"
