@@ -83,6 +83,7 @@ class OAuthConfig(BaseSettings):
         default=r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback", alias="GOOGLE_REDIRECT_URI"
     )
 
+
 class MiddlewareConfig(BaseSettings):
     model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
 

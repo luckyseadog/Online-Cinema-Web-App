@@ -9,8 +9,8 @@ from api.v1.models import (
     ActualTokensModel,
     HistoryModel,
     LoginModel,
-    SecureAccountModel,
     RightsAccountModel,
+    SecureAccountModel,
 )
 from models.alchemy_model import Action
 from services.password_service import Password, PasswordService, get_password_service

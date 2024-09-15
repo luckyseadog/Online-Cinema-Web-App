@@ -104,7 +104,7 @@ class RightsManagementService:
         await self.redis.set_all_rights(all_rights.rights)
         return all_rights
 
-    async def get_admin_right(self):
+    async def get_admin_right(self) -> Right:
         """Выгрузка права Администратора"""
         try:
             right_ = (await self.session.scalars(select(Right).where(Right.name == admin_config.right_name))).one()
