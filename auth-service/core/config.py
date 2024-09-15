@@ -83,8 +83,16 @@ class OAuthConfig(BaseSettings):
         default=r"http://127.0.0.1:90/auth/v1/oauth/go/oauth2callback", alias="GOOGLE_REDIRECT_URI"
     )
 
+class MiddlewareConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
+
+    update_time: int = Field(default=30, alias="UPDATE_TIME")
+    update_val: int = Field(default=10, alias="UPDATE_VAL")
+    capacity: int = Field(default=10, alias="CAPACITY")
+
 
 configs = Configs()
 jwt_config = JWTConfig()
 admin_config = AdminConfig()
 oauth_config = OAuthConfig()
+middleware_config = MiddlewareConfig()
