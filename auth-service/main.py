@@ -18,6 +18,11 @@ from jwt_auth_helpers import get_jwt_user_global
 from models.errors import ErrorBody
 from services import redis_service
 from services.custom_error import ResponseError
+from services.token_bucket_service import get_token_bucket
+from middleware.token_bucket_middleware import TokenBucketMiddleware
+from db.redis_db import get_redis
+
+import asyncio
 
 
 @AuthJWT.load_config
@@ -27,8 +32,17 @@ def get_config() -> JWTConfig:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
-    redis_service.redis = Redis(host=configs.redis_host, port=configs.redis_port)
+    redis_service.redis = get_redis()
+
+    background_tasks = set()
+    token_bucket = get_token_bucket()
+    task = asyncio.create_task(token_bucket.start_fill_bucket_process())
+    background_tasks.add(task)
+    task.add_done_callback(background_tasks.discard)
+
     yield
+
+    task.cancel()
     await redis_service.redis.close()
 
 
@@ -62,6 +76,7 @@ FastAPIInstrumentor.instrument_app(app)
 
 tracer = get_tracer("my.tracer.name")
 
+app.add_middleware(TokenBucketMiddleware)
 
 @app.middleware("http")
 @tracer.start_as_current_span(app.title)
