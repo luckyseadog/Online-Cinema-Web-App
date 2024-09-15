@@ -1,0 +1,3 @@
+typings/
+.venv/
+__pycache__/

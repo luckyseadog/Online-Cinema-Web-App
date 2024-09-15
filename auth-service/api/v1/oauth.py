@@ -87,10 +87,10 @@ async def google_oauth(
         await user_service.save_history(
             HistoryModel(
                 user_id=user.id,
-                ip_address=request.client.host,
+                ip_address=request.client.host if request.client else "",
                 action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent"),
-                system_info=request.headers.get("sec-ch-ua-platform") or "",
+                browser_info=request.headers.get("user-agent", ""),
+                system_info=request.headers.get("sec-ch-ua-platform", ""),
             )
         )
 
@@ -161,10 +161,10 @@ async def yandex_oauth(
         await user_service.save_history(
             HistoryModel(
                 user_id=user.id,
-                ip_address=request.client.host,
+                ip_address=request.client.host if request.client else "",
                 action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent"),
-                system_info=request.headers.get("sec-ch-ua-platform") or "",
+                browser_info=request.headers.get("user-agent", ""),
+                system_info=request.headers.get("sec-ch-ua-platform", ""),
             )
         )
 
