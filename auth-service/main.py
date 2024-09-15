@@ -60,7 +60,7 @@ app = FastAPI(
 
 FastAPIInstrumentor.instrument_app(app)
 
-tracer = get_tracer("my.tracer.name")
+tracer = get_tracer(app.title)
 
 
 @app.middleware("http")
