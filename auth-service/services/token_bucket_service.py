@@ -1,11 +1,13 @@
-from redis.asyncio import Redis
 import asyncio
 from functools import lru_cache
-from db.redis_db import get_redis
+
 from core.config import middleware_config
+from db.redis_db import get_redis
+from redis.asyncio import Redis
+
 
 class TokenBucket:
-    def __init__(self, redis: Redis): # TODO: init from envs
+    def __init__(self, redis: Redis):
         self._redis = redis
         self._cap = middleware_config.capacity
         self._update_time = middleware_config.update_time
@@ -13,7 +15,7 @@ class TokenBucket:
 
     async def start_fill_bucket_process(self):
         while True:
-            keys_bytes: list[bytes] = await self._redis.keys(pattern=f"token_bucket:*")
+            keys_bytes: list[bytes] = await self._redis.keys(pattern="token_bucket:*")
             keys = [key.decode("utf-8") for key in keys_bytes]
             for key in keys:
                 value_bytes: bytes = await self._redis.get(key)

@@ -1,28 +1,26 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
+from core.config import JWTConfig, configs, jwt_config
+from core.jaeger_configure import configure_tracer
+from db.redis_db import get_redis
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from jwt_auth_helpers import get_jwt_user_global
+from middleware.token_bucket_middleware import TokenBucketMiddleware
+from models.errors import ErrorBody
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
-from redis.asyncio import Redis
-
-from api.v1 import access_control, auth, oauth
-from core.config import JWTConfig, configs, jwt_config
-from core.jaeger_configure import configure_tracer
-from jwt_auth_helpers import get_jwt_user_global
-from models.errors import ErrorBody
 from services import redis_service
 from services.custom_error import ResponseError
 from services.token_bucket_service import get_token_bucket
-from middleware.token_bucket_middleware import TokenBucketMiddleware
-from db.redis_db import get_redis
 
-import asyncio
+from api.v1 import access_control, auth, oauth
 
 
 @AuthJWT.load_config
