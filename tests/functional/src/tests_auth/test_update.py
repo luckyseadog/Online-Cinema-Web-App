@@ -1,6 +1,4 @@
-from base64 import urlsafe_b64encode
 from collections.abc import Callable, Coroutine
-from hashlib import pbkdf2_hmac
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from typing import Any
@@ -10,6 +8,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from core.settings import test_settings
 from src.models_auth import AccountModel, LoginModel
+from test_fixtures.password import Password
 from testdata.alchemy_model import User
 
 
@@ -26,6 +25,7 @@ async def test_update(
     make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     make_patch_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     pg_session: AsyncSession,
+    compute_hash: Callable[..., Coroutine[Any, Any, Password]],
     query_data: dict[str, str],
     expected_answer: dict[str, int],
 ) -> None:
@@ -35,9 +35,7 @@ async def test_update(
 
     # 2. Генерируем данные
 
-    password_enc = query_data["password"].encode("utf-8")
-    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, test_settings.salt_password, test_settings.iters_password)
-    password = urlsafe_b64encode(password_hash_bytes).decode("utf-8")
+    password = await compute_hash(query_data["password"])
 
     login = LoginModel(login=query_data["name"], password=query_data["password"])
 
@@ -49,13 +47,9 @@ async def test_update(
         email="email",
     )
 
-    password_enc = b"password_update"
-    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, test_settings.salt_password, test_settings.iters_password)
-    password_update = urlsafe_b64encode(password_hash_bytes).decode("utf-8")
-
     account_update = AccountModel(
         login=f"{query_data["name"]}_update",
-        password=password_update,
+        password="password_update",
         first_name="first_name_update",
         last_name="last_name_update",
         email="email_update",

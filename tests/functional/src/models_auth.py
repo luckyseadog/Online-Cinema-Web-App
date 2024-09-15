@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 
+from test_fixtures.password import Password
+
 
 class AccountModel(BaseModel):
     login: str
-    password: str
+    password: Password | str
     first_name: str
     last_name: str
     email: str

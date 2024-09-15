@@ -1,5 +1,6 @@
 import http
 from collections.abc import Callable, Coroutine
+from http.cookies import SimpleCookie
 from typing import Any
 
 import pytest
@@ -20,9 +21,14 @@ async def test_film_by_id(
     es_write_data: Callable[..., Coroutine[Any, Any, None]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
     es_clear_data: Callable[..., Coroutine[Any, Any, None]],
-    query_data: dict[str, str],
+    login_auth: Callable[..., Coroutine[Any, Any, tuple[SimpleCookie, dict[str, str]]]],
+    query_data: str,
     expected_answer: dict[str, int],
 ) -> None:
+    # 0. Логинимся
+
+    cookies, headers = await login_auth()
+
     # 1. Генерируем данные для ES
 
     es_films = [
@@ -58,7 +64,9 @@ async def test_film_by_id(
 
     # 3. Запрашиваем данные из ES по API
 
-    body, status = await make_get_request(url=f"{test_settings.service_url}api/v1/films/{query_data}")
+    body, status = await make_get_request(
+        url=f"{test_settings.service_url}api/v1/films/{query_data}", cookies=cookies, headers=headers
+    )
 
     # 4. Проверяем ответ
 
@@ -71,7 +79,9 @@ async def test_film_by_id(
 
     # 6. Запрашиваем данные из Redis по API
 
-    body, status = await make_get_request(url=f"{test_settings.service_url}api/v1/films/{query_data}")
+    body, status = await make_get_request(
+        url=f"{test_settings.service_url}api/v1/films/{query_data}", cookies=cookies, headers=headers
+    )
 
     # 7. Проверяем ответ
 

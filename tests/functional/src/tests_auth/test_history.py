@@ -1,6 +1,4 @@
-from base64 import urlsafe_b64encode
 from collections.abc import Callable, Coroutine
-from hashlib import pbkdf2_hmac
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from typing import Any
@@ -10,6 +8,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from core.settings import test_settings
 from src.models_auth import AccountModel, LoginModel
+from test_fixtures.password import Password
 from testdata.alchemy_model import User
 
 
@@ -32,6 +31,7 @@ async def test_history(
     drop_database: Callable[[], Coroutine[Any, Any, None]],
     make_post_request: Callable[..., Coroutine[Any, Any, tuple[Any, int, SimpleCookie]]],
     make_get_request: Callable[..., Coroutine[Any, Any, tuple[Any, int]]],
+    compute_hash: Callable[..., Coroutine[Any, Any, Password]],
     pg_session: AsyncSession,
     query_data: dict[str, str | int],
     expected_answer: dict[str, int],
@@ -42,9 +42,7 @@ async def test_history(
 
     # 2. Генерируем данные
 
-    password_enc = query_data["password"].encode("utf-8")
-    password_hash_bytes = pbkdf2_hmac("sha256", password_enc, test_settings.salt_password, test_settings.iters_password)
-    password = urlsafe_b64encode(password_hash_bytes).decode("utf-8")
+    password = await compute_hash(query_data["password"])
 
     login = LoginModel(login=query_data["name"], password=query_data["password"])
 

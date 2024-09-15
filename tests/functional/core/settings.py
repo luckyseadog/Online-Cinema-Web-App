@@ -45,11 +45,7 @@ class TestSettings(BaseSettings):
     pg_port: int = Field(default=5432, alias="POSTGRES_PORT", serialization_alias="DB_PORT")
 
     iters_password: int = Field(default=100_000, alias="ITERS_PASSWORD")
-    salt: str = Field(default="<salt>", alias="SALT_PASSWORD")
-
-    @property
-    def salt_password(self) -> bytes:
-        return self.salt.encode("utf-8")
+    hash_name_password: str = Field(default="sha256", alias="HASH_NAME_PASSWORD")
 
     @property
     def elastic_dsn(self) -> str:
