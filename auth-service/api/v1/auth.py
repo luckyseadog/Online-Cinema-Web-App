@@ -10,6 +10,7 @@ from api.v1.models import (
     HistoryModel,
     LoginModel,
     SecureAccountModel,
+    RightsAccountModel,
 )
 from models.alchemy_model import Action
 from services.password_service import Password, PasswordService, get_password_service
@@ -61,7 +62,7 @@ async def login(
     rights_management_service: Annotated[RightsManagementService, Depends(get_rights_management_service)],
     redis: Annotated[RedisService, Depends(get_redis)],
     authorize: Annotated[AuthJWT, Depends(auth_dep)],
-) -> ActualTokensModel:
+) -> RightsAccountModel:
     # Обновление всех прав в Redis
     await rights_management_service.get_all()
     # Проверить введённые данные
@@ -90,7 +91,7 @@ async def login(
     # Отдать токены
     await authorize.set_access_cookies(access_token)
     await authorize.set_refresh_cookies(refresh_token)
-    return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
+    return RightsAccountModel.model_validate(user)
 
 
 @router.post(
