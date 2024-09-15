@@ -1,18 +1,16 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator
 from pydantic.fields import Field
 
 from models.alchemy_model import Action
 
 
-class AccountModel(BaseModel):
-    login: str = Field(description="Логин пользователя", title="Login")
-    password: str = Field(description="Пароль пользователя", title="Password")
-    first_name: str = Field(description="Имя пользователя", title="First Name")
-    last_name: str = Field(description="Фамилия пользователя", title="Last Name")
-    email: str = Field(description="Почта пользователя", title="Email Address")
+class SecureRightModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str = Field(description="Название права", title="Название")
 
 
 class SecureAccountModel(BaseModel):
@@ -20,6 +18,20 @@ class SecureAccountModel(BaseModel):
     first_name: str | None = Field(description="Имя пользователя", title="First Name")
     last_name: str | None = Field(description="Фамилия пользователя", title="Last Name")
     email: str | None = Field(description="Почта пользователя", title="Email Address")
+
+
+class RightsAccountModel(SecureAccountModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    rights: list[SecureRightModel | str] = Field(description="Права пользователя", title="Права")
+
+    @field_validator("rights")
+    def handle_rights_model(cls, v: list[object]) -> list[object]:
+        return [instance.name for instance in v]
+
+
+class AccountModel(SecureAccountModel):
+    password: str = Field(description="Пароль пользователя", title="Password")
 
 
 class LoginModel(BaseModel):
