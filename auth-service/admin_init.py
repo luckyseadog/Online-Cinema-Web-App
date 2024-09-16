@@ -16,9 +16,9 @@ def create_admin_right(session: Session) -> Right:
     admin_right = session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
     if admin_right:
         raise typer.Exit
-    else:
-        admin_right = Right(name=admin_config.right_name, description="admin right allows everything")
-        session.add(admin_right)
+
+    admin_right = Right(name=admin_config.right_name, description="admin right allows everything")
+    session.add(admin_right)
 
     return admin_right
 
@@ -48,15 +48,15 @@ def creaete_admin_user(
 
     if admin_user:
         raise typer.Exit
-    else:
-        admin_user = User(
-            login=name,
-            password=password_hash,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-        )
-        session.add(admin_user)
+
+    admin_user = User(
+        login=name,
+        password=password_hash,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+    )
+    session.add(admin_user)
 
     return admin_user
 

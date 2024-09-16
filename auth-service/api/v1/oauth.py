@@ -42,60 +42,59 @@ async def google_oauth(
             f"state={oauth_config.google_state}&client_id={oauth_config.google_client_id}&redirect_uri={oauth_config.google_redirect_uri}"
         )
         return RedirectResponse(auth_uri, status_code=302)
-    else:
-        if not state:
-            raise HTTPException(status_code=400, detail="no state")
-        data = {
-            "code": code,
-            "client_id": oauth_config.google_client_id,
-            "client_secret": oauth_config.google_client_secret,
-            "grant_type": "authorization_code",
-            "redirect_uri": oauth_config.google_redirect_uri,
-        }
-        async with aiohttp.ClientSession() as session:
-            headers = {"Content-Type": "application/x-www-form-urlencoded"}
-            async with session.post("https://oauth2.googleapis.com/token", data=data, headers=headers) as resp:
-                tokens = await resp.json()
+    if not state:
+        raise HTTPException(status_code=400, detail="no state")
+    data = {
+        "code": code,
+        "client_id": oauth_config.google_client_id,
+        "client_secret": oauth_config.google_client_secret,
+        "grant_type": "authorization_code",
+        "redirect_uri": oauth_config.google_redirect_uri,
+    }
+    async with aiohttp.ClientSession() as session:
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        async with session.post("https://oauth2.googleapis.com/token", data=data, headers=headers) as resp:
+            tokens = await resp.json()
 
-            access_token = tokens.get("access_token")
-            if not access_token:
-                raise HTTPException(status_code=500, detail=tokens)
+        access_token = tokens.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=500, detail=tokens)
 
-            headers = {"Authorization": f"Bearer {access_token}"}
-            async with session.get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json", headers=headers) as resp:
-                user_data = await resp.json()
+        headers = {"Authorization": f"Bearer {access_token}"}
+        async with session.get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json", headers=headers) as resp:
+            user_data = await resp.json()
 
-        user = await user_service.get_user(user_data.get("email"))
-        if not user:
-            new_user_model = AccountModel(
-                login=user_data["email"],
-                first_name=user_data["given_name"],
-                last_name=user_data["family_name"],
-                email=user_data["email"],
-                password=str(uuid.uuid4()),
-            )
-            user = await user_service.create_user(new_user_model)
-
-        access_token = await authorize.create_access_token(subject=str(user.id))
-        refresh_token = await authorize.create_refresh_token(subject=access_token)
-
-        user_right_ids = [right.id for right in user.rights]
-        await redis.add_valid_refresh(user.id, refresh_token, access_token)
-        await redis.add_user_right(user.id, user_right_ids)
-
-        await user_service.save_history(
-            HistoryModel(
-                user_id=user.id,
-                ip_address=request.client.host if request.client else "",
-                action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent", ""),
-                system_info=request.headers.get("sec-ch-ua-platform", ""),
-            )
+    user = await user_service.get_user(user_data.get("email"))
+    if not user:
+        new_user_model = AccountModel(
+            login=user_data["email"],
+            first_name=user_data["given_name"],
+            last_name=user_data["family_name"],
+            email=user_data["email"],
+            password=str(uuid.uuid4()),
         )
+        user = await user_service.create_user(new_user_model)
 
-        await authorize.set_access_cookies(access_token)
-        await authorize.set_refresh_cookies(refresh_token)
-        return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
+    access_token = await authorize.create_access_token(subject=str(user.id))
+    refresh_token = await authorize.create_refresh_token(subject=access_token)
+
+    user_right_ids = [right.id for right in user.rights]
+    await redis.add_valid_refresh(user.id, refresh_token, access_token)
+    await redis.add_user_right(user.id, user_right_ids)
+
+    await user_service.save_history(
+        HistoryModel(
+            user_id=user.id,
+            ip_address=request.client.host if request.client else "",
+            action=Action.LOGIN,
+            browser_info=request.headers.get("user-agent", ""),
+            system_info=request.headers.get("sec-ch-ua-platform", ""),
+        )
+    )
+
+    await authorize.set_access_cookies(access_token)
+    await authorize.set_refresh_cookies(refresh_token)
+    return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
 
 
 @router.get(
@@ -116,56 +115,56 @@ async def yandex_oauth(
             f"response_type=code&state={oauth_config.yandex_state}&client_id={oauth_config.yandex_client_id}&redirect_uri={oauth_config.yandex_redirect_uri}"
         )
         return RedirectResponse(auth_uri, status_code=302)
-    else:
-        if not state:
-            raise HTTPException(status_code=400, detail="no state")
-        data = {
-            "code": code,
-            "client_id": oauth_config.yandex_client_id,
-            "client_secret": oauth_config.yandex_client_secret,
-            "grant_type": "authorization_code",
-        }
-        async with aiohttp.ClientSession() as session:
-            headers = {"Content-Type": "application/x-www-form-urlencoded"}
-            async with session.post("https://oauth.yandex.ru/token", data=data, headers=headers) as resp:
-                tokens = await resp.json()
 
-            access_token = tokens.get("access_token")
-            if not access_token:
-                raise HTTPException(status_code=500, detail=tokens)
+    if not state:
+        raise HTTPException(status_code=400, detail="no state")
+    data = {
+        "code": code,
+        "client_id": oauth_config.yandex_client_id,
+        "client_secret": oauth_config.yandex_client_secret,
+        "grant_type": "authorization_code",
+    }
+    async with aiohttp.ClientSession() as session:
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        async with session.post("https://oauth.yandex.ru/token", data=data, headers=headers) as resp:
+            tokens = await resp.json()
 
-            headers = {"Authorization": f"Bearer {access_token}"}
-            async with session.get("https://login.yandex.ru/info?alt=json", headers=headers) as resp:
-                user_data = await resp.json()
+        access_token = tokens.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=500, detail=tokens)
 
-        user = await user_service.get_user(user_data.get("default_email"))
-        if not user:
-            new_user_model = AccountModel(
-                login=user_data["default_email"],
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
-                email=user_data["default_email"],
-                password=str(uuid.uuid4()),
-            )
-            user = await user_service.create_user(new_user_model)
+        headers = {"Authorization": f"Bearer {access_token}"}
+        async with session.get("https://login.yandex.ru/info?alt=json", headers=headers) as resp:
+            user_data = await resp.json()
 
-        access_token = await authorize.create_access_token(subject=str(user.id))
-        refresh_token = await authorize.create_refresh_token(subject=access_token)
-
-        user_right_ids = [right.id for right in user.rights]
-        await redis.add_valid_refresh(user.id, refresh_token, access_token)
-        await redis.add_user_right(user.id, user_right_ids)
-
-        await user_service.save_history(
-            HistoryModel(
-                user_id=user.id,
-                ip_address=request.client.host if request.client else "",
-                action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent", ""),
-                system_info=request.headers.get("sec-ch-ua-platform", ""),
-            )
+    user = await user_service.get_user(user_data.get("default_email"))
+    if not user:
+        new_user_model = AccountModel(
+            login=user_data["default_email"],
+            first_name=user_data["first_name"],
+            last_name=user_data["last_name"],
+            email=user_data["default_email"],
+            password=str(uuid.uuid4()),
         )
+        user = await user_service.create_user(new_user_model)
 
-        await authorize.set_access_cookies(access_token)
-        await authorize.set_refresh_cookies(refresh_token)
-        return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
+    access_token = await authorize.create_access_token(subject=str(user.id))
+    refresh_token = await authorize.create_refresh_token(subject=access_token)
+
+    user_right_ids = [right.id for right in user.rights]
+    await redis.add_valid_refresh(user.id, refresh_token, access_token)
+    await redis.add_user_right(user.id, user_right_ids)
+
+    await user_service.save_history(
+        HistoryModel(
+            user_id=user.id,
+            ip_address=request.client.host if request.client else "",
+            action=Action.LOGIN,
+            browser_info=request.headers.get("user-agent", ""),
+            system_info=request.headers.get("sec-ch-ua-platform", ""),
+        )
+    )
+
+    await authorize.set_access_cookies(access_token)
+    await authorize.set_refresh_cookies(refresh_token)
+    return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)

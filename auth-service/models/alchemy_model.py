@@ -1,9 +1,9 @@
 import enum
 import uuid
 
-from sqlalchemy import JSON, UUID, Boolean, Column, DateTime, Enum, ForeignKey, String, Table
+from sqlalchemy import JSON, UUID, Boolean, Column, DateTime, Enum, ForeignKey, Index, String, Table
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, declared_attr
 from sqlalchemy.sql import func
 
 
@@ -19,8 +19,8 @@ class Action(enum.Enum):
 user_right = Table(
     "user_right",
     Base.metadata,
-    Column("user_id", ForeignKey("user.id"), primary_key=True),
-    Column("right_id", ForeignKey("right.id"), primary_key=True),
+    Column("user_id", ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    Column("right_id", ForeignKey("right.id", ondelete="CASCADE"), primary_key=True),
 )
 
 
@@ -63,12 +63,16 @@ class Right(Base):
 
 class HistoryMixin:
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     ip_address: Mapped[str] = mapped_column(String(60), nullable=False)
     action: Mapped[Action] = mapped_column(Enum(Action), nullable=False)
     browser_info: Mapped[str] = mapped_column(String(256), nullable=True)
     system_info: Mapped[str] = mapped_column(String(256), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
+
+    @declared_attr.directive
+    def __table_args__(cls):
+        return (Index(f"_idx_{cls.__tablename__}", "user_id", "action"),)
 
 
 class History(HistoryMixin, Base):

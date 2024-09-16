@@ -35,12 +35,11 @@ class TokenBucket:
             return self.request_permisson(user_ip)
 
         val = int(val_bytes.decode("utf-8"))
-        if val > 0:
-            val -= 1
-            await self._redis.set(f"token_bucket:{user_ip}", val)
-            return True
-        else:
+        if val == 0:
             return False
+        val -= 1
+        await self._redis.set(f"token_bucket:{user_ip}", val)
+        return True
 
 
 @lru_cache
