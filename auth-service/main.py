@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, NoReturn
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
@@ -32,7 +32,7 @@ def get_config() -> JWTConfig:
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     redis_service.redis = get_redis()
 
-    background_tasks = set()
+    background_tasks: set[asyncio.Task[NoReturn]] = set()
     token_bucket = get_token_bucket()
     task = asyncio.create_task(token_bucket.start_fill_bucket_process())
     background_tasks.add(task)
@@ -42,9 +42,6 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
 
     task.cancel()
     await redis_service.redis.close()
-
-
-configure_tracer()
 
 
 tags_metadata = [
@@ -70,23 +67,26 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-FastAPIInstrumentor.instrument_app(app)
-
-tracer = get_tracer(app.title)
 
 app.add_middleware(TokenBucketMiddleware)
 
+if configs.jaeger_on:
+    FastAPIInstrumentor.instrument_app(app)
 
-@app.middleware("http")
-@tracer.start_as_current_span(app.title)
-async def before_request(request: Request, call_next: Any) -> JSONResponse | Any:
-    response = await call_next(request)
-    request_id = request.headers.get("X-Request-Id")
-    if request_id is None:
-        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
+    configure_tracer()
 
-    get_current_span().set_attribute("http.request_id", request_id)
-    return response
+    tracer = get_tracer(app.title)
+
+    @app.middleware("http")
+    @tracer.start_as_current_span(app.title)
+    async def before_request(request: Request, call_next: Any) -> JSONResponse | Any:
+        response = await call_next(request)
+        request_id = request.headers.get("X-Request-Id")
+        if request_id is None:
+            return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
+
+        get_current_span().set_attribute("http.request_id", request_id)
+        return response
 
 
 @app.exception_handler(ResponseError)

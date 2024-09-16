@@ -32,6 +32,7 @@ class Configs(BaseSettings):
     iters_password: int = Field(default=100_000, alias="ITERS_PASSWORD")
     hash_name_password: str = Field(default="sha256", alias="HASH_NAME_PASSWORD")
 
+    jaeger_on: bool = Field(default=True, alias="JAEGER_ON")
     jaeger_host: str = Field(default="127.0.0.1", alias="JAEGER_HOST")
     jaeger_port: int = Field(default=6831, alias="JAEGER_PORT")
 

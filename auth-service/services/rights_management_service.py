@@ -44,6 +44,7 @@ class RightsManagementService:
             right = RightModel(id=right_.id, name=right_.name, description=right_.description)
             await self.redis.add_right(right)
             return right
+
         raise ResponseError(f"Право с названием '{create_right.name}' уже существует")
 
     async def delete(self, right: SearchRightModel) -> str:
@@ -91,6 +92,7 @@ class RightsManagementService:
         right = RightModel(id=right_.id, name=right_.name, description=right_.description)
         if right_new.name != right_old.name:
             await self.redis.update_right(right)
+
         return right
 
     async def get_all(self) -> RightsModel:

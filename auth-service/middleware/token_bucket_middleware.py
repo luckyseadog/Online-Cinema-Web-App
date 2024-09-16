@@ -11,7 +11,7 @@ class TokenBucketMiddleware(BaseHTTPMiddleware):
         self._token_bucket = get_token_bucket()
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response | JSONResponse:
-        if request.scope["path"] in ["/api/openapi", "/api/openapi.json", "/api/redoc"]:
+        if request.scope["path"] in {"/api/openapi", "/api/openapi.json", "/api/redoc"}:
             return await call_next(request)
 
         if await self._token_bucket.request_permisson(request.client.host if request.client else ""):

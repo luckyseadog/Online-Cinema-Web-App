@@ -73,6 +73,7 @@ def create_admin(
         admin_right = pg_session.scalars(select(Right).where(Right.name == admin_config.right_name)).first()
         if not admin_right:
             admin_right = create_admin_right(pg_session)
+
         admin_user = creaete_admin_user(
             pg_session,
             name,
@@ -94,6 +95,7 @@ def delete_admin(name: str | None = None) -> None:
         admin_user = session.scalars(select(User).where(User.login == name)).first()
         if not admin_user:
             raise typer.Exit
+
         if num_admins == 1:
             session.delete(admin_right)
             session.delete(admin_user)

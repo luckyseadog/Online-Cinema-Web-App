@@ -41,9 +41,9 @@ async def google_oauth(
             "access_type=offline&response_type=code&"
             f"state={oauth_config.google_state}&client_id={oauth_config.google_client_id}&redirect_uri={oauth_config.google_redirect_uri}"
         )
-        return RedirectResponse(auth_uri, status_code=302)
+        return RedirectResponse(auth_uri, status_code=status.HTTP_302_FOUND)
     if not state:
-        raise HTTPException(status_code=400, detail="no state")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
     data = {
         "code": code,
         "client_id": oauth_config.google_client_id,
@@ -58,7 +58,7 @@ async def google_oauth(
 
         access_token = tokens.get("access_token")
         if not access_token:
-            raise HTTPException(status_code=500, detail=tokens)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=tokens)
 
         headers = {"Authorization": f"Bearer {access_token}"}
         async with session.get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json", headers=headers) as resp:
@@ -114,10 +114,10 @@ async def yandex_oauth(
             f"https://oauth.yandex.ru/authorize?scope={oauth_config.yandex_scope}&"
             f"response_type=code&state={oauth_config.yandex_state}&client_id={oauth_config.yandex_client_id}&redirect_uri={oauth_config.yandex_redirect_uri}"
         )
-        return RedirectResponse(auth_uri, status_code=302)
+        return RedirectResponse(auth_uri, status_code=status.HTTP_302_FOUND)
 
     if not state:
-        raise HTTPException(status_code=400, detail="no state")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
     data = {
         "code": code,
         "client_id": oauth_config.yandex_client_id,
@@ -131,7 +131,7 @@ async def yandex_oauth(
 
         access_token = tokens.get("access_token")
         if not access_token:
-            raise HTTPException(status_code=500, detail=tokens)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=tokens)
 
         headers = {"Authorization": f"Bearer {access_token}"}
         async with session.get("https://login.yandex.ru/info?alt=json", headers=headers) as resp:

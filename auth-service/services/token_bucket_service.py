@@ -37,6 +37,7 @@ class TokenBucket:
         val = int(val_bytes.decode("utf-8"))
         if val == 0:
             return False
+
         val -= 1
         await self._redis.set(f"token_bucket:{user_ip}", val)
         return True
