@@ -56,41 +56,40 @@ async def google_oauth(
             f"state={oauth_config.google_state}&client_id={oauth_config.google_client_id}&redirect_uri={oauth_config.google_redirect_uri}"
         )
         return RedirectResponse(auth_uri, status_code=status.HTTP_302_FOUND)
-    else:
-        if not state:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
+    if not state:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
 
-        data = {
-            "code": code,
-            "client_id": oauth_config.google_client_id,
-            "client_secret": oauth_config.google_client_secret,
-            "grant_type": "authorization_code",
-            "redirect_uri": oauth_config.google_redirect_uri,
-        }
+    data = {
+        "code": code,
+        "client_id": oauth_config.google_client_id,
+        "client_secret": oauth_config.google_client_secret,
+        "grant_type": "authorization_code",
+        "redirect_uri": oauth_config.google_redirect_uri,
+    }
 
-        user_data = await oauth_service.get_user_data_google(data)
-        user = await user_service.get_user(user_data.get("email"))
-        if not user:
-            new_user_model = AccountModel(
-                login=user_data["email"],
-                first_name=user_data["given_name"],
-                last_name=user_data["family_name"],
-                email=user_data["email"],
-                password=str(uuid.uuid4()),
-            )
-            user = await user_service.create_user(new_user_model)
-
-        access_token, refresh_token = await issue_tokens(user, authorize, redis)
-        await user_service.save_history(
-            HistoryModel(
-                user_id=user.id,
-                ip_address=request.client.host if request.client else "",
-                action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent", ""),
-                system_info=request.headers.get("sec-ch-ua-platform", ""),
-            )
+    user_data = await oauth_service.get_user_data_google(data)
+    user = await user_service.get_user(user_data.get("email"))
+    if not user:
+        new_user_model = AccountModel(
+            login=user_data["email"],
+            first_name=user_data["given_name"],
+            last_name=user_data["family_name"],
+            email=user_data["email"],
+            password=str(uuid.uuid4()),
         )
-        return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
+        user = await user_service.create_user(new_user_model)
+
+    access_token, refresh_token = await issue_tokens(user, authorize, redis)
+    await user_service.save_history(
+        HistoryModel(
+            user_id=user.id,
+            ip_address=request.client.host if request.client else "",
+            action=Action.LOGIN,
+            browser_info=request.headers.get("user-agent", ""),
+            system_info=request.headers.get("sec-ch-ua-platform", ""),
+        )
+    )
+    return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
 
 
 @router.get(
@@ -112,37 +111,36 @@ async def yandex_oauth(
             f"response_type=code&state={oauth_config.yandex_state}&client_id={oauth_config.yandex_client_id}&redirect_uri={oauth_config.yandex_redirect_uri}"
         )
         return RedirectResponse(auth_uri, status_code=status.HTTP_302_FOUND)
-    else:
-        if not state:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
+    if not state:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="no state")
 
-        data = {
-            "code": code,
-            "client_id": oauth_config.yandex_client_id,
-            "client_secret": oauth_config.yandex_client_secret,
-            "grant_type": "authorization_code",
-        }
+    data = {
+        "code": code,
+        "client_id": oauth_config.yandex_client_id,
+        "client_secret": oauth_config.yandex_client_secret,
+        "grant_type": "authorization_code",
+    }
 
-        user_data = await oauth_service.get_user_data_yandex(data)
-        user = await user_service.get_user(user_data.get("default_email"))
-        if not user:
-            new_user_model = AccountModel(
-                login=user_data["default_email"],
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
-                email=user_data["default_email"],
-                password=str(uuid.uuid4()),
-            )
-            user = await user_service.create_user(new_user_model)
-
-        access_token, refresh_token = await issue_tokens(user, authorize, redis)
-        await user_service.save_history(
-            HistoryModel(
-                user_id=user.id,
-                ip_address=request.client.host if request.client else "",
-                action=Action.LOGIN,
-                browser_info=request.headers.get("user-agent", ""),
-                system_info=request.headers.get("sec-ch-ua-platform", ""),
-            )
+    user_data = await oauth_service.get_user_data_yandex(data)
+    user = await user_service.get_user(user_data.get("default_email"))
+    if not user:
+        new_user_model = AccountModel(
+            login=user_data["default_email"],
+            first_name=user_data["first_name"],
+            last_name=user_data["last_name"],
+            email=user_data["default_email"],
+            password=str(uuid.uuid4()),
         )
-        return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
+        user = await user_service.create_user(new_user_model)
+
+    access_token, refresh_token = await issue_tokens(user, authorize, redis)
+    await user_service.save_history(
+        HistoryModel(
+            user_id=user.id,
+            ip_address=request.client.host if request.client else "",
+            action=Action.LOGIN,
+            browser_info=request.headers.get("user-agent", ""),
+            system_info=request.headers.get("sec-ch-ua-platform", ""),
+        )
+    )
+    return ActualTokensModel(access_token=access_token, refresh_token=refresh_token)
