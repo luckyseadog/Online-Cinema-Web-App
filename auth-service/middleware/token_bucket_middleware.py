@@ -16,5 +16,5 @@ class TokenBucketMiddleware(BaseHTTPMiddleware):
 
         if await self._token_bucket.request_permisson(request.client.host if request.client else ""):
             return await call_next(request)
-        else:
-            return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content={"message": "Too many requests"})
+
+        return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content={"message": "Too many requests"})

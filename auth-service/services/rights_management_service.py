@@ -44,8 +44,7 @@ class RightsManagementService:
             right = RightModel(id=right_.id, name=right_.name, description=right_.description)
             await self.redis.add_right(right)
             return right
-        else:
-            raise ResponseError(f"Право с названием '{create_right.name}' уже существует")
+        raise ResponseError(f"Право с названием '{create_right.name}' уже существует")
 
     async def delete(self, right: SearchRightModel) -> str:
         """Удаление права в системе"""
@@ -57,13 +56,14 @@ class RightsManagementService:
             right_ = (await self.session.scalars(stmt)).one()
         except NoResultFound:
             raise ResponseError(f"Право '{right.name or right.id}' не существует")
-        else:
-            if right_.name == admin_config.right_name:
-                raise ResponseError("Нельзя удалять право Администратора!")
-            await self.session.delete(right_)
-            await self.session.commit()
-            await self.redis.delete_right(right_.id, right_.name)
-            return f"Право '{right.name or right.id}' удалено"
+
+        if right_.name == admin_config.right_name:
+            raise ResponseError("Нельзя удалять право Администратора!")
+
+        await self.session.delete(right_)
+        await self.session.commit()
+        await self.redis.delete_right(right_.id, right_.name)
+        return f"Право '{right.name or right.id}' удалено"
 
     async def update(self, right_old: SearchRightModel, right_new: ChangeRightModel) -> RightModel:
         """Изменение свойств права в системе"""
@@ -86,12 +86,12 @@ class RightsManagementService:
             raise ResponseError(f"Право '{right_old.name or right_old.id}' не существует")
         except IntegrityError:
             raise ResponseError(f"Право с названием '{right_new.name}' уже существует")
-        else:
-            await self.session.commit()
-            right = RightModel(id=right_.id, name=right_.name, description=right_.description)
-            if right_new.name != right_old.name:
-                await self.redis.update_right(right)
-            return right
+
+        await self.session.commit()
+        right = RightModel(id=right_.id, name=right_.name, description=right_.description)
+        if right_new.name != right_old.name:
+            await self.redis.update_right(right)
+        return right
 
     async def get_all(self) -> RightsModel:
         """Выгрузка всех прав"""
