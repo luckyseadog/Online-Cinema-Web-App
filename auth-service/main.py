@@ -104,4 +104,4 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONRe
 
 app.include_router(auth.router, prefix="/auth/v1/auth")
 app.include_router(access_control.router, prefix="/auth/v1/access_control", dependencies=[Depends(get_jwt_user_global)])
-app.include_router(oauth.router, prefix="/auth/v1/oauth")
+app.include_router(oauth.router, prefix="/auth/v1/oauth", tags=['OAuth'])
