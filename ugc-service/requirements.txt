@@ -1,0 +1,15 @@
+aiohttp==3.10.5
+alembic==1.13.2
+alembic-postgresql-enum==0.4.0
+fastapi==0.111.0
+redis==5.0.4
+pydantic_settings==2.3.4
+backoff==2.2.1
+sqlalchemy[asyncio]==2.0.32
+psycopg[binary]==3.1.19
+alembic==1.13.2
+async_fastapi_jwt_auth==0.6.6
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-instrumentation-fastapi==0.48b0
+opentelemetry-exporter-jaeger==1.21.0
