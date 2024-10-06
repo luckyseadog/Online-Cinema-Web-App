@@ -6,6 +6,9 @@ from configs.settings import settings
 from models import Event
 
 
+logger = settings.logger
+
+
 class ClickhouseLoader:
     def __init__(self) -> None:
         self.get_client_clickhouse()
@@ -28,6 +31,6 @@ class ClickhouseLoader:
         try:
             result = self.client.insert(table=settings.ch_table, data=data, column_names=Event.model_fields.keys())
         except Error:
-            settings.logger.exception(f"Ошибка при загрузке пакета в clickhouse {data}")
+            logger.exception(f"Ошибка при загрузке пакета в clickhouse {data}")
         else:
-            settings.logger.info(f"Загруженная партия {event_batch} с результатом {result.summary}")
+            logger.info(f"Загруженная партия {event_batch} с результатом {result.summary}")

@@ -14,9 +14,11 @@ from logger import setup_logger
 if TYPE_CHECKING:
     from models import Event
 
+logger = settings.logger
+
 
 async def main() -> None:
-    settings.logger.info("Старт etl")
+    logger.info("Старт etl")
     loader = ClickhouseLoader()
     batches: list[Event] = []
     async with KafkaExtractor() as extractor:
@@ -29,7 +31,7 @@ async def main() -> None:
 
         loader.load_batch(batches)
 
-    settings.logger.info("Etl завершен")
+    logger.info("Etl завершен")
 
 
 if __name__ == "__main__":
@@ -37,7 +39,7 @@ if __name__ == "__main__":
     init_clickhouse()
     scheduler = AsyncIOScheduler()
     scheduler.add_job(main, "interval", seconds=settings.run_interval_seconds, max_instances=1)
-    settings.logger.info("Запуск планировщика")
+    logger.info("Запуск планировщика")
     scheduler.start()
 
     with suppress(KeyboardInterrupt, SystemExit):

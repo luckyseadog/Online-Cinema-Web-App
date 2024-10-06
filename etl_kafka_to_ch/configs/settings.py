@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     kafka_servers: list[str] | str = Field(
         default=["kafka-0:9092", "kafka-1:9092", "kafka-2:9092"], alias="KAFKA_SERVERS"
     )
-    kafka_topic: str = Field(default="message", alias="KAFKA_TOPIC")
+    kafka_topic: str = Field(default="clickhouse", alias="KAFKA_TOPIC")
     kafka_group_id: str = Field(default="cool_id", alias="KAFKA_GROUP_ID")
 
     ch_host: str = Field(default="clickhouse-node1", alias="CH_HOST")
