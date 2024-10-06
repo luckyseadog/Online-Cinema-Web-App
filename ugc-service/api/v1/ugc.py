@@ -7,7 +7,10 @@ from api.v1.models import RatingModel, ReviewModel, FavouriteModel
 from services.ugc_service import UGCService, get_ugc_service
 
 router = APIRouter()
-ugc_tags_metadata = {"name": "Пользовательский контент", "description": "Получение информации по пользовательскому контенту"}
+ugc_tags_metadata = {
+    "name": "Пользовательский контент",
+    "description": "Получение информации по пользовательскому контенту",
+}
 
 
 @router.get(
