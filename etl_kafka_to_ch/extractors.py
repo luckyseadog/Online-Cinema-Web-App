@@ -22,6 +22,7 @@ class KafkaExtractor:
     def get_consumer(self) -> None:
         self.consumer = AIOKafkaConsumer(
             settings.kafka_topic,
+            group_id=settings.kafka_group_id,
             bootstrap_servers=settings.kafka_servers,
             auto_offset_reset="earliest",
             enable_auto_commit=False,

@@ -1,7 +1,8 @@
 from typing import Literal
 from uuid import UUID
+from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Event(BaseModel):
@@ -17,10 +18,16 @@ class Event(BaseModel):
     )
     feedback: str | None = Field(description="String NULL")
     rating: int | None = Field(description="int NULL")
-    filter_id_genre: list[str] | None = Field(description="Array(String) NULL")
+    filter_id_genre: list[str] | None = Field(description="Array(String)")
     filter_rating: int | None = Field(description="int NULL")
-    filter_id_actor: list[str] | None = Field(description="Array(String) NULL")
+    filter_id_actor: list[str] | None = Field(description="Array(String)")
     film_curr_time: int | None = Field(description="int NULL")
     film_abs_time: int | None = Field(description="int NULL")
     url: str | None = Field(description="String NULL")
     spent_time: int | None = Field(description="int NULL")
+    timestamp: datetime = Field(description="DateTime", default_factory=datetime.now)
+
+    @field_validator("filter_id_genre", "filter_id_actor")
+    @classmethod
+    def validate_x(cls, v: list[str] | None) -> list[str]:
+        return [] if v is None else v
