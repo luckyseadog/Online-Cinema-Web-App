@@ -4,3 +4,4 @@ clickhouse-connect==0.7.16
 pydantic==2.8.2
 pydantic-settings==2.3.4
 backoff==2.2.1
+avro==1.12.0

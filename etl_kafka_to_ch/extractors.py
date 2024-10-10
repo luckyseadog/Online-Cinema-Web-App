@@ -1,10 +1,12 @@
-import json
+import io
 from collections.abc import AsyncIterator
 from typing import Self
 
 import backoff
 from aiokafka import AIOKafkaConsumer
 from aiokafka.errors import KafkaConnectionError, KafkaError
+from avro.datafile import DataFileReader
+from avro.io import DatumReader
 from pydantic import ValidationError
 
 from configs.settings import settings
@@ -26,7 +28,7 @@ class KafkaExtractor:
             bootstrap_servers=settings.kafka_servers,
             auto_offset_reset="earliest",
             enable_auto_commit=False,
-            value_deserializer=lambda m: json.loads(m.decode("utf-8")),
+            value_deserializer=lambda m: DataFileReader(io.BytesIO(m), DatumReader()),
         )
 
     @backoff.on_exception(backoff.expo, KafkaConnectionError, max_tries=10, max_time=10)
@@ -54,11 +56,14 @@ class KafkaExtractor:
             for topic_partition, messages in data.items():
                 logger.info(f"Получил {len(messages)} сообщений от kafka,  тема {topic_partition.topic}")
                 for message in messages:
-                    value = message.value
-                    logger.info(f"Сообщение: {value}")
-                    try:
-                        event = Event.model_validate(value)
-                    except ValidationError:
-                        logger.exception(f"Ошибка при анализе данных события {data}")
-                    else:
-                        yield event
+                    if (values := message.value) is None:
+                        continue
+
+                    for value in values:
+                        logger.info(f"Сообщение: {value}")
+                        try:
+                            event = Event.model_validate(value)
+                        except ValidationError:
+                            logger.exception(f"Ошибка при анализе данных события {data}")
+                        else:
+                            yield event
