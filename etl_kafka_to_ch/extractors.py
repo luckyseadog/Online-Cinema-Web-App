@@ -20,6 +20,9 @@ class KafkaExtractor:
     def __init__(self) -> None:
         self.get_consumer()
 
+    def _avro_deserializer(self, data: bytes) -> DataFileReader:
+        return DataFileReader(io.BytesIO(data), DatumReader())
+
     @backoff.on_exception(backoff.expo, KafkaConnectionError, max_tries=10, max_time=10)
     def get_consumer(self) -> None:
         self.consumer = AIOKafkaConsumer(
@@ -28,7 +31,7 @@ class KafkaExtractor:
             bootstrap_servers=settings.kafka_servers,
             auto_offset_reset="earliest",
             enable_auto_commit=False,
-            value_deserializer=lambda m: DataFileReader(io.BytesIO(m), DatumReader()),
+            value_deserializer=self._avro_deserializer,
         )
 
     @backoff.on_exception(backoff.expo, KafkaConnectionError, max_tries=10, max_time=10)
