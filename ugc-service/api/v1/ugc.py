@@ -3,8 +3,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Request, status
 
-from api.v1.models import RatingModel, ReviewModel, FavouriteModel
+from api.v1.models import FavouriteModel, RatingModel, ReviewModel
 from services.ugc_service import UGCService, get_ugc_service
+
 
 router = APIRouter()
 ugc_tags_metadata = {

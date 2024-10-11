@@ -14,9 +14,9 @@ from opentelemetry.trace.propagation import get_current_span
 from api.v1 import ugc
 from core.config import JWTConfig, configs, jwt_config
 from core.jaeger_configure import configure_tracer
-from services import redis_service
 from jwt_auth_helpers import get_jwt_user_global
 from middleware.token_bucket_middleware import TokenBucketMiddleware
+from services import redis_service
 from services.token_bucket_service import get_token_bucket
 
 

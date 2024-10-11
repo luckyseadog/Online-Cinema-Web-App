@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import UUID, DateTime, String, Float
+from sqlalchemy import UUID, DateTime, Float, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
 

@@ -7,8 +7,8 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
+from db.models import Favourite, Rating, Review
 from db.postgres_db import get_session
-from db.models import Rating, Review, Favourite
 
 
 class UGCService:
@@ -44,7 +44,5 @@ class UGCService:
 
 
 @lru_cache
-def get_ugc_service(
-    postgres: Annotated[AsyncSession, Depends(get_session)],
-) -> UGCService:
+def get_ugc_service(postgres: Annotated[AsyncSession, Depends(get_session)]) -> UGCService:
     return UGCService(postgres)

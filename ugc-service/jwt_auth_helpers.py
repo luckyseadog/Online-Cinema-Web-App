@@ -39,9 +39,7 @@ class JWTBearer(HTTPBearer):
         super().__init__(auto_error=auto_error)
 
     async def __call__(
-        self,
-        request: Request,
-        redis_service: Annotated[RedisService, Depends(get_redis_service)],
+        self, request: Request, redis_service: Annotated[RedisService, Depends(get_redis_service)]
     ) -> JWTUserModel:
         authorize = AuthJWT(req=request)
         # Достаём Access Token и проверяем его на коректность
