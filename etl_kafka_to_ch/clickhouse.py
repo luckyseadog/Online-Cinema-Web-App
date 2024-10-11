@@ -11,11 +11,7 @@ logger = settings.logger
 
 @backoff.on_exception(backoff.expo, OperationalError, max_tries=10, max_time=10)
 def init_clickhouse() -> None:
-    client = get_client(
-        host=settings.ch_host,
-        username=settings.ch_user,
-        password=settings.ch_password,
-    )
+    client = get_client(host=settings.ch_host, username=settings.ch_user, password=settings.ch_password)
     logger.info("Инициализация clickhouse")
 
     result = client.command(f"CREATE DATABASE IF NOT EXISTS {settings.ch_database} ON CLUSTER company_cluster")
