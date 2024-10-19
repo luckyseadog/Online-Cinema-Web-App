@@ -51,6 +51,12 @@ class UGCStorageService:
         if not self.mongo_db.favourites.find_one({'user_id': user_id, 'film_id': film_id}):
             self.mongo_db.favourites.insert_one({'user_id': user_id, 'film_id': film_id})
 
+    def del_favourite(self, user_id: UUID, film_id: UUID) -> None:
+        user_id = user_id.__str__()
+        film_id = film_id.__str__()
+        if self.mongo_db.favourites.find_one({'user_id': user_id, 'film_id': film_id}):
+            self.mongo_db.favourites.delete_one({'user_id': user_id, 'film_id': film_id})
+
 
 @lru_cache
 def get_ugc_storage_service() -> UGCStorageService:
