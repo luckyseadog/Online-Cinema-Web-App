@@ -10,6 +10,8 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.v1 import ugc
 from core.config import JWTConfig, configs, jwt_config
@@ -18,6 +20,7 @@ from jwt_auth_helpers import get_jwt_user_global
 from middleware.token_bucket_middleware import TokenBucketMiddleware
 from services import redis_service
 from services.token_bucket_service import get_token_bucket
+from db.models import Rating, Review, Favourite
 
 
 @AuthJWT.load_config
@@ -32,6 +35,9 @@ tags_metadata = [
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
+    client = AsyncIOMotorClient(configs.mongo_host, configs.mongo_port)
+    await init_beanie(database=getattr(client, configs.mongo_name), document_models=[Rating, Review, Favourite])
+
     background_tasks: set[asyncio.Task[NoReturn]] = set()
     token_bucket = get_token_bucket()
     task = asyncio.create_task(token_bucket.start_fill_bucket_process())
@@ -40,13 +46,14 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
 
     yield
 
+    client.close()
     task.cancel()
     await redis_service.redis.close()
 
 
 app = FastAPI(
     title=configs.project_name,
-    description="Информация о пользовательскому контенту",
+    description="Информация по пользовательскому контенту",
     version="1.0.0",
     docs_url="/api/openapi",
     openapi_url="/api/openapi.json",

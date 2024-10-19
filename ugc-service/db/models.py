@@ -1,47 +1,31 @@
-import uuid
+from typing import Annotated
+from uuid import UUID, uuid4
 
-from sqlalchemy import UUID, DateTime, Float, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.sql import func
-
-
-class Base(DeclarativeBase):
-    pass
+from beanie import Document, Indexed
+from pydantic import Field
 
 
-class Rating(Base):
-    __tablename__ = "rating"
+class Rating(Document):
+    user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    film_id: UUID = Field(default_factory=uuid4)
+    rating: float
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    film_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    rating: Mapped[float] = mapped_column(Float, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
-
-    def __repr__(self) -> str:
-        return f"Ratings(id={self.id!r}, rating={self.rating!r})"
+    class Settings:
+        name = "ratings"
 
 
-class Review(Base):
-    __tablename__ = "review"
+class Review(Document):
+    user_id: UUID = Field(default_factory=uuid4)
+    film_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    review: str
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    film_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    review: Mapped[str] = mapped_column(String(5000), nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
-
-    def __repr__(self) -> str:
-        return f"Reviews(id={self.id!r}, review={self.review!r})"
+    class Settings:
+        name = "reviews"
 
 
-class Favourite(Base):
-    __tablename__ = "favourite"
+class Favourite(Document):
+    user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    film_id: UUID = Field(default_factory=uuid4)
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    film_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
-
-    def __repr__(self) -> str:
-        return f"Favourite(id={self.id!r})"
+    class Settings:
+        name = "favourites"
