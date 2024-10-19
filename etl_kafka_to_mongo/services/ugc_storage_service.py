@@ -1,12 +1,13 @@
 from functools import lru_cache
 from uuid import UUID
 
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
+from pymongo.synchronous.database import Database
 
-from db.postgres_db import get_session_admin, get_session_ugc
-from models.alchemy_model import Favourite, FilmWork, Rating, Review
+from db.postgres_db import get_session_admin
+from db.mongo_db import get_db_ugc
+from models.alchemy_model import FilmWork
 
 
 def update_rating(old_rating: float, new_rating: float) -> float:
@@ -14,20 +15,17 @@ def update_rating(old_rating: float, new_rating: float) -> float:
 
 
 class UGCStorageService:
-    def __init__(self, session: Session, session_admin: Session) -> None:
-        self.session = session
+    def __init__(self, mongo_db: Database, session_admin: Session) -> None:
+        self.mongo_db = mongo_db
         self.session_admin = session_admin
 
     def _add_rating(self, user_id: UUID, film_id: UUID, rating: float) -> None:
-        stmt = select(Rating).where(Rating.user_id == user_id, Rating.film_id == film_id)
-        try:
-            rating_model = (self.session.scalars(stmt)).one()
-            rating_model.rating = rating
-            self.session.commit()
-        except NoResultFound:
-            rating_model = Rating(user_id=user_id, rating=rating, film_id=film_id)
-            self.session.add(rating_model)
-            self.session.commit()
+        user_id = user_id.__str__()
+        film_id = film_id.__str__()
+        if existing_document := self.mongo_db.ratings.find_one({'user_id': user_id, 'film_id': film_id}):
+            self.mongo_db.ratings.update_one({'_id': existing_document['_id']}, {'$set': {'rating': rating}})
+        else:
+            self.mongo_db.ratings.insert_one({'user_id': user_id, 'film_id': film_id, 'rating': rating})
 
     def _update_film_rating(self, film_id: UUID, rating: float) -> None:
         stmt = select(FilmWork).where(FilmWork.id == film_id)
@@ -40,28 +38,22 @@ class UGCStorageService:
         self._update_film_rating(film_id, rating)
 
     def add_review(self, user_id: UUID, film_id: UUID, review: str) -> None:
-        stmt = select(Review).where(Review.user_id == user_id)
-        try:
-            review_model = (self.session.scalars(stmt)).one()
-            review_model.review = review
-            self.session.commit()
-        except NoResultFound:
-            review_ = Review(user_id=user_id, review=review, film_id=film_id)
-            self.session.add(review_)
-            self.session.commit()
+        user_id = user_id.__str__()
+        film_id = film_id.__str__()
+        if existing_document := self.mongo_db.reviews.find_one({'user_id': user_id, 'film_id': film_id}):
+            self.mongo_db.reviews.update_one({'_id': existing_document['_id']}, {'$set': {'review': review}})
+        else:
+            self.mongo_db.reviews.insert_one({'user_id': user_id, 'film_id': film_id, 'review': review})
 
     def add_favourite(self, user_id: UUID, film_id: UUID) -> None:
-        stmt = select(Favourite).where(Favourite.user_id == user_id)
-        try:
-            (self.session.scalars(stmt)).one()
-        except NoResultFound:
-            favourite_ = Favourite(user_id=user_id, film_id=film_id)
-            self.session.add(favourite_)
-            self.session.commit()
+        user_id = user_id.__str__()
+        film_id = film_id.__str__()
+        if not self.mongo_db.favourites.find_one({'user_id': user_id, 'film_id': film_id}):
+            self.mongo_db.favourites.insert_one({'user_id': user_id, 'film_id': film_id})
 
 
 @lru_cache
 def get_ugc_storage_service() -> UGCStorageService:
-    session = next(get_session_ugc())
+    session = get_db_ugc()
     session_admin = next(get_session_admin())
     return UGCStorageService(session, session_admin)

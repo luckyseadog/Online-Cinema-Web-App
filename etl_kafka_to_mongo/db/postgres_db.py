@@ -8,14 +8,7 @@ from sqlalchemy.orm import Session
 from core.config import configs
 
 
-engine_ugc = create_engine(configs.postgres_dsn_ugc)
 engine_admin = create_engine(configs.postgres_dsn_admin)
-
-
-@lru_cache
-def get_session_ugc() -> Generator[Session, Any, None]:
-    with Session(engine_ugc) as session_ugc:
-        yield session_ugc
 
 
 @lru_cache

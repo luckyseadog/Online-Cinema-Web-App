@@ -49,7 +49,7 @@ def main() -> NoReturn:
                     film_id = UUID(value["film_id"])
                     match action:
                         case Action.REVIEW_FILM.value:
-                            ugc_storage_service.add_review(user_id, film_id, action)
+                            ugc_storage_service.add_review(user_id, film_id, value["review"])
                         case Action.RATE_FILM.value:
                             ugc_storage_service.add_rating(user_id, film_id, value["rating"])
                         case Action.FAVOURITE_FILM.value:
