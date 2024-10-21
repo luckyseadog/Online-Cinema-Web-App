@@ -13,7 +13,7 @@ from opentelemetry.trace.propagation import get_current_span
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from api.v1 import ugc
+from api.v1 import favourites, ratings, reviews
 from core.config import JWTConfig, configs, jwt_config
 from core.jaeger_configure import configure_tracer
 from jwt_auth_helpers import get_jwt_user_global
@@ -29,7 +29,9 @@ def get_config() -> JWTConfig:
 
 
 tags_metadata = [
-    ugc.ugc_tags_metadata,
+    favourites.favourites_tags_metadata,
+    ratings.ratings_tags_metadata,
+    reviews.reviews_tags_metadata,
 ]
 
 
@@ -91,4 +93,6 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONRe
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
-app.include_router(ugc.router, prefix="/api/v1/ugc", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(favourites.router, prefix="/api/v1/favourites", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(ratings.router, prefix="/api/v1/ratings", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(reviews.router, prefix="/api/v1/reviews", dependencies=[Depends(get_jwt_user_global)])

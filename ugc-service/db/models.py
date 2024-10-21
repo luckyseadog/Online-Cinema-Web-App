@@ -6,6 +6,7 @@ from pydantic import Field
 
 
 class Rating(Document):
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     film_id: UUID = Field(default_factory=uuid4)
     rating: float
@@ -15,6 +16,7 @@ class Rating(Document):
 
 
 class Review(Document):
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     user_id: UUID = Field(default_factory=uuid4)
     film_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     review: str
@@ -24,6 +26,7 @@ class Review(Document):
 
 
 class Favourite(Document):
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     film_id: UUID = Field(default_factory=uuid4)
 

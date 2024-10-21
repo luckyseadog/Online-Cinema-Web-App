@@ -1,4 +1,4 @@
-from .auth import JWTUserModel as JWTUserModel
-from .ugc import FavouriteModel as FavouriteModel
-from .ugc import RatingModel as RatingModel
-from .ugc import ReviewModel as ReviewModel
+from .auth import JWTUserModel
+from .favourites import FavouriteModel, PostFavouriteModel
+from .ratings import RatingModel, PostRatingModel, PatchRatingModel
+from .reviews import ReviewModel, PostReviewModel, PatchReviewModel
