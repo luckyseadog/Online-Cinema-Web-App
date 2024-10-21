@@ -1,5 +1,5 @@
 from functools import lru_cache
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
@@ -20,12 +20,10 @@ class UGCStorageService:
         self.session_admin = session_admin
 
     def _add_rating(self, user_id: UUID, film_id: UUID, rating: float) -> None:
-        user_id = user_id.__str__()
-        film_id = film_id.__str__()
         if existing_document := self.mongo_db.ratings.find_one({'user_id': user_id, 'film_id': film_id}):
             self.mongo_db.ratings.update_one({'_id': existing_document['_id']}, {'$set': {'rating': rating}})
         else:
-            self.mongo_db.ratings.insert_one({'user_id': user_id, 'film_id': film_id, 'rating': rating})
+            self.mongo_db.ratings.insert_one({'_id': uuid4(), 'user_id': user_id, 'film_id': film_id, 'rating': rating})
 
     def _update_film_rating(self, film_id: UUID, rating: float) -> None:
         stmt = select(FilmWork).where(FilmWork.id == film_id)
@@ -38,22 +36,16 @@ class UGCStorageService:
         self._update_film_rating(film_id, rating)
 
     def add_review(self, user_id: UUID, film_id: UUID, review: str) -> None:
-        user_id = user_id.__str__()
-        film_id = film_id.__str__()
         if existing_document := self.mongo_db.reviews.find_one({'user_id': user_id, 'film_id': film_id}):
             self.mongo_db.reviews.update_one({'_id': existing_document['_id']}, {'$set': {'review': review}})
         else:
-            self.mongo_db.reviews.insert_one({'user_id': user_id, 'film_id': film_id, 'review': review})
+            self.mongo_db.reviews.insert_one({'_id': uuid4(), 'user_id': user_id, 'film_id': film_id, 'review': review})
 
     def add_favourite(self, user_id: UUID, film_id: UUID) -> None:
-        user_id = user_id.__str__()
-        film_id = film_id.__str__()
         if not self.mongo_db.favourites.find_one({'user_id': user_id, 'film_id': film_id}):
-            self.mongo_db.favourites.insert_one({'user_id': user_id, 'film_id': film_id})
+            self.mongo_db.favourites.insert_one({'_id': uuid4(), 'user_id': user_id, 'film_id': film_id})
 
     def del_favourite(self, user_id: UUID, film_id: UUID) -> None:
-        user_id = user_id.__str__()
-        film_id = film_id.__str__()
         if self.mongo_db.favourites.find_one({'user_id': user_id, 'film_id': film_id}):
             self.mongo_db.favourites.delete_one({'user_id': user_id, 'film_id': film_id})
 
