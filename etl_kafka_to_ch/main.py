@@ -2,6 +2,7 @@ from asyncio import get_event_loop
 from contextlib import suppress
 from typing import TYPE_CHECKING
 
+import sentry_sdk
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from clickhouse import init_clickhouse
@@ -15,6 +16,13 @@ if TYPE_CHECKING:
     from models import Event
 
 logger = settings.logger
+
+
+sentry_sdk.init(
+    dsn=settings.sentry_dsn,
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 
 
 async def main() -> None:

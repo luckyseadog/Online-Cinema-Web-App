@@ -30,5 +30,7 @@ class Settings(BaseSettings):
 
     logger: Logger = getLogger("etl")
 
+    sentry_dsn: str = Field(alias="SENTRY_DSN")
+
 
 settings = Settings()
