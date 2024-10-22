@@ -21,6 +21,7 @@ class Action(Enum):
     REVIEW_FILM = "review"
     RATE_FILM = "rate"
     FAVOURITE_FILM = "favourite"
+    UNFAVOURITE_FILM = "unfavourite"
 
 
 def avro_deserializer(data: bytes) -> DataFileReader:
@@ -49,11 +50,13 @@ def main() -> NoReturn:
                     film_id = UUID(value["film_id"])
                     match action:
                         case Action.REVIEW_FILM.value:
-                            ugc_storage_service.add_review(user_id, film_id, action)
+                            ugc_storage_service.add_review(user_id, film_id, value["review"])
                         case Action.RATE_FILM.value:
                             ugc_storage_service.add_rating(user_id, film_id, value["rating"])
                         case Action.FAVOURITE_FILM.value:
                             ugc_storage_service.add_favourite(user_id, film_id)
+                        case Action.UNFAVOURITE_FILM.value:
+                            ugc_storage_service.del_favourite(user_id, film_id)
                         case _:
                             raise InvalidActionError(f"No such action: {action}")
 
