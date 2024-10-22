@@ -54,12 +54,12 @@ def main() -> NoReturn:
                             ugc_storage_service.add_rating(user_id, film_id, value["rating"])
                         case Action.FAVOURITE_FILM.value:
                             ugc_storage_service.add_favourite(user_id, film_id)
-                        case _:
+                        case _:  # pyright: ignore[reportUnknownVariableType]
                             raise InvalidActionError(f"No such action: {action}")
 
         except InvalidActionError as e:
             logging.warning(f"Could not process action: {e}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logging.warning(f"Unexpected error occur: {e}")
 
 
