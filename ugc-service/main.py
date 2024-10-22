@@ -10,14 +10,17 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 
-from api.v1 import ugc
+from api.v1 import favourites, ratings, reviews
 from core.config import JWTConfig, configs, jwt_config
 from core.jaeger_configure import configure_tracer
 from jwt_auth_helpers import get_jwt_user_global
 from middleware.token_bucket_middleware import TokenBucketMiddleware
 from services import redis_service
 from services.token_bucket_service import get_token_bucket
+from db.models import Rating, Review, Favourite
 
 
 @AuthJWT.load_config
@@ -26,12 +29,17 @@ def get_config() -> JWTConfig:
 
 
 tags_metadata = [
-    ugc.ugc_tags_metadata,
+    favourites.favourites_tags_metadata,
+    ratings.ratings_tags_metadata,
+    reviews.reviews_tags_metadata,
 ]
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
+    client = AsyncIOMotorClient(configs.mongo_host, configs.mongo_port)
+    await init_beanie(database=getattr(client, configs.mongo_name), document_models=[Rating, Review, Favourite])
+
     background_tasks: set[asyncio.Task[NoReturn]] = set()
     token_bucket = get_token_bucket()
     task = asyncio.create_task(token_bucket.start_fill_bucket_process())
@@ -40,13 +48,14 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
 
     yield
 
+    client.close()
     task.cancel()
     await redis_service.redis.close()
 
 
 app = FastAPI(
     title=configs.project_name,
-    description="Информация о пользовательскому контенту",
+    description="Информация по пользовательскому контенту",
     version="1.0.0",
     docs_url="/api/openapi",
     openapi_url="/api/openapi.json",
@@ -84,4 +93,6 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONRe
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
-app.include_router(ugc.router, prefix="/api/v1/ugc", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(favourites.router, prefix="/api/v1/favourites", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(ratings.router, prefix="/api/v1/ratings", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(reviews.router, prefix="/api/v1/reviews", dependencies=[Depends(get_jwt_user_global)])
