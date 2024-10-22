@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Any
 from uuid import UUID, uuid4
 
 from pymongo.synchronous.database import Database
@@ -15,7 +16,7 @@ def update_rating(old_rating: float, new_rating: float) -> float:
 
 
 class UGCStorageService:
-    def __init__(self, mongo_db: Database, session_admin: Session) -> None:
+    def __init__(self, mongo_db: Database[Any], session_admin: Session) -> None:
         self.mongo_db = mongo_db
         self.session_admin = session_admin
 
