@@ -4,17 +4,17 @@ from pydantic import BaseModel, Field
 
 
 class RatingModel(BaseModel):
+    id: UUID = Field(description="Идентификатор рейтинга", title="Идентификатор")
     user_id: UUID = Field(description="Идентификатор юзера", title="Идентификатор")
     film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
     rating: float = Field(description="Рейтинг фильма", title="Рейтинг")
 
 
-class ReviewModel(BaseModel):
+class PostRatingModel(BaseModel):
     user_id: UUID = Field(description="Идентификатор юзера", title="Идентификатор")
     film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
-    review: str = Field(description="Обзор фильма пользователем", title="Обзор")
+    rating: int = Field(description="Рейтинг фильма", title="Рейтинг")
 
 
-class FavouriteModel(BaseModel):
-    user_id: UUID = Field(description="Идентификатор юзера", title="Идентификатор")
-    film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
+class PatchRatingModel(BaseModel):
+    rating: int = Field(description="Рейтинг фильма", title="Рейтинг")
