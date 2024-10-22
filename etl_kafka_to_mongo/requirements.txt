@@ -1,6 +1,6 @@
 sqlalchemy[asyncio]==2.0.32
 psycopg[binary]==3.1.19
-pydantic_settings==2.3.4
+pydantic_settings==2.6.0
 uvicorn==0.30.6
 avro==1.12.0
 git+https://github.com/dpkp/kafka-python.git
