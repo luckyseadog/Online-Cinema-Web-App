@@ -1,0 +1,42 @@
+{
+    // "include": [
+    //     "./",
+    // ],
+    "exclude": [
+        "**/__pycache__",
+        "**/local_settings.py",
+        "**/node_modules",
+        "typings/",
+        ".venv/"
+    ],
+    "deprecateTypingAliases": false,  // когда true ругается pylance на версию питона
+    "disableBytesTypePromotions": true,
+    "enableExperimentalFeatures": true,
+    "enableTypeIgnoreComments": false,
+    // "reportAny": false,
+    "reportIgnoreCommentWithoutRule": false,
+    "reportImplicitOverride": false,
+    "reportImplicitStringConcatenation": false,
+    "reportImportCycles": false,
+    "reportMissingImports": true,
+    "reportMissingSuperCall": false,
+    "reportMissingTypeStubs": true,
+    "reportOptionalMemberAccess": true,
+    "reportPropertyTypeMismatch": true,
+    "reportShadowedImports": true,
+    "reportUninitializedInstanceVariable": false,
+    "reportUnnecessaryComparison": true,
+    "reportUnnecessaryTypeIgnoreComment": true,
+    "reportUnreachable": true,
+    "reportUnusedCallResult": false,
+    "reportUnusedVariable": true,
+    "pythonVersion": "3.12",
+    "pythonPlatform": "Linux",
+    // "executionEnvironments": [
+    //     {
+    //         "root": "src/"
+    //     }
+    // ],
+    "stubPath": "typings/",
+    "typeCheckingMode": "strict",
+}
