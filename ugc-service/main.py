@@ -112,7 +112,7 @@ if configs.jaeger_on:
             return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
 
         get_current_span().set_attribute("http.request_id", request_id)
-        logger.info(f"Request ID: {request_id}")
+        logger.info(f"{request_id}: {request.method} {request.url} {response.status_code}")
         return response
 
 
