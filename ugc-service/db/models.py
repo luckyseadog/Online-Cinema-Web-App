@@ -1,12 +1,12 @@
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from beanie import Document, Indexed
+from beanie import Document, Indexed  # pyright: ignore[reportUnknownVariableType]
 from pydantic import Field
 
 
 class Rating(Document):
-    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)  # pyright: ignore[reportIncompatibleVariableOverride]
     user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     film_id: UUID = Field(default_factory=uuid4)
     rating: float
@@ -16,7 +16,7 @@ class Rating(Document):
 
 
 class Review(Document):
-    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)  # pyright: ignore[reportIncompatibleVariableOverride]
     user_id: UUID = Field(default_factory=uuid4)
     film_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     review: str
@@ -26,7 +26,7 @@ class Review(Document):
 
 
 class Favourite(Document):
-    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
+    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)  # pyright: ignore[reportIncompatibleVariableOverride]
     user_id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)
     film_id: UUID = Field(default_factory=uuid4)
 

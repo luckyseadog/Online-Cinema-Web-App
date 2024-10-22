@@ -8,10 +8,7 @@ from services.ugc_service import UGCService, get_ugc_service
 
 
 router = APIRouter()
-favourites_tags_metadata = {
-    "name": "Избранное",
-    "description": "Управление избранным пользователя",
-}
+favourites_tags_metadata = {"name": "Избранное", "description": "Управление избранным пользователя"}
 
 
 @router.get(
@@ -28,7 +25,7 @@ async def get_favourites(
     user_id: Annotated[UUID | None, Query(description="ID пользователя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[FavouriteModel]:
-    return await ugc_service.get_favourites(user_id, film_id)
+    return await ugc_service.get_favourites(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
@@ -43,8 +40,8 @@ async def add_to_favourites(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     favourite: Annotated[PostFavouriteModel, Body(description="Данные об избранном")],
-) -> FavouriteModel:
-    return await ugc_service.add_to_favourites(favourite)
+) -> FavouriteModel | None:
+    return await ugc_service.add_to_favourites(favourite)  # pyright: ignore[reportReturnType]
 
 
 @router.delete(

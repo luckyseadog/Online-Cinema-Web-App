@@ -28,7 +28,7 @@ async def get_reviews(
     user_id: Annotated[UUID | None, Query(description="ID пользователя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[ReviewModel]:
-    return await ugc_service.get_reviews(user_id, film_id)
+    return await ugc_service.get_reviews(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
@@ -43,8 +43,8 @@ async def add_review(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     review: Annotated[PostReviewModel, Body(description="Данные о рецензии")],
-) -> ReviewModel:
-    return await ugc_service.add_review(review)
+) -> ReviewModel | None:
+    return await ugc_service.add_review(review)  # pyright: ignore[reportReturnType]
 
 
 @router.patch(
@@ -61,7 +61,7 @@ async def update_review(
     review_id: Annotated[UUID, Path(description="ID рецензии")],
     review: Annotated[PatchReviewModel, Body(description="Данные о рецензии")],
 ) -> ReviewModel:
-    return await ugc_service.update_review(review_id, review)
+    return await ugc_service.update_review(review_id, review)  # pyright: ignore[reportReturnType]
 
 
 @router.delete(

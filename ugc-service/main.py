@@ -5,7 +5,7 @@ from typing import Any, NoReturn
 
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
-from beanie import init_beanie
+from beanie import init_beanie  # pyright: ignore[reportUnknownVariableType]
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -37,7 +37,7 @@ tags_metadata = [
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
-    client = AsyncIOMotorClient(configs.mongo_host, configs.mongo_port)
+    client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(configs.mongo_host, configs.mongo_port)
     await init_beanie(database=getattr(client, configs.mongo_name), document_models=[Rating, Review, Favourite])
 
     background_tasks: set[asyncio.Task[NoReturn]] = set()
@@ -86,6 +86,10 @@ if configs.jaeger_on:
 
         get_current_span().set_attribute("http.request_id", request_id)
         return response
+
+
+
+
 
 
 @app.exception_handler(AuthJWTException)

@@ -28,7 +28,7 @@ async def get_ratings(
     user_id: Annotated[UUID | None, Query(description="ID пользователя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[RatingModel]:
-    return await ugc_service.get_ratings(user_id, film_id)
+    return await ugc_service.get_ratings(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
@@ -43,8 +43,8 @@ async def add_rating(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     rating: Annotated[PostRatingModel, Body(description="Данные о рейтинге")],
-) -> RatingModel:
-    return await ugc_service.add_rating(rating)
+) -> RatingModel | None:
+    return await ugc_service.add_rating(rating)  # pyright: ignore[reportReturnType]
 
 
 @router.patch(
@@ -61,7 +61,7 @@ async def update_rating(
     rating_id: Annotated[UUID, Path(description="ID рейтинга")],
     rating: Annotated[PatchRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel:
-    return await ugc_service.update_rating(rating_id, rating)
+    return await ugc_service.update_rating(rating_id, rating)  # pyright: ignore[reportReturnType]
 
 
 @router.delete(
