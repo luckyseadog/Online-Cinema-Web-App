@@ -28,7 +28,10 @@ async def get_ratings(
     user_id: Annotated[UUID | None, Query(description="ID пользолвателя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[RatingModel]:
-    return await ugc_service.get_ratings(user_id, film_id)
+    return [
+        RatingModel(user_id=obj.user_id, film_id=obj.film_id, rating=obj.rating)
+        for obj in await ugc_service.get_ratings(user_id, film_id)
+    ]
 
 
 @router.get(
@@ -45,7 +48,10 @@ async def get_reviews(
     user_id: Annotated[UUID | None, Query(description="ID пользолвателя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[ReviewModel]:
-    return await ugc_service.get_reviews(user_id, film_id)
+    return [
+        ReviewModel(user_id=obj.user_id, film_id=obj.film_id, review=obj.review)
+        for obj in await ugc_service.get_reviews(user_id, film_id)
+    ]
 
 
 @router.get(
@@ -62,4 +68,7 @@ async def get_favourites(
     user_id: Annotated[UUID | None, Query(description="ID пользолвателя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[FavouriteModel]:
-    return await ugc_service.get_favourites(user_id, film_id)
+    return [
+        FavouriteModel(user_id=obj.user_id, film_id=obj.film_id)
+        for obj in await ugc_service.get_favourites(user_id, film_id)
+    ]

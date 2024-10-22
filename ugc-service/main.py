@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any, NoReturn
 
-from async_fastapi_jwt_auth import AuthJWT
+from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
@@ -57,7 +57,7 @@ app = FastAPI(
 )
 
 
-app.add_middleware(TokenBucketMiddleware)
+app.add_middleware(TokenBucketMiddleware)  # pyright: ignore[reportCallIssue, reportArgumentType]
 
 
 if configs.jaeger_on:
