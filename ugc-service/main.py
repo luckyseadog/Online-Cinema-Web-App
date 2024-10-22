@@ -5,22 +5,22 @@ from typing import Any, NoReturn
 
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
+from beanie import init_beanie
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
-from beanie import init_beanie
-from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.v1 import favourites, ratings, reviews
 from core.config import JWTConfig, configs, jwt_config
 from core.jaeger_configure import configure_tracer
+from db.models import Favourite, Rating, Review
 from jwt_auth_helpers import get_jwt_user_global
 from middleware.token_bucket_middleware import TokenBucketMiddleware
 from services import redis_service
 from services.token_bucket_service import get_token_bucket
-from db.models import Rating, Review, Favourite
 
 
 @AuthJWT.load_config

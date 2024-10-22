@@ -1,9 +1,9 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, Body, Path, Request, status
+from fastapi import APIRouter, Body, Depends, Path, Query, Request, status
 
-from api.v1.models import RatingModel, PostRatingModel, PatchRatingModel
+from api.v1.models import PatchRatingModel, PostRatingModel, RatingModel
 from services.ugc_service import UGCService, get_ugc_service
 
 
@@ -42,7 +42,7 @@ async def get_ratings(
 async def add_rating(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    rating: Annotated[PostRatingModel, Body(description='Данные о рейтинге')]
+    rating: Annotated[PostRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel:
     return await ugc_service.add_rating(rating)
 
@@ -59,7 +59,7 @@ async def update_rating(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     rating_id: Annotated[UUID, Path(description="ID рейтинга")],
-    rating: Annotated[PatchRatingModel, Body(description='Данные о рейтинге')]
+    rating: Annotated[PatchRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel:
     return await ugc_service.update_rating(rating_id, rating)
 
@@ -75,6 +75,6 @@ async def update_rating(
 async def delete_rating(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    rating_id: Annotated[UUID, Path(description="ID рейтинга")]
+    rating_id: Annotated[UUID, Path(description="ID рейтинга")],
 ) -> None:
     return await ugc_service.delete_rating(rating_id)

@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, Path, Body, Request, status
+from fastapi import APIRouter, Body, Depends, Path, Query, Request, status
 
 from api.v1.models import FavouriteModel, PostFavouriteModel
 from services.ugc_service import UGCService, get_ugc_service
@@ -42,7 +42,7 @@ async def get_favourites(
 async def add_to_favourites(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    favourite: Annotated[PostFavouriteModel, Body(description="Данные об избранном")]
+    favourite: Annotated[PostFavouriteModel, Body(description="Данные об избранном")],
 ) -> FavouriteModel:
     return await ugc_service.add_to_favourites(favourite)
 
@@ -58,6 +58,6 @@ async def add_to_favourites(
 async def remove_from_favourites(
     request: Request,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    favourite_id: Annotated[UUID, Path(description="ID избранного")]
+    favourite_id: Annotated[UUID, Path(description="ID избранного")],
 ) -> None:
     return await ugc_service.remove_from_favourites(favourite_id)

@@ -2,19 +2,20 @@ from collections.abc import Sequence
 from functools import lru_cache
 from uuid import UUID
 
-from db.models import Favourite, Rating, Review
 from api.v1.models import PostFavouriteModel, PostRatingModel, PostReviewModel
+from db.models import Favourite, Rating, Review
 
 
 class UGCService:
     async def get_favourites(self, user_id: UUID | None, film_id: UUID | None) -> Sequence[Favourite]:
         return await Favourite.find_many(
-            Favourite.user_id == user_id if user_id else {},
-            Favourite.film_id == film_id if film_id else {}
+            Favourite.user_id == user_id if user_id else {}, Favourite.film_id == film_id if film_id else {}
         ).to_list()
 
     async def add_to_favourites(self, favourite: PostFavouriteModel) -> Favourite:
-        if favourite_found := await Favourite.find_one(Favourite.user_id == favourite.user_id, Favourite.film_id == favourite.film_id):
+        if favourite_found := await Favourite.find_one(
+            Favourite.user_id == favourite.user_id, Favourite.film_id == favourite.film_id
+        ):
             return favourite_found
         else:
             return await Favourite.insert_one(Favourite.model_validate(favourite.model_dump()))
@@ -24,8 +25,7 @@ class UGCService:
 
     async def get_ratings(self, user_id: UUID | None, film_id: UUID | None) -> Sequence[Rating]:
         return await Rating.find_many(
-            Rating.user_id == user_id if user_id else {},
-            Rating.film_id == film_id if film_id else {}
+            Rating.user_id == user_id if user_id else {}, Rating.film_id == film_id if film_id else {}
         ).to_list()
 
     async def add_rating(self, rating: PostRatingModel) -> Rating:
@@ -50,8 +50,7 @@ class UGCService:
 
     async def get_reviews(self, user_id: UUID | None, film_id: UUID | None) -> Sequence[Review]:
         return await Review.find_many(
-            Review.user_id == user_id if user_id else {},
-            Review.film_id == film_id if film_id else {}
+            Review.user_id == user_id if user_id else {}, Review.film_id == film_id if film_id else {}
         ).to_list()
 
     async def add_review(self, review: PostReviewModel) -> Review:
