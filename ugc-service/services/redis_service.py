@@ -1,8 +1,8 @@
 import builtins
 import hashlib
-import pickle
+import pickle  # noqa: S403
 from functools import lru_cache
-from typing import Any, cast
+from typing import Any
 from uuid import UUID
 
 import backoff
@@ -25,15 +25,15 @@ class RedisService:
         if (data := await self.redis.get(f"{prefix_general}_{prefix_local}:{key}")) is None:  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
             return None
 
-        result = pickle.loads(data)[0]  # pyright: ignore[reportUnknownArgumentType]
+        result = pickle.loads(data)[0]  # pyright: ignore[reportUnknownArgumentType]  # noqa: S301
         return DEFAULT_REDIS if result is None else result
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
     async def _check_token(self, user_id: UUID, token_type: str, token: str) -> bool:
         """Проверяет наличие в Redis записи с ключем в формате '{user_id}:{token_type}:{token_hash}'"""
         token_hash = self._compute_hash(token)
-        token_value = await self.redis.get(f"{user_id}:{token_type}:{token_hash}")
-        return True if token_value is not None else False
+        token_value = await self.redis.get(f"{user_id}:{token_type}:{token_hash}")  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+        return token_value is not None
 
     async def check_banned_access(self, user_id: UUID, token: str) -> bool:
         """Проверяет наличие в Redis записи с ключем в формате '{user_id}:access:{token_hash}'"""
@@ -42,16 +42,14 @@ class RedisService:
     @backoff.on_exception(backoff.expo, RedisConnectionError)
     async def get_user_rights(self, user_id: UUID) -> builtins.set[UUID]:
         """Возвращает все права пользователя из Redis записи с ключем в формате '{user_id}:rights'"""
-        rights_bytes = await self.redis.smembers(f"{user_id}:rights")
-        rights = {pickle.loads(right) for right in rights_bytes}
-        return rights
+        rights_bytes: list[bytes] = await self.redis.smembers(f"{user_id}:rights")  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues, reportUnknownMemberType]
+        return {pickle.loads(right) for right in rights_bytes}  # noqa: S301
 
     @backoff.on_exception(backoff.expo, RedisConnectionError)
     async def get_all_rights(self) -> builtins.set[tuple[UUID, str]]:
         """Возвращает все права из Redis записи с ключем 'rights'"""
-        rights_bytes = await self.redis.smembers("rights")
-        rights = {pickle.loads(right) for right in rights_bytes}
-        return rights
+        rights_bytes: list[bytes] = await self.redis.smembers("rights")  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues, reportUnknownMemberType]
+        return {pickle.loads(right) for right in rights_bytes}  # noqa: S301
 
     def _compute_hash(self, data: str) -> str:
         data_bytes = data.encode("utf-8")
@@ -61,4 +59,4 @@ class RedisService:
 
 @lru_cache
 def get_redis_service() -> RedisService:
-    return RedisService(cast(Redis, redis))
+    return RedisService(redis)

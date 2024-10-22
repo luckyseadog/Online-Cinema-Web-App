@@ -4,6 +4,7 @@ include = [
     "*.py",
     "ruff.toml",
 ]
+exclude = ["**/typings/", "**/.venv/", "**/tests/", "**/alembic/"]
 
 [lint]
 select = ["ALL"]
@@ -36,12 +37,15 @@ ignore = [
     "D415",    # First line should end with a period, question mark, or exclamation point
     "DJ001",   # Avoid using `null=True` on string-based fields such as CharField
     "DJ012",   # Order of model's inner classes, methods, and fields does not follow the Django Style Guide: field declaration should come before `Meta` class
+    "DOC201",  # `return` is not documented in docstring
+    "DOC501",  # Raised exception `ImportError` missing from docstring
     "DTZ004",  # The use of `datetime.datetime.utcfromtimestamp()` is not allowed,
     "DTZ005",  # The use of `datetime.datetime.now()` without `tz` argument is not allowed
     "DTZ006",  # The use of `datetime.datetime.fromtimestamp()` without `tz` argument is not allowed
     "DTZ007",  # The use of `datetime.datetime.strptime()` without %z
     "DTZ011",  # The use of `datetime.date.today()` is not allowed
     "EM101",  # Exception must not use a string literal, assign to variable first
+    "EM102",  # Exception must not use an f-string literal, assign to variable first
     "FBT001",  # Boolean-typed positional argument in function definition
     "FBT002",  # Boolean default positional argument in function definition
     "FBT003",  #  Boolean positional value in function call
@@ -81,6 +85,7 @@ ignore = [
     "TD002",   # Missing author in TODO
     "TD003",   # Missing issue link on the line following this TODO
     "TRY003",  # Avoid specifying long messages outside the exception 
+    "TRY301",  # Abstract `raise` to an inner function
     "TRY400",  # Use `logging.exception` instead of `logging.error`
 ]
 extend-safe-fixes = [
@@ -165,5 +170,5 @@ max-args = 17            # PLR0913
 max-branches = 12        # PLR0912
 max-positional-args = 24 #  PLR0917
 max-public-methods = 36  # PLR0904
-max-returns = 6          # PLR0911
+max-returns = 7          # PLR0911
 max-statements = 43      # PLR0915
