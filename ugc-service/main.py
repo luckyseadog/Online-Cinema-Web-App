@@ -88,10 +88,6 @@ if configs.jaeger_on:
         return response
 
 
-
-
-
-
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONResponse:
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
