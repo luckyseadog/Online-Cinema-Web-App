@@ -18,7 +18,7 @@ class TokenBucket:
 
     async def start_fill_bucket_process(self) -> NoReturn:
         while True:
-            keys_bytes: list[bytes] = await self._redis.keys(pattern="token_bucket:*")
+            keys_bytes: list[bytes] = await self._redis.keys(pattern="token_bucket:*")  # pyright: ignore[reportUnknownMemberType]
             keys = [key.decode("utf-8") for key in keys_bytes]
             for key in keys:
                 value_bytes: bytes = await self._redis.get(key)
