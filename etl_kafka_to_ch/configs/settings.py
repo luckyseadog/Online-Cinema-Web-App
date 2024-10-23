@@ -33,4 +33,4 @@ class Settings(BaseSettings):
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
 
-settings = Settings()
+settings = Settings()  # pyright: ignore[reportCallIssue]
