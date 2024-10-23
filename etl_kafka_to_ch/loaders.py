@@ -1,5 +1,5 @@
 import backoff
-from clickhouse_connect import get_client  # pyright: ignore[reportUnknownVariableType]
+from clickhouse_connect import get_client
 from clickhouse_connect.driver.exceptions import Error, OperationalError
 
 from configs.settings import settings
@@ -33,4 +33,4 @@ class ClickhouseLoader:
         except Error:
             logger.exception(f"Ошибка при загрузке пакета в clickhouse {data}")
         else:
-            logger.info(f"Загруженная партия {event_batch} с результатом {result.summary}")  # pyright: ignore[reportUnknownMemberType]
+            logger.info(f"Загруженная партия {event_batch} с результатом {result.summary}")
