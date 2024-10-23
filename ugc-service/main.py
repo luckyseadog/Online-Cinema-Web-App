@@ -3,15 +3,21 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any, NoReturn
 
+import sentry_sdk
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from beanie import init_beanie  # pyright: ignore[reportUnknownVariableType]
 from fastapi import Depends, FastAPI, Request, status
+from fastapi.logger import logger
 from fastapi.responses import JSONResponse, ORJSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
+from sentry_sdk.integrations.starlette import StarletteIntegration
+from sentry_sdk.integrations.fastapi import FastApiIntegration
 
 from api.v1 import favourites, ratings, reviews
 from core.config import JWTConfig, configs, jwt_config
@@ -53,6 +59,25 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis_service.redis.close()
 
 
+sentry_sdk.init(
+    dsn=configs.sentry_dsn,
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+    integrations=[
+        StarletteIntegration(
+            transaction_style="endpoint",
+            failed_request_status_codes={403, *range(500, 599)},
+            http_methods_to_capture=("GET",),
+        ),
+        FastApiIntegration(
+            transaction_style="endpoint",
+            failed_request_status_codes={403, *range(500, 599)},
+            http_methods_to_capture=("GET",),
+        ),
+    ]
+)
+
+
 app = FastAPI(
     title=configs.project_name,
     description="Информация по пользовательскому контенту",
@@ -65,6 +90,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+@app.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
 
 app.add_middleware(TokenBucketMiddleware)  # pyright: ignore[reportCallIssue, reportArgumentType]
 
@@ -85,6 +114,7 @@ if configs.jaeger_on:
             return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
 
         get_current_span().set_attribute("http.request_id", request_id)
+        logger.info(f"{request_id}: {request.method} {request.url} {response.status_code}")
         return response
 
 
