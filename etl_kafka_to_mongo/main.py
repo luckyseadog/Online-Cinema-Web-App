@@ -5,6 +5,7 @@ from io import BytesIO
 from typing import NoReturn
 from uuid import UUID
 
+import sentry_sdk
 from avro.datafile import DataFileReader
 from avro.io import DatumReader
 from kafka import KafkaConsumer
@@ -22,6 +23,13 @@ class Action(Enum):
     RATE_FILM = "rate"
     FAVOURITE_FILM = "favourite"
     UNFAVOURITE_FILM = "unfavourite"
+
+
+sentry_sdk.init(
+    dsn=configs.sentry_dsn,
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 
 
 def avro_deserializer(data: bytes) -> DataFileReader:
