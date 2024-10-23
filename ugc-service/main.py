@@ -14,10 +14,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.trace import get_tracer
 from opentelemetry.trace.propagation import get_current_span
-from beanie import init_beanie
-from motor.motor_asyncio import AsyncIOMotorClient
-from sentry_sdk.integrations.starlette import StarletteIntegration
 from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.starlette import StarletteIntegration
 
 from api.v1 import favourites, ratings, reviews
 from core.config import JWTConfig, configs, jwt_config
@@ -74,7 +72,7 @@ sentry_sdk.init(
             failed_request_status_codes={403, *range(500, 599)},
             http_methods_to_capture=("GET",),
         ),
-    ]
+    ],
 )
 
 
@@ -92,8 +90,9 @@ app = FastAPI(
 
 
 @app.get("/sentry-debug")
-async def trigger_error():
-    division_by_zero = 1 / 0
+async def trigger_error() -> None:
+    _ = 1 / 0
+
 
 app.add_middleware(TokenBucketMiddleware)  # pyright: ignore[reportCallIssue, reportArgumentType]
 
