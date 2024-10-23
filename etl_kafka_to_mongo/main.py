@@ -65,7 +65,7 @@ def main() -> NoReturn:
                             ugc_storage_service.add_favourite(user_id, film_id)
                         case Action.UNFAVOURITE_FILM.value:
                             ugc_storage_service.del_favourite(user_id, film_id)
-                        case _:  # pyright: ignore[reportUnknownVariableType]
+                        case _:
                             raise InvalidActionError(f"No such action: {action}")
 
         except InvalidActionError as e:
