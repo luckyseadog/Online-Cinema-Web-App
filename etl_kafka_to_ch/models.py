@@ -13,8 +13,8 @@ class Event(BaseModel):
     element_id: str | None = Field(default=None, description="String NULL")
     group_id: str | None = Field(default=None, description="String NULL")
     time: str | None = Field(default=None, description="String NULL")
-    action: Literal["stop", "pause", "review", "rate", "favourite"] | None = Field(
-        default=None, description="Enum('add', 'remove', 'stop', 'pause') NULL"
+    action: Literal["stop", "pause", "review", "rate", "favourite", "unfavourite"] | None = Field(
+        default=None, description="Enum('stop', 'pause', 'review', 'rate', 'favourite', 'unfavourite') NULL"
     )
     feedback: str | None = Field(default=None, description="String NULL")
     review: str | None = Field(default=None, description="String NULL")
