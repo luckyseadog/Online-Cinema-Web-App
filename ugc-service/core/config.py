@@ -47,6 +47,6 @@ class MiddlewareConfig(BaseSettings):
     capacity: int = Field(default=10, alias="CAPACITY")
 
 
-configs = Configs()
+configs = Configs()  # pyright: ignore[reportCallIssue]
 jwt_config = JWTConfig()
 middleware_config = MiddlewareConfig()
