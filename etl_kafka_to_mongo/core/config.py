@@ -39,11 +39,11 @@ class Configs(BaseSettings):
     kafka_auto_offset_reset: str = Field(default="earliest", alias="AUTO_OFFSET_RESET")
     kafka_group_id: str = Field(default="sample-group", alias="GROUP_ID")
 
-    sentry_dsn: str = Field(default="", alias="SENTRY_DSN")
+    sentry_dsn: str = Field(alias="SENTRY_DSN")
 
     @property
     def postgres_dsn_admin(self) -> str:
         return f"postgresql+psycopg://{self.pg_user_admin}:{self.pg_password_admin}@{self.pg_host_admin}:{self.pg_port_admin}/{self.pg_name_admin}"
 
 
-configs = Configs()
+configs = Configs()  # pyright: ignore[reportCallIssue]
