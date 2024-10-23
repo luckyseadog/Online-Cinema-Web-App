@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from beanie import Document, Indexed  # pyright: ignore[reportUnknownVariableType]
+from beanie import Document, Indexed
 from pydantic import Field
 
 

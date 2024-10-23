@@ -6,7 +6,7 @@ from typing import Any, NoReturn
 import sentry_sdk
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
-from beanie import init_beanie  # pyright: ignore[reportUnknownVariableType]
+from beanie import init_beanie
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.logger import logger
 from fastapi.responses import JSONResponse, ORJSONResponse
