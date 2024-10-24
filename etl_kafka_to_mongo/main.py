@@ -25,11 +25,12 @@ class Action(Enum):
     UNFAVOURITE_FILM = "unfavourite"
 
 
-sentry_sdk.init(
-    dsn=configs.sentry_dsn,
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-)
+if configs.sentry_on:
+    sentry_sdk.init(
+        dsn=configs.sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 
 def avro_deserializer(data: bytes) -> DataFileReader:

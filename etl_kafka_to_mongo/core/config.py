@@ -39,6 +39,7 @@ class Configs(BaseSettings):
     kafka_auto_offset_reset: str = Field(default="earliest", alias="AUTO_OFFSET_RESET")
     kafka_group_id: str = Field(default="sample-group", alias="GROUP_ID")
 
+    sentry_on: bool = Field(default=True, alias="SENTRY_ON")
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
     @property
