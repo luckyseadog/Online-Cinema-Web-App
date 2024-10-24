@@ -11,8 +11,6 @@ class ReviewModel(BaseModel):
 
 
 class PostReviewModel(BaseModel):
-    user_id: UUID = Field(description="Идентификатор юзера", title="Идентификатор")
-    film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
     review: str = Field(description="Рецензия фильма пользователем", title="Рецензия")
 
 

@@ -11,10 +11,8 @@ class RatingModel(BaseModel):
 
 
 class PostRatingModel(BaseModel):
-    user_id: UUID = Field(description="Идентификатор юзера", title="Идентификатор")
-    film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
-    rating: int = Field(description="Рейтинг фильма", title="Рейтинг")
+    rating: float = Field(description="Рейтинг фильма", title="Рейтинг")
 
 
 class PatchRatingModel(BaseModel):
-    rating: int = Field(description="Рейтинг фильма", title="Рейтинг")
+    rating: float = Field(description="Рейтинг фильма", title="Рейтинг")

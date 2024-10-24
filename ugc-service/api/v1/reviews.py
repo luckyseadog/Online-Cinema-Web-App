@@ -1,9 +1,9 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, Path, Query, Request, status
+from fastapi import APIRouter, Body, Depends, Path, Query, status
 
-from api.v1.models import PatchReviewModel, PostReviewModel, ReviewModel
+from api.v1.models import JWTRequestModel, PatchReviewModel, PostReviewModel, ReviewModel
 from services.ugc_service import UGCService, get_ugc_service
 
 
@@ -23,16 +23,15 @@ reviews_tags_metadata = {
     tags=["Рецензии"],
 )
 async def get_reviews(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    user_id: Annotated[UUID | None, Query(description="ID пользователя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[ReviewModel]:
-    return await ugc_service.get_reviews(user_id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_reviews(request.jwt_user.id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
-    "/",
+    "/{film_id}",
     summary="Добавление пользовательской рецензии",
     description="Добавление пользовательской рецензии",
     response_description="Рецензии пользователя",
@@ -40,15 +39,16 @@ async def get_reviews(
     tags=["Рецензии"],
 )
 async def add_review(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
     review: Annotated[PostReviewModel, Body(description="Данные о рецензии")],
 ) -> ReviewModel | None:
-    return await ugc_service.add_review(review)  # pyright: ignore[reportReturnType]
+    return await ugc_service.add_review(request.jwt_user.id, film_id, review.review)  # pyright: ignore[reportReturnType]
 
 
 @router.patch(
-    "/{review_id}",
+    "/{film_id}",
     summary="Изменение рецензии",
     description="Изменение рецензии",
     response_description="Изменённая рецензия",
@@ -56,16 +56,16 @@ async def add_review(
     tags=["Рецензии"],
 )
 async def update_review(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    review_id: Annotated[UUID, Path(description="ID рецензии")],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
     review: Annotated[PatchReviewModel, Body(description="Данные о рецензии")],
 ) -> ReviewModel:
-    return await ugc_service.update_review(review_id, review)  # pyright: ignore[reportReturnType]
+    return await ugc_service.update_review(request.jwt_user.id, film_id, review.review)  # pyright: ignore[reportReturnType]
 
 
 @router.delete(
-    "/{review_id}",
+    "/{film_id}",
     summary="Удаление рецензии",
     description="Удаление рецензии",
     response_description="Рецензия удалена",
@@ -73,8 +73,8 @@ async def update_review(
     tags=["Рецензии"],
 )
 async def delete_review(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    review_id: Annotated[UUID, Path(description="ID рецензии")],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    return await ugc_service.delete_review(review_id)
+    return await ugc_service.delete_review(request.jwt_user.id, film_id)

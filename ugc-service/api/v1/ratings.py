@@ -1,9 +1,9 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, Path, Query, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query, status
 
-from api.v1.models import PatchRatingModel, PostRatingModel, RatingModel
+from api.v1.models import JWTRequestModel, PatchRatingModel, PostRatingModel, RatingModel
 from services.ugc_service import UGCService, get_ugc_service
 
 
@@ -23,16 +23,15 @@ ratings_tags_metadata = {
     tags=["Рейтинги"],
 )
 async def get_ratings(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    user_id: Annotated[UUID | None, Query(description="ID пользователя")] = None,
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[RatingModel]:
-    return await ugc_service.get_ratings(user_id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_ratings(request.jwt_user.id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
-    "/",
+    "/{film_id}",
     summary="Добавление или изменение рейтинга",
     description="Добавление или изменение рейтинга",
     response_description="Рейтинги пользователя",
@@ -40,15 +39,16 @@ async def get_ratings(
     tags=["Рейтинги"],
 )
 async def add_rating(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
     rating: Annotated[PostRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel | None:
-    return await ugc_service.add_rating(rating)  # pyright: ignore[reportReturnType]
+    return await ugc_service.add_rating(request.jwt_user.id, film_id, rating.rating)  # pyright: ignore[reportReturnType]
 
 
 @router.patch(
-    "/{rating_id}",
+    "/{film_id}",
     summary="Изменение рейтинга",
     description="Изменение рейтинга",
     response_description="Изменённый рейтинг пользователя",
@@ -56,16 +56,18 @@ async def add_rating(
     tags=["Рейтинги"],
 )
 async def update_rating(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    rating_id: Annotated[UUID, Path(description="ID рейтинга")],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
     rating: Annotated[PatchRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel:
-    return await ugc_service.update_rating(rating_id, rating)  # pyright: ignore[reportReturnType]
+    if not (new_rating := await ugc_service.update_rating(request.jwt_user.id, film_id, rating.rating)):
+        raise HTTPException(status_code=404, detail="Item not found")
+    return new_rating  # pyright: ignore[reportReturnType]
 
 
 @router.delete(
-    "/{rating_id}",
+    "/{film_id}",
     summary="Удаление рейтинга",
     description="Удаление рейтинга",
     response_description="Подтверждение удаления рейтинга пользователя",
@@ -73,8 +75,8 @@ async def update_rating(
     tags=["Рейтинги"],
 )
 async def delete_rating(
-    request: Request,
+    request: JWTRequestModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-    rating_id: Annotated[UUID, Path(description="ID рейтинга")],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    return await ugc_service.delete_rating(rating_id)
+    return await ugc_service.delete_rating(request.jwt_user.id, film_id)
