@@ -18,7 +18,7 @@ class UGCService:
             return await Favourite.insert_one(Favourite(user_id=user_id, film_id=film_id))
 
     async def remove_from_favourites(self, user_id: UUID, film_id: UUID) -> None:
-        await Favourite.find_one(Favourite.user_id == user_id, Favourite.id == film_id).delete()
+        await Favourite.find_one(Favourite.user_id == user_id, Favourite.film_id == film_id).delete()
 
     async def get_ratings(self, user_id: UUID, film_id: UUID | None) -> Sequence[Rating]:
         return await Rating.find_many(
