@@ -28,6 +28,7 @@ class Configs(BaseSettings):
     jaeger_host: str = Field(default="127.0.0.1", alias="JAEGER_HOST")
     jaeger_port: int = Field(default=6831, alias="JAEGER_PORT")
 
+    sentry_on: bool = Field(default=True, alias="SENTRY_ON")
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
 
