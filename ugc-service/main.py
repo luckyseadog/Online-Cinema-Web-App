@@ -56,6 +56,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     task.cancel()
     await redis_service.redis.close()
 
+
 if configs.sentry_on:
     sentry_sdk.init(
         dsn=configs.sentry_dsn,
