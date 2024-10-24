@@ -57,23 +57,24 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
     await redis_service.redis.close()
 
 
-sentry_sdk.init(
-    dsn=configs.sentry_dsn,
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-    integrations=[
-        StarletteIntegration(
-            transaction_style="endpoint",
-            failed_request_status_codes={403, *range(500, 599)},
-            http_methods_to_capture=("GET",),
-        ),
-        FastApiIntegration(
-            transaction_style="endpoint",
-            failed_request_status_codes={403, *range(500, 599)},
-            http_methods_to_capture=("GET",),
-        ),
-    ],
-)
+if configs.sentry_on:
+    sentry_sdk.init(
+        dsn=configs.sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+        integrations=[
+            StarletteIntegration(
+                transaction_style="endpoint",
+                failed_request_status_codes={403, *range(500, 599)},
+                http_methods_to_capture=("GET",),
+            ),
+            FastApiIntegration(
+                transaction_style="endpoint",
+                failed_request_status_codes={403, *range(500, 599)},
+                http_methods_to_capture=("GET",),
+            ),
+        ],
+    )
 
 
 app = FastAPI(
