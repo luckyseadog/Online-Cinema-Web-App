@@ -18,11 +18,12 @@ if TYPE_CHECKING:
 logger = settings.logger
 
 
-sentry_sdk.init(
-    dsn=settings.sentry_dsn,
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-)
+if settings.sentry_on:
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 
 async def main() -> None:
