@@ -1,9 +1,9 @@
 FROM python:3.12.3-slim-bookworm
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV DEBIAN_FRONTEND noninteractive
-ENV TZ Europe/Moscow
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Moscow
 
 RUN apt update && apt install \
     gcc \
@@ -19,6 +19,6 @@ RUN apt update -y && \
     python -m pip install --upgrade pip && \
     pip3 install -r ./requirements.txt --no-cache-dir
 
-COPY .. .
+COPY . .
 
 CMD ["/bin/bash", "./entrypoint.sh"]
