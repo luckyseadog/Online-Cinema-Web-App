@@ -11,26 +11,24 @@ BASE_DIRECTORY = Path()
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
 
-    kafka_servers: list[str] | str = Field(
-        default=["kafka-0:9092", "kafka-1:9092", "kafka-2:9092"], alias="KAFKA_SERVERS"
-    )
-    kafka_topic: str = Field(default="clickhouse", alias="KAFKA_TOPIC")
-    kafka_group_id: str = Field(default="cool_id", alias="KAFKA_GROUP_ID")
+    kafka_servers: list[str] | str = Field(alias="KAFKA_SERVERS")
+    kafka_topic: str = Field(alias="KAFKA_TOPIC")
+    kafka_group_id: str = Field(alias="KAFKA_GROUP_ID")
 
-    ch_host: str = Field(default="clickhouse-node1", alias="CH_HOST")
-    ch_port: int = Field(default=8123, alias="CH_PORT")
-    ch_database: str = Field(default="example", alias="CH_DATABASE")
-    ch_user: str = Field(default="default", alias="CH_USER")
-    ch_password: str = Field(default="", alias="CH_PASSWORD")
-    ch_table: str = Field(default="event", alias="CH_TABLE")
+    ch_host: str = Field(alias="CH_HOST")
+    ch_port: int = Field(alias="CH_PORT")
+    ch_database: str = Field(alias="CH_DATABASE")
+    ch_user: str = Field(alias="CH_USER")
+    ch_password: str = Field(alias="CH_PASSWORD")
+    ch_table: str = Field(alias="CH_TABLE")
 
-    batch_size: int = Field(default=1000, alias="BATCH_SIZE")
-    run_interval_seconds: int = Field(default=5, alias="RUN_INTERVAL_SECONDS")
-    log_level: str = Field(default="info", alias="LOG_LEVEL")
+    batch_size: int = Field(alias="BATCH_SIZE")
+    run_interval_seconds: int = Field(alias="RUN_INTERVAL_SECONDS")
+    log_level: str = Field(alias="LOG_LEVEL")
 
     logger: Logger = getLogger("etl")
 
-    sentry_on: bool = Field(default=True, alias="SENTRY_ON")
+    sentry_on: bool = Field(alias="SENTRY_ON")
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
 
