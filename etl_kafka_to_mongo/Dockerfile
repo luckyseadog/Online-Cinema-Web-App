@@ -1,6 +1,6 @@
 FROM python:3.12.3-slim-bookworm
 
-ENV PYTHONPATH /app
+ENV PYTHONPATH=/app
 
 RUN apt update && apt install \
     git \
