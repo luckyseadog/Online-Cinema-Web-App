@@ -56,4 +56,4 @@ async def remove_from_favourites(
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    return await ugc_service.remove_from_favourites(request.jwt_user.id, film_id)
+    await ugc_service.remove_from_favourites(request.jwt_user.id, film_id)

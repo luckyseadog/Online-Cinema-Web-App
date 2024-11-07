@@ -60,7 +60,7 @@ async def update_review(
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
     review: Annotated[PatchReviewModel, Body(description="Данные о рецензии")],
-) -> ReviewModel:
+) -> ReviewModel | None:
     return await ugc_service.update_review(request.jwt_user.id, film_id, review.review)  # pyright: ignore[reportReturnType]
 
 
@@ -77,4 +77,4 @@ async def delete_review(
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    return await ugc_service.delete_review(request.jwt_user.id, film_id)
+    await ugc_service.delete_review(request.jwt_user.id, film_id)

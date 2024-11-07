@@ -62,7 +62,8 @@ async def update_rating(
     rating: Annotated[PatchRatingModel, Body(description="Данные о рейтинге")],
 ) -> RatingModel:
     if not (new_rating := await ugc_service.update_rating(request.jwt_user.id, film_id, rating.rating)):
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
+
     return new_rating  # pyright: ignore[reportReturnType]
 
 
@@ -79,4 +80,4 @@ async def delete_rating(
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    return await ugc_service.delete_rating(request.jwt_user.id, film_id)
+    await ugc_service.delete_rating(request.jwt_user.id, film_id)
