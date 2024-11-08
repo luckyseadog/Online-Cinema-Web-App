@@ -1,20 +1,19 @@
-FROM python:3.12.3-slim-bookworm
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 ENV PYTHONPATH=/app
 
-RUN apt update && apt install \
-    git \
-    --no-install-recommends -y && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+RUN apt update -y && apt install \
+    git \
+    --no-install-recommends -y && apt clean && rm -rf /var/lib/apt/lists/*
 
-RUN  pip install --upgrade pip \
-    && pip install -r requirements.txt --no-cache-dir
+COPY ./requirements.txt .
+
+RUN uv pip install -r requirements.txt --no-cache-dir --system
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN chmod u+x entrypoint.sh
 
-ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
+CMD ["/bin/bash", "./entrypoint.sh"]
