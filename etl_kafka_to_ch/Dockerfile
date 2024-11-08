@@ -1,24 +1,24 @@
-FROM python:3.12.3-slim-bookworm
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Moscow
 
-RUN apt update && apt install \
+WORKDIR /app
+
+RUN apt update -y && apt install \
     gcc \
     libpq-dev \
     libc-dev \
-    --no-install-recommends -y && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
+    --no-install-recommends -y && apt clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt .
 
-RUN apt update -y && \
-    python -m pip install --upgrade pip && \
-    pip3 install -r ./requirements.txt --no-cache-dir
+RUN uv pip install -r requirements.txt --no-cache-dir --system
 
 COPY . .
+
+RUN chmod u+x entrypoint.sh
 
 CMD ["/bin/bash", "./entrypoint.sh"]
