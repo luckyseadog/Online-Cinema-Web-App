@@ -19,7 +19,7 @@ def init_clickhouse() -> None:
 
     result = client.command(
         f"CREATE TABLE IF NOT EXISTS {settings.ch_database}.{settings.ch_table} ON CLUSTER company_cluster "
-        f"({', '.join(f'{name} {info.description}' for name, info in Event.model_fields.items())}) "
+        f"({", ".join(f"{name} {info.description}" for name, info in Event.model_fields.items())}) "
         "Engine=MergeTree() ORDER BY timestamp"
     )
     logger.info(f"Создали таблицу '{settings.ch_table}'. Результат: {result}")
