@@ -45,7 +45,7 @@ class UGCService:
     async def delete_rating(self, user_id: UUID, film_id: UUID) -> None:
         await Rating.find_one(Rating.user_id == user_id, Rating.film_id == film_id).delete()
 
-    async def get_reviews(self, user_id: UUID, film_id: UUID | None) -> Sequence[Review]:
+    async def get_reviews(self, user_id: UUID | None, film_id: UUID | None) -> Sequence[Review]:
         return await Review.find_many(
             Review.user_id == user_id if user_id else {}, Review.film_id == film_id if film_id else {}
         ).to_list()
