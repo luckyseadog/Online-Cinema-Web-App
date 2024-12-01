@@ -72,7 +72,7 @@ async def update_rating(
     summary="Удаление рейтинга",
     description="Удаление рейтинга",
     response_description="Подтверждение удаления рейтинга пользователя",
-    responses={status.HTTP_204_NO_CONTENT: {}},
+    responses={status.HTTP_200_OK: {}},
     tags=["Рейтинги"],
 )
 async def delete_rating(
@@ -81,3 +81,18 @@ async def delete_rating(
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
     await ugc_service.delete_rating(request.jwt_user.id, film_id)
+
+
+@router.delete(
+    "/",
+    summary="Удаление всех рейтингов пользователя",
+    description="Удаление всех рейтингов пользователя",
+    response_description="Подтверждение удаления всех рейтингов пользователя",
+    responses={status.HTTP_200_OK: {}},
+    tags=["Рейтинги"],
+)
+async def delete_all_ratings(
+    request: JWTRequestModel,
+    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+) -> None:
+    await ugc_service.delete_all_ratings(request.jwt_user.id)

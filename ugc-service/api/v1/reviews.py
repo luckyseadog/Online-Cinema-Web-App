@@ -85,7 +85,7 @@ async def update_review(
     summary="Удаление рецензии",
     description="Удаление рецензии",
     response_description="Рецензия удалена",
-    responses={status.HTTP_204_NO_CONTENT: {}},
+    responses={status.HTTP_200_OK: {}},
     tags=["Рецензии"],
 )
 async def delete_review(
@@ -94,3 +94,18 @@ async def delete_review(
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
     await ugc_service.delete_review(request.jwt_user.id, film_id)
+
+
+@router.delete(
+    "/",
+    summary="Удаление всех рецензий пользователя",
+    description="Удаление всех рецензий пользователя",
+    response_description="Все рецензии пользователя удалены",
+    responses={status.HTTP_200_OK: {}},
+    tags=["Рецензии"],
+)
+async def delete_all_reviews(
+    request: JWTRequestModel,
+    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+) -> None:
+    await ugc_service.delete_all_reviews(request.jwt_user.id)
