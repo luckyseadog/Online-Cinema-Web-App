@@ -30,6 +30,22 @@ async def get_reviews(
     return await ugc_service.get_reviews(request.jwt_user.id, film_id)  # pyright: ignore[reportReturnType]
 
 
+@router.get(
+    "/{film_id}",
+    summary="Просмотр всех пользовательских рецензий на фильм",
+    description="Просмотр всех пользовательских рецензий на фильм",
+    response_description="Список всех пользовательских рецензий на фильм",
+    responses={status.HTTP_200_OK: {"model": ReviewModel}},
+    tags=["Рецензии"],
+)
+async def get_all_film_reviews(
+    request: JWTRequestModel,
+    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+    film_id: Annotated[UUID, Path(description="ID фильма")],
+) -> list[ReviewModel]:
+    return await ugc_service.get_reviews(None, film_id)  # pyright: ignore[reportReturnType]
+
+
 @router.post(
     "/{film_id}",
     summary="Добавление пользовательской рецензии",
@@ -69,7 +85,7 @@ async def update_review(
     summary="Удаление рецензии",
     description="Удаление рецензии",
     response_description="Рецензия удалена",
-    responses={status.HTTP_204_NO_CONTENT: {}},
+    responses={status.HTTP_200_OK: {}},
     tags=["Рецензии"],
 )
 async def delete_review(
@@ -78,3 +94,18 @@ async def delete_review(
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
     await ugc_service.delete_review(request.jwt_user.id, film_id)
+
+
+@router.delete(
+    "/",
+    summary="Удаление всех рецензий пользователя",
+    description="Удаление всех рецензий пользователя",
+    response_description="Все рецензии пользователя удалены",
+    responses={status.HTTP_200_OK: {}},
+    tags=["Рецензии"],
+)
+async def delete_all_reviews(
+    request: JWTRequestModel,
+    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+) -> None:
+    await ugc_service.delete_all_reviews(request.jwt_user.id)

@@ -57,3 +57,18 @@ async def remove_from_favourites(
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
     await ugc_service.remove_from_favourites(request.jwt_user.id, film_id)
+
+
+@router.delete(
+    "/",
+    summary="Удаление всего избранного пользователя",
+    description="Удаление всего избранного пользователя",
+    response_description="Подтверждение удаления всего избранного пользователя",
+    responses={status.HTTP_200_OK: {}},
+    tags=["Избранное"],
+)
+async def remove_all_favourites(
+    request: JWTRequestModel,
+    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
+) -> None:
+    await ugc_service.remove_all_favourites(request.jwt_user.id)

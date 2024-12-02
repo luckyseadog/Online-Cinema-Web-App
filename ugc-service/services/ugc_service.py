@@ -20,6 +20,9 @@ class UGCService:
     async def remove_from_favourites(self, user_id: UUID, film_id: UUID) -> None:
         await Favourite.find_one(Favourite.user_id == user_id, Favourite.film_id == film_id).delete()
 
+    async def remove_all_favourites(self, user_id: UUID) -> None:
+        await Favourite.find_many(Favourite.user_id == user_id).delete()
+
     async def get_ratings(self, user_id: UUID, film_id: UUID | None) -> Sequence[Rating]:
         return await Rating.find_many(
             Rating.user_id == user_id if user_id else {}, Rating.film_id == film_id if film_id else {}
@@ -45,7 +48,10 @@ class UGCService:
     async def delete_rating(self, user_id: UUID, film_id: UUID) -> None:
         await Rating.find_one(Rating.user_id == user_id, Rating.film_id == film_id).delete()
 
-    async def get_reviews(self, user_id: UUID, film_id: UUID | None) -> Sequence[Review]:
+    async def delete_all_ratings(self, user_id: UUID) -> None:
+        await Rating.find_many(Rating.user_id == user_id).delete()
+
+    async def get_reviews(self, user_id: UUID | None, film_id: UUID | None) -> Sequence[Review]:
         return await Review.find_many(
             Review.user_id == user_id if user_id else {}, Review.film_id == film_id if film_id else {}
         ).to_list()
@@ -69,6 +75,9 @@ class UGCService:
 
     async def delete_review(self, user_id: UUID, film_id: UUID) -> None:
         await Review.find_one(Review.user_id == user_id, Review.film_id == film_id).delete()
+
+    async def delete_all_reviews(self, user_id: UUID) -> None:
+        await Review.find_many(Review.user_id == user_id).delete()
 
 
 @lru_cache
