@@ -1,5 +1,5 @@
 import asyncio
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Any, NoReturn
 
@@ -7,7 +7,7 @@ import sentry_sdk
 from async_fastapi_jwt_auth.auth_jwt import AuthJWT
 from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from beanie import init_beanie
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.logger import logger
 from fastapi.responses import JSONResponse, ORJSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -107,12 +107,12 @@ if configs.jaeger_on:
 
     @app.middleware("http")
     @tracer.start_as_current_span(app.title)
-    async def before_request(request: Request, call_next: Any) -> JSONResponse | Any:
-        response = await call_next(request)
+    async def before_request(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         request_id = request.headers.get("X-Request-Id")
         if request_id is None:
             return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "X-Request-Id is required"})
 
+        response = await call_next(request)
         get_current_span().set_attribute("http.request_id", request_id)
         logger.info(f"{request_id}: {request.method} {request.url} {response.status_code}")
         return response
