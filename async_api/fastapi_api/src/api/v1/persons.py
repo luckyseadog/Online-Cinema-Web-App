@@ -7,6 +7,7 @@ from models.film import ShortFilm
 from models.person import Person, PersonFilmsRoles
 from services.person_service import PersonService, get_person_service
 from api.v1.commons import page_data
+from services.validation import check_roles
 
 router = APIRouter()
 
@@ -20,7 +21,10 @@ router = APIRouter()
 async def person_all(
         page_data: Annotated[dict, Depends(page_data)],
         person_service: PersonService = Depends(get_person_service),
+        check_roles: bool = Depends(check_roles),
 ) -> list[Person]:
+    if not check_roles:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='no role found')
     persons = await person_service.get_all(page_data['page_size'], page_data['page_number'])
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='not found persons')
@@ -45,7 +49,10 @@ async def person_search(
             ),
         ],
         person_service: PersonService = Depends(get_person_service),
+        check_roles: bool = Depends(check_roles),
 ) -> list[PersonFilmsRoles]:
+    if not check_roles:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='no role found')
     persons = await person_service.search(query, page_data['page_size'], page_data['page_number'])
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'not found persons by key: {query}')
@@ -62,7 +69,10 @@ async def person_search(
 async def person_deatils(
         person_id: UUID,
         person_service: PersonService = Depends(get_person_service),
+        check_roles: bool = Depends(check_roles),
 ) -> PersonFilmsRoles:
+    if not check_roles:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='no role found')
     person = await person_service.get_by_id(str(person_id))
     if not person:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='person not found')
@@ -80,7 +90,10 @@ async def person_deatils(
 async def person_films(
         person_id: UUID,
         person_service: PersonService = Depends(get_person_service),
+        check_roles: bool = Depends(check_roles),
 ) -> list[ShortFilm]:
+    if not check_roles:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='no role found')
     films = await person_service.get_person_films(str(person_id))
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='person films not found')
