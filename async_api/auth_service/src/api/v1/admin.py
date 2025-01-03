@@ -16,7 +16,7 @@ router = APIRouter(
     '/user_role/assign',
     response_model=User,
     status_code=status.HTTP_200_OK,
-    summary='Назначение роли пользователю',
+    summary='Assign Role to User',
     description='''
     В теле запроса принимает два параметра: uuid пользователя и uuid роли.
     - Если у пользователяю роль присутствует ничего не происходит.\n
@@ -37,7 +37,7 @@ async def assign_role(
     '/user_role/revoke',
     response_model=User,
     status_code=status.HTTP_200_OK,
-    summary='Отзыв роли у пользователя',
+    summary='Recall Role from User',
     description='',
 )
 async def revoke_role(
@@ -51,7 +51,7 @@ async def revoke_role(
 @router.post(
     '/user_role/check',
     status_code=status.HTTP_200_OK,
-    summary='Проверка наличия роли у пользователя',
+    summary='Check User Role',
     description='',
 )
 async def check_role(

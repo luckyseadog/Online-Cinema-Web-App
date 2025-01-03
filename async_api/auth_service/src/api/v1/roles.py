@@ -16,7 +16,7 @@ router = APIRouter(
     '/roles',
     response_model=list[Role],
     status_code=status.HTTP_200_OK,
-    summary='Получение списка ролей',
+    summary='Get List of Roles',
     description='',
 )
 async def get_roles(
@@ -30,7 +30,7 @@ async def get_roles(
     '/roles',
     response_model=Role,
     status_code=status.HTTP_200_OK,
-    summary='Добавление роли',
+    summary='Add Role',
     description='',
 )
 async def add_role(
@@ -45,7 +45,7 @@ async def add_role(
     '/roles',
     response_model=Role,
     status_code=status.HTTP_200_OK,
-    summary='Обновление роли',
+    summary='Update Role',
     description='',
 )
 async def update_role(
@@ -59,7 +59,7 @@ async def update_role(
 @router.delete(
     '/roles',
     status_code=status.HTTP_200_OK,
-    summary='Удаление роли',
+    summary='Delete Role',
     description='',
 )
 async def delete_role(

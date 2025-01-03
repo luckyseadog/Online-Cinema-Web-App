@@ -24,7 +24,7 @@ router = APIRouter()
     path='/signup',
     # response_model=,
     status_code=status.HTTP_200_OK,
-    summary='Регистрация пользователя',
+    summary='User Registration',
     description='''
     Ручка позволяет зарегистрироваться новому пользователю\n
     В теле запроса необходимо предать:
@@ -61,7 +61,7 @@ async def signup(
     # response_model=,
     status_code=status.HTTP_200_OK,
     response_model=TokenPair,
-    summary='Аутентификация пользователя',
+    summary='User Authentication',
     description='''
     В теле запроса принимает два параметра: логин и пароль.
     Если пользователь аутентифицирован, вернуть его токены, если такого пользователя не
@@ -124,7 +124,7 @@ async def login(
     '/logout',
     # response_model=,
     status_code=status.HTTP_200_OK,
-    summary='Выход пользователя',
+    summary='User Logout',
     description='Из токена получается id пользователя. '
                 'Токен помещается в кеш забаненнных access токенов. '
                 'Если пользователь решит снова аутентифицироваться, то ему придётся ввести логин и пароль.',
@@ -157,7 +157,7 @@ async def logout(
     '/logout_all',
     # response_model=,
     status_code=status.HTTP_200_OK,
-    summary='Выход пользователя из всех устройств',
+    summary='User Logout All Devices',
     description='',
 )
 async def logout_all(
@@ -187,7 +187,7 @@ async def logout_all(
     '/refresh',
     response_model=TokenPair,
     status_code=status.HTTP_200_OK,
-    summary='Обновление access и refresh токенов',
+    summary='Refresh Access Token',
     description='',
 )
 async def refresh(
@@ -225,7 +225,7 @@ async def refresh(
     '/signup_guest',
     # response_model=,
     status_code=status.HTTP_200_OK,
-    summary='Регистрация гостевого пользователя',
+    summary='Guest User Registration',
     description='''
     В теле запроса принимает два параметра: логин и пароль.
     - Если пользователь с таким логином уже существует возвращается ошибка 409 с

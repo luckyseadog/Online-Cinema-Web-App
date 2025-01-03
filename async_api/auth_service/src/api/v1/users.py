@@ -19,7 +19,7 @@ router = APIRouter()
     path='/users',
     response_model=list[User],
     status_code=status.HTTP_200_OK,
-    summary='Получение списка пользователей',
+    summary='Get List of Users',
     description='Получить список пользователй из БД',
     dependencies=[Depends(get_admin_access_token)],
 )
@@ -34,7 +34,7 @@ async def get_users(
 @router.put(
     path='/users',
     status_code=status.HTTP_200_OK,
-    summary='Изменение пользователя пользователя',
+    summary='Update User',
     description='Добавление пользователя в БД',
     response_model=User,
     dependencies=[Depends(check_role_consistency)],
@@ -55,7 +55,7 @@ async def change_user(
 
 @router.delete(
     path='/users',
-    description='Удаление пользователя',
+    description='Delete User',
     summary='Удаление пользователя из БД',
     response_model=User,
     status_code=status.HTTP_200_OK,
@@ -80,7 +80,7 @@ async def delete_user(
 
 @router.get(
     path='/users/history',
-    description='Получение истории операций пользователя',
+    description='Get User Transaction History',
     summary='История входа/выхода пользователя',
     response_model=list[History],
     status_code=status.HTTP_200_OK,
@@ -96,7 +96,7 @@ async def get_history(
 @router.get(
     '/users/me',
     response_model=User,
-    description='Текущий пользователь',
+    description='Get User Transaction History',
     summary='Информация о текущем пользователе',
     status_code=status.HTTP_200_OK,
 )

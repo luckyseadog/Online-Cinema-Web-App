@@ -24,8 +24,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title='Сервис авторизации онлайн кинотеатра',
-    description='Сервис авторизации онлайн кинотеатра',
+    title='Online Cinema Authorization Service',
+    description='',
     version='1.0.0',
     docs_url='/api/openapi',
     openapi_url='/api/openapi.json',
