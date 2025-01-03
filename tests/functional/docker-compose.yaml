@@ -1,0 +1,151 @@
+version: "1.0"
+services:
+
+  postgres_db_auth:
+    image: postgres:16.2
+    container_name: Postgres_auth_test
+    env_file: "postgres_auth.env"
+    volumes:
+      - postgres_db_auth_test:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2G
+    networks:
+      movies:
+        aliases:
+          - postgres_db_auth
+
+  elasticsearch_db:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: Elasticsearch_test
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 0.5GB
+    volumes:
+      - elasticsearch_db_test:/data
+    ports:
+      - 9200:9200
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      movies:
+        aliases:
+          - elasticsearch_db
+
+  redis_db:
+    image: redis:latest
+    container_name: Redis_test
+    restart: unless-stopped
+    ports:
+      - 6380:6379
+    volumes:
+      - redis_db_test:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      movies:
+        aliases:
+          - redis_db
+
+  api:
+    container_name: API_test
+    build:
+      context: ../../api/
+    image: api:latest
+    pull_policy: never
+    restart: unless-stopped
+    volumes:
+      - ../../api/:/app/
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      elasticsearch_db:
+        condition: service_healthy
+        restart: true
+      redis_db:
+        condition: service_healthy
+        restart: true
+    networks:
+      movies:
+        aliases:
+          - api
+
+  auth_service:
+    container_name: Auth_test
+    build:
+      context: ../../auth-service/
+    image: auth:latest
+    pull_policy: never
+    restart: unless-stopped
+    volumes:
+      - ../../auth-service/:/app/
+    expose:
+      - "8080"
+    ports:
+      - "8080:8000"
+    depends_on:
+      postgres_db_auth:
+        condition: service_healthy
+        restart: true
+      redis_db:
+        condition: service_healthy
+        restart: true
+    networks:
+      movies:
+        aliases:
+          - auth_service
+
+  tests:
+    container_name: Tests
+    build:
+      context: ./
+    pull_policy: never
+    volumes:
+      - .:/app
+    depends_on:
+      elasticsearch_db:
+        condition: service_healthy
+        restart: true
+      redis_db:
+        condition: service_healthy
+        restart: true
+    networks:
+      movies:
+        aliases:
+          - tests
+
+volumes:
+  postgres_db_auth_test:
+  elasticsearch_db_test:
+  redis_db_test:
+
+networks:
+  movies:
+    driver: bridge
