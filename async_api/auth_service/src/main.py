@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -8,6 +9,8 @@ from fastapi.responses import ORJSONResponse
 from api.v1 import admin, auth, roles, users
 from core.logger import LOGGING
 from db import postgres_db, redis_db
+from src.services.token_bucket_service import get_token_bucket
+from src.middleware.token_bucket_middleware import TokenBucketMiddleware
 
 
 @asynccontextmanager
@@ -15,6 +18,12 @@ async def lifespan(app: FastAPI):
     logging.info('start')
     pg_session = postgres_db.get_session()
     redis_db.redis = redis_db.get_redis()
+
+    background_tasks = set()
+    token_bucket = get_token_bucket()
+    task = asyncio.create_task(token_bucket.start_fill_bucket_process())
+    background_tasks.add(task)
+    task.add_done_callback(background_tasks.discard)
 
     yield
 
@@ -32,6 +41,8 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
+
+app.add_middleware(TokenBucketMiddleware)
 
 app.include_router(admin.router, prefix='/api/v1/auth/admin', tags=['admin'])
 app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])

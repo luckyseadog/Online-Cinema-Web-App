@@ -52,5 +52,13 @@ class Settings(BaseSettings):
 
     # model_config = SettingsConfigDict(env_file='../../.env', env_file_encoding='utf-8')
 
+class MiddlewareConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", extra="allow")
+
+    update_time: int = Field(default=30, alias="UPDATE_TIME")
+    update_val: int = Field(default=10, alias="UPDATE_VAL")
+    capacity: int = Field(default=10, alias="CAPACITY")
+
 
 settings = Settings()
+middleware_config = MiddlewareConfig()
