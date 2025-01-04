@@ -67,6 +67,47 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    
+  redis-auth:
+    image: redis/redis-stack-server:latest
+    volumes:
+     - redis-auth-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+  
+  postgres-auth:
+    image: postgres:16
+    volumes:
+     - postgres-auth-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: "${AUTH_DB_PASSWORD}"
+      POSTGRES_USER: "${AUTH_DB_USER}"
+      POSTGRES_DB: "${AUTH_DB_NAME}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
+      interval: 5s
+      timeout: 10s
+  
+  fastapi-auth:
+    build: ./auth_service
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      redis-auth:
+        condition: service_healthy
 
   nginx:
     image: nginx:1.25.3
@@ -79,6 +120,7 @@ services:
       - django
       - fastapi
       - etl
+      - fastapi-auth
     ports:
       - "80:80"
 
@@ -86,4 +128,8 @@ volumes:
   esdata:
     driver: local
   redisdata:
+    driver: local
+  redis-auth-data:
+    driver: local
+  postgres-auth-data:
     driver: local

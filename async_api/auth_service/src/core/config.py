@@ -2,13 +2,11 @@ import os
 from logging import config as logging_config
 
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 from core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Settings(BaseSettings):
@@ -25,7 +23,7 @@ class Settings(BaseSettings):
     pg_password: str = Field('123qwe', alias='AUTH_DB_PASSWORD')
     pg_name: str = Field('auth_database', alias='AUTH_DB_NAME')
 
-    secret_key: str = Field('secret', alias='SECRET_KEY')
+    token_secret_key: str = Field('secret', alias='TOKEN_SECRET_KEY')
     algorithm: str = Field('HS256', alias='ALGORITHM')
 
     access_token_min: int = Field(15, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
@@ -53,8 +51,6 @@ class Settings(BaseSettings):
     # model_config = SettingsConfigDict(env_file='../../.env', env_file_encoding='utf-8')
 
 class MiddlewareConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", extra="allow")
-
     update_time: int = Field(default=30, alias="UPDATE_TIME")
     update_val: int = Field(default=10, alias="UPDATE_VAL")
     capacity: int = Field(default=10, alias="CAPACITY")

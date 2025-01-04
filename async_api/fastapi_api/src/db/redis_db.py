@@ -109,5 +109,5 @@ redis_session =  RedisTokenStorage(Redis(host=settings.redis_host, port=settings
 redis: RedisTokenStorage | None = None
 
 # Функция понадобится при внедрении зависимостей
-async def get_redis() -> Redis:
+def get_redis() -> Redis:
     return redis_session

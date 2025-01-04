@@ -17,7 +17,7 @@ from src.middleware.token_bucket_middleware import TokenBucketMiddleware
 async def lifespan(app: FastAPI):
     logging.info('start')
     pg_session = postgres_db.get_session()
-    redis_db.redis = redis_db.get_redis()
+    redis_db.redis = redis_db.get_redis_token_storage()
 
     background_tasks = set()
     token_bucket = get_token_bucket()
@@ -36,18 +36,18 @@ app = FastAPI(
     title='Online Cinema Authorization Service',
     description='',
     version='1.0.0',
-    docs_url='/api/openapi',
-    openapi_url='/api/openapi.json',
+    docs_url='/auth/openapi',
+    openapi_url='/auth/openapi.json',
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
 
 app.add_middleware(TokenBucketMiddleware)
 
-app.include_router(admin.router, prefix='/api/v1/auth/admin', tags=['admin'])
-app.include_router(auth.router, prefix='/api/v1/auth', tags=['auth'])
-app.include_router(users.router, prefix='/api/v1/auth', tags=['users'])
-app.include_router(roles.router, prefix='/api/v1/auth/admin', tags=['roles'])
+app.include_router(admin.router, prefix='/auth/v1/admin', tags=['admin'])
+app.include_router(auth.router, prefix='/auth/v1', tags=['auth'])
+app.include_router(users.router, prefix='/auth/v1', tags=['users'])
+app.include_router(roles.router, prefix='/auth/v1/admin', tags=['roles'])
 
 
 if __name__ == '__main__':

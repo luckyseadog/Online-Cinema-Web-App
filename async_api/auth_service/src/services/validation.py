@@ -7,7 +7,7 @@ from fastapi import Cookie, Depends, Header, HTTPException, status
 from fastapi.responses import ORJSONResponse
 
 from core.config import settings
-from db.redis_db import RedisTokenStorage, get_redis
+from db.redis_db import RedisTokenStorage, get_redis_token_storage
 from schemas.entity_schemas import AccessTokenData, RefreshTokenData
 from services.token_service import (AccessTokenService, RefreshTokenService,
                                     get_access_token_service,
@@ -19,7 +19,7 @@ async def validate_access_token(
         user_agent: Annotated[Union[str, None], Header()] = None,
         access_token: Annotated[Union[str, None], Cookie()] = None,
         access_token_service: AccessTokenService = Depends(get_access_token_service),
-        cache: RedisTokenStorage = Depends(get_redis),
+        cache: RedisTokenStorage = Depends(get_redis_token_storage),
     ):
     if access_token is None:
         raise HTTPException(
@@ -112,7 +112,7 @@ async def validate_refresh_token(
         user_agent: Annotated[Union[str, None], Header()] = None,
         refresh_token: Annotated[Union[str, None], Cookie()] = None,
         refresh_token_service: RefreshTokenService = Depends(get_refresh_token_service),
-        cache: RedisTokenStorage = Depends(get_redis),
+        cache: RedisTokenStorage = Depends(get_redis_token_storage),
     ):
     if refresh_token is None:
         raise HTTPException(

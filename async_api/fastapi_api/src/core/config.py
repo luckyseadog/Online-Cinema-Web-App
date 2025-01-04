@@ -18,5 +18,10 @@ class Settings(BaseSettings):
     elastic_host: str = Field('127.0.0.1', alias='ELASTIC_HOST')
     elastic_port: int = Field(9200, alias='ELASTIC_PORT')
 
+    token_secret_key: str = Field('secret', alias='TOKEN_SECRET_KEY')
+
+    access_token_min: int = Field(15, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
+    refresh_token_weeks: int = Field(1, alias='REFRESH_TOKEN_WEEKS')
+
 
 settings = Settings()

@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.postgres_db import get_session
-from db.redis_db import RedisTokenStorage, get_redis
+from db.redis_db import RedisTokenStorage, get_redis_token_storage
 from schemas.entity_schemas import TokenPairExpired, UserCredentials
 from services.password_service import password_service
 from services.token_service import AccessTokenService, RefreshTokenService
@@ -116,7 +116,7 @@ class AuthService:
 @lru_cache
 def get_auth_service(
         db: AsyncSession = Depends(get_session),
-        cache: RedisTokenStorage = Depends(get_redis),
+        cache: RedisTokenStorage = Depends(get_redis_token_storage),
         user_service: UserService = Depends(get_user_service),
 ) -> AuthService:
     return AuthService(
