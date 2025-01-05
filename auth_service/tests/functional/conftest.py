@@ -1,16 +1,15 @@
 import asyncio
+from collections.abc import AsyncGenerator
+from pathlib import Path
 
 import aiohttp
 import pytest_asyncio
-from redis.asyncio import Redis
-from collections.abc import AsyncGenerator
-from tests.functional.settings import auth_test_settings
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, AsyncEngine, AsyncConnection,
-)
-from tests.functional.utils.db_models import Base
-from pathlib import Path
 from faker import Faker
+from redis.asyncio import Redis
+from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncEngine, AsyncSession,
+                                    create_async_engine)
+from tests.functional.settings import auth_test_settings
+from tests.functional.utils.db_models import Base
 
 
 @pytest_asyncio.fixture(scope='session')

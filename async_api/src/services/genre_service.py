@@ -1,11 +1,11 @@
 from functools import lru_cache
 
+from db.abstruct import CacheInterface, StorageInterface
 from db.elastic import get_elastic
 from db.redis import get_redis
 from fastapi import Depends
 from models.genre import Genre
 from services.cache import Cache
-from db.abstruct import CacheInterface, StorageInterface
 from services.genre_storage import GenreStorage
 
 INDEX = 'genres'

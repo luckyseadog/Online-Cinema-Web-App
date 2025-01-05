@@ -2,9 +2,8 @@ import datetime
 import hashlib
 import time
 
-from redis.asyncio import Redis
-
 from core.config import settings
+from redis.asyncio import Redis
 
 ACCESS_TOKEN_BANNED = 'banned_access'
 REFRESH_TOKEN_VALID = 'valid_refresh'

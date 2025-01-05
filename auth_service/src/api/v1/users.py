@@ -1,9 +1,8 @@
 from typing import Annotated
 
+from core.config import settings
 from fastapi import APIRouter, Depends, Header, status
 from fastapi.responses import ORJSONResponse
-
-from core.config import settings
 from schemas.entity import History, User
 from schemas.entity_schemas import AccessTokenData, UserPatch
 from services.auth_service import AuthService, get_auth_service

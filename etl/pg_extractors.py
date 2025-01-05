@@ -3,11 +3,9 @@ import logging
 
 import psycopg
 from backoff import backoff_generator
-from sql_queries import (
-    EXTRUCT, FILM_IDS_BY_GENRE, FILM_IDS_BY_PERSON,
-    RAW_GENRE_EXTRUCT, RAW_PERSONS, WHERE_CLAUSE_IN,
-    WHERE_CLAUSE_MODIFIED,
-)
+from sql_queries import (EXTRUCT, FILM_IDS_BY_GENRE, FILM_IDS_BY_PERSON,
+                         RAW_GENRE_EXTRUCT, RAW_PERSONS, WHERE_CLAUSE_IN,
+                         WHERE_CLAUSE_MODIFIED)
 
 logging.basicConfig(level=logging.INFO)
 

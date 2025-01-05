@@ -1,12 +1,13 @@
-from services.abstract_service import AbstractService
-from models.person import Person, PersonFilmsRoles
-from services.cache import Cache
 from functools import lru_cache
-from fastapi import Depends
+
+from db.abstruct import CacheInterface, StorageInterface
 from db.elastic import get_elastic
 from db.redis import get_redis
+from fastapi import Depends
+from models.person import Person, PersonFilmsRoles
+from services.abstract_service import AbstractService
+from services.cache import Cache
 from services.person_storage import PersonStorage
-from db.abstruct import CacheInterface, StorageInterface
 
 INDEX = 'persons'
 

@@ -3,14 +3,13 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
-
 from api.v1 import admin, auth, roles, users
 from core.logger import LOGGING
 from db import postgres_db, redis_db
-from src.services.token_bucket_service import get_token_bucket
+from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse, ORJSONResponse
 from src.middleware.token_bucket_middleware import TokenBucketMiddleware
+from src.services.token_bucket_service import get_token_bucket
 
 
 @asynccontextmanager
@@ -43,6 +42,10 @@ app = FastAPI(
 )
 
 app.add_middleware(TokenBucketMiddleware)
+
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def health():
+    return JSONResponse({"status": "ok"})
 
 app.include_router(admin.router, prefix='/auth/v1/admin', tags=['admin'])
 app.include_router(auth.router, prefix='/auth/v1', tags=['auth'])

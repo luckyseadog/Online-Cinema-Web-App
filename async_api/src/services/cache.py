@@ -1,8 +1,9 @@
 import logging
-from services.abstract_cache import AbstractCache
+
 from models.film import Film
 from models.genre import Genre
 from models.person import Person
+from services.abstract_cache import AbstractCache
 
 DELIMETER = '<delimiter>'
 CACHE_EXPIRE_IN_SECONDS = 60 * 5

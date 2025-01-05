@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-
 from schemas.entity import User
 from schemas.entity_schemas import UpdateUserRole
 from services.admin_service import AdminService, get_admin_service

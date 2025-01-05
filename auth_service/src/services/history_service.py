@@ -1,12 +1,11 @@
 from functools import lru_cache
 
+from db.postgres_db import AsyncSession, get_session
 from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select
-
-from db.postgres_db import AsyncSession, get_session
 from models.entity import UserHistoryModel
 from schemas.entity import History
+from sqlalchemy import select
 
 
 class HistoryService:

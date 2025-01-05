@@ -1,11 +1,12 @@
 from functools import lru_cache
 from uuid import UUID
+
+from db.abstruct import CacheInterface, StorageInterface
 from db.elastic import get_elastic
 from db.redis import get_redis
-from db.abstruct import CacheInterface, StorageInterface
 from fastapi import Depends
-from services.cache import Cache
 from models.film import Film, SortModel
+from services.cache import Cache
 from services.film_storage import FilmStorage
 
 INDEX = 'movies'

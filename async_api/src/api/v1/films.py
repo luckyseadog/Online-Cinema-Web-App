@@ -1,11 +1,11 @@
 from http import HTTPStatus
-from uuid import UUID
 from typing import Annotated
+from uuid import UUID
 
+from api.v1.commons import page_data
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.film import FullFilm, ShortFilm
 from services.film_service import FilmService, SortModel, get_film_service
-from api.v1.commons import page_data
 from services.validation import check_roles
 
 router = APIRouter()

@@ -1,5 +1,4 @@
 from elasticsearch import Elasticsearch
-
 from tests.functional.settings import test_settings
 from tests.functional.utils.helpers import backoff
 

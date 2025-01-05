@@ -1,7 +1,8 @@
+from enum import Enum
+
 from models.genre import Genre
 from models.mixins import OrjsonMixin, UUIDMixin
 from models.person import Person
-from enum import Enum
 
 
 class ShortFilm(UUIDMixin, OrjsonMixin):

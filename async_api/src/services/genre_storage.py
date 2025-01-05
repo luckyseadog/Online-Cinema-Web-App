@@ -1,8 +1,9 @@
-from services.abstract_storage import AbstractStorage
-from db.abstruct import StorageInterface
-from elasticsearch import NotFoundError, ElasticsearchException
-from models.genre import Genre
 import backoff
+from db.abstruct import StorageInterface
+from elasticsearch import ElasticsearchException, NotFoundError
+from models.genre import Genre
+from services.abstract_storage import AbstractStorage
+
 INDEX = 'genres'
 
 

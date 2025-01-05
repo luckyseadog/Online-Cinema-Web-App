@@ -2,7 +2,6 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, status
-
 from schemas.entity import Role
 from services.role_service import RoleService, get_role_service
 from services.validation import get_admin_access_token

@@ -3,11 +3,10 @@ import logging
 import time
 from typing import Annotated, Union
 
-from fastapi import Cookie, Depends, Header, HTTPException, status
 from db.redis_db import RedisTokenStorage, get_redis
+from fastapi import Cookie, Depends, Header, HTTPException, status
 from schemas.entity_schemas import AccessTokenData
-from services.token_service import (AccessTokenService,
-                                    get_access_token_service)
+from services.token_service import AccessTokenService, get_access_token_service
 
 
 async def validate_access_token(

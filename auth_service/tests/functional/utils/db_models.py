@@ -2,9 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
 
-from sqlalchemy.orm import DeclarativeBase
 
 class Base(DeclarativeBase):
      pass

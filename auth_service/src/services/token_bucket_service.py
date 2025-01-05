@@ -3,10 +3,9 @@ from collections.abc import Coroutine
 from functools import lru_cache
 from typing import Any, NoReturn
 
-from redis.asyncio import Redis
-
 from core.config import middleware_config
 from db.redis_db import get_redis
+from redis.asyncio import Redis
 
 
 class TokenBucket:

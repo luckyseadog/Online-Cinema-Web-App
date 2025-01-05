@@ -1,8 +1,8 @@
 from fastapi import Request, status
 from fastapi.responses import JSONResponse, Response
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-
 from services.token_bucket_service import get_token_bucket
+from starlette.middleware.base import (BaseHTTPMiddleware,
+                                       RequestResponseEndpoint)
 
 
 class TokenBucketMiddleware(BaseHTTPMiddleware):

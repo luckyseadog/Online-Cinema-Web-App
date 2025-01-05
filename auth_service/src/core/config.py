@@ -1,10 +1,9 @@
 import os
 from logging import config as logging_config
 
+from core.logger import LOGGING
 from pydantic import Field
 from pydantic_settings import BaseSettings
-
-from core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
 
@@ -53,7 +52,7 @@ class Settings(BaseSettings):
 class MiddlewareConfig(BaseSettings):
     update_time: int = Field(default=30, alias="UPDATE_TIME")
     update_val: int = Field(default=10, alias="UPDATE_VAL")
-    capacity: int = Field(default=10, alias="CAPACITY")
+    capacity: int = Field(default=100, alias="CAPACITY")
 
 
 settings = Settings()

@@ -10,10 +10,8 @@ from es_loaders import LoaderGenres, LoaderMovies, LoaderPersons
 from pg_extractors import ExtractorGenres, ExtractorMovies, ExtractorPersons
 from redis import Redis
 from setup import setup
-from transformers import (
-    TransformerGenres, TransformerMovies,
-    TransformerPersons,
-)
+from transformers import (TransformerGenres, TransformerMovies,
+                          TransformerPersons)
 
 logging.basicConfig(level=logging.INFO)
 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class CacheInterface(ABC):
     @abstractmethod
     async def get(self, **kwargs):

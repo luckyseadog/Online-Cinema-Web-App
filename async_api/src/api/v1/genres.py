@@ -2,10 +2,10 @@ from http import HTTPStatus
 from typing import Annotated
 from uuid import UUID
 
+from api.v1.commons import page_data
 from fastapi import APIRouter, Depends, HTTPException
 from models.genre import Genre
 from services.genre_service import GenreService, get_genre_service
-from api.v1.commons import page_data
 from services.validation import check_roles
 
 router = APIRouter()

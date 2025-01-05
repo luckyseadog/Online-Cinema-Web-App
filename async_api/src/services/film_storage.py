@@ -1,15 +1,12 @@
+import backoff
 from db.abstruct import StorageInterface
-from services.abstract_storage import AbstractStorage
-from elasticsearch import NotFoundError, ElasticsearchException
+from elasticsearch import ElasticsearchException, NotFoundError
 from models.film import Film, SortModel
-from services.elastic_queries import (
-    GET_ALL_FILMS, GET_ALL_FILMS_IN_GENRE,
-    GET_GENRE_BY_NAME, SEARCH_FILMS,
-)
 from models.genre import Genre
 from models.person import Person
-import backoff
-
+from services.abstract_storage import AbstractStorage
+from services.elastic_queries import (GET_ALL_FILMS, GET_ALL_FILMS_IN_GENRE,
+                                      GET_GENRE_BY_NAME, SEARCH_FILMS)
 
 INDEX = 'movies'
 

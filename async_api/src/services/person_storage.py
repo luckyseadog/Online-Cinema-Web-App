@@ -1,12 +1,10 @@
+import backoff
 import elasticsearch
-
-from elasticsearch import NotFoundError, ElasticsearchException
-
+from elasticsearch import ElasticsearchException, NotFoundError
 from models.film import ShortFilm
 from models.person import FilmsByPerson, Person, PersonFilmsRoles
-from services.elastic_queries import GET_PERSON_FILMS_AND_ROLES, PERSON_SEARCH
 from services.abstract_storage import AbstractStorage
-import backoff
+from services.elastic_queries import GET_PERSON_FILMS_AND_ROLES, PERSON_SEARCH
 
 INDEX = 'persons'
 

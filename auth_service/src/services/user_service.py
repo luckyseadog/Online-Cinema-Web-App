@@ -2,16 +2,15 @@ import logging
 from datetime import datetime
 from functools import lru_cache
 
+from db.postgres_db import get_session
 from fastapi import Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from db.postgres_db import get_session
 from models.entity import RoleModel, UserModel
 from schemas.entity import Role, User
 from schemas.entity_schemas import UserPatch
 from services.password_service import password_service
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserService:

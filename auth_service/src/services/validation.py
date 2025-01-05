@@ -3,11 +3,10 @@ import logging
 import time
 from typing import Annotated, Union
 
-from fastapi import Cookie, Depends, Header, HTTPException, status
-from fastapi.responses import ORJSONResponse
-
 from core.config import settings
 from db.redis_db import RedisTokenStorage, get_redis_token_storage
+from fastapi import Cookie, Depends, Header, HTTPException, status
+from fastapi.responses import ORJSONResponse
 from schemas.entity_schemas import AccessTokenData, RefreshTokenData
 from services.token_service import (AccessTokenService, RefreshTokenService,
                                     get_access_token_service,
