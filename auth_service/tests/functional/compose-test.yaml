@@ -39,3 +39,21 @@ services:
         condition: service_healthy
       auth-test-redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+    
+  # auth-tests:
+  #   build: ../../.
+  #   image: auth-test-fastapi-image
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - "../../tests:/tests"
+  #   entrypoint: >
+  #     sh -c "pip install -r /tests/functional/requirements.txt
+  #     && pytest /tests/functional"
+  #   depends_on:
+  #     auth-test-fastapi:
+  #       condition: service_healthy

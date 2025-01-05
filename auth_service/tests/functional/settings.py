@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    root_path: str = 'http://localhost:8000/api/v1/auth'
+    root_path: str = 'http://localhost:8000/auth/v1'
 
     redis_host: str = '127.0.0.1'
     redis_port: int = 6379
