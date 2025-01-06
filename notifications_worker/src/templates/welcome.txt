@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+    <p>Hello,</p>
+    <p>Welcome to our service! We're excited to have you with us.</p>
+    <p>If you have any questions or need assistance, feel free to reach out.</p>
+    <p>Best regards,</p>
+    <p>The Team</p>
+</body>
+</html>

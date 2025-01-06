@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head></head>
+<body>
+    <h1>Hi, {{ name }}!</h1>
+    <h1>This is your Top 3 Movie Recommendations</h1>
+    {% for movie in movies %}
+    <div>{{ movie }}</div>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+    <p>Hello,</p>
+    <p>Big Sale -50% off</p>
+    <p>This Black Friday weekend only, we are offering 50% off our annual Premium subscription. Take advantage of this limited-time deal to unlock a whole year of exclusive subscriber content at an unbeatable price.</p>
+
+    <p>If you have any questions or need assistance, feel free to reach out.</p>
+    <p>Best regards,</p>
+    <p>The Team</p>
+</body>
+</html>
