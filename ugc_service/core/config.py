@@ -31,6 +31,8 @@ class Configs(BaseSettings):
     sentry_on: bool = Field(alias="SENTRY_ON")
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
+    kafka_boorstrap_server: list[str] | str = Field(alias="KAFKA_BOOTSTRAP_SERVER")
+
 
 class JWTConfig(BaseSettings):
     model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
