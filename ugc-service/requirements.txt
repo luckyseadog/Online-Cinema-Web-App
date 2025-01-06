@@ -1,0 +1,12 @@
+aiohttp==3.10.5
+async_fastapi_jwt_auth==0.6.6
+backoff==2.2.1
+beanie==1.27.0
+fastapi==0.111.0
+opentelemetry-api==1.27.0
+opentelemetry-exporter-jaeger==1.21.0
+opentelemetry-instrumentation-fastapi==0.48b0
+opentelemetry-sdk==1.27.0
+pydantic_settings==2.6.0
+redis==5.0.8
+sentry-sdk[fastapi]==2.17.0
