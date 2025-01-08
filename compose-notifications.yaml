@@ -1,0 +1,213 @@
+version: '3.8'
+
+services:
+  redis-auth:
+    image: redis/redis-stack-server:latest
+    volumes:
+     - redis-auth-data:/data
+    ports:
+      - "6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+  
+  postgres-auth:
+    image: postgres:16
+    volumes:
+     - postgres-auth-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: "${AUTH_DB_PASSWORD}"
+      POSTGRES_USER: "${AUTH_DB_USER}"
+      POSTGRES_DB: "${AUTH_DB_NAME}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER} -d ${AUTH_DB_NAME}"]
+      interval: 5s
+      timeout: 10s
+  
+  auth-service:
+    build: ./auth_service
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      redis-auth:
+        condition: service_healthy
+
+  kafka-0:
+    container_name: Kafka-0
+    image: bitnami/kafka:latest
+    ports:
+      - "9094:9094"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-0:9092,EXTERNAL://127.0.0.1:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+   
+  kafka-1:
+    container_name: Kafka-1
+    image: bitnami/kafka:latest
+    ports:
+      - "9095:9095"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9095
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092,EXTERNAL://127.0.0.1:9095
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+   
+   
+  kafka-2:
+    container_name: Kafka-2
+    image: bitnami/kafka:latest
+    ports:
+      - "9096:9096"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9096
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9092,EXTERNAL://127.0.0.1:9096
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+  
+  redis-notifications:
+    image: redis:latest
+    restart: unless-stopped
+    volumes:
+      - redis-notifications-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "6379"
+
+  notifications-service:
+    build:
+      context: .
+      dockerfile: notifications_service/Dockerfile
+    env_file:
+      - .env
+    image: notifications-service:latest
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+      redis-notifications:
+        condition: service_healthy
+        restart: true
+    ports:
+      - "8000"
+
+  notifications-worker:
+    build:
+      context: .
+      dockerfile: notifications_worker/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+      redis-notifications:
+        condition: service_healthy
+        restart: true
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:r
+    restart: always
+    depends_on:
+     - notifications-worker
+     - auth-service
+     - notifications-service
+      
+
+volumes:
+  postgres-auth-data:
+    driver: local
+  redis-auth-data:
+    driver: local
+  redis-notifications-data:
+    driver: local
