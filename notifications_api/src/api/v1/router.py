@@ -9,7 +9,6 @@ from src.services.notification_service import (
     get_notification_service,
 )
 from src.services.rate_limiter_service import TokenBucket, get_token_bucket
-from src.helpers.rights import check_token
 from fastapi import Request
 
 router = APIRouter(prefix="/notifications")
@@ -36,7 +35,6 @@ async def send_greeting_notification(
 
 
 @router.post('/new_movies', status_code=status.HTTP_202_ACCEPTED)
-@check_token
 async def send_new_movies_notification(
     request: Request, 
     users: list[User],
@@ -58,7 +56,6 @@ async def send_new_movies_notification(
 
 
 @router.post('/sale_event', status_code=status.HTTP_202_ACCEPTED)
-@check_token
 async def send_greeting_notification(
     request: Request, 
     users: list[User], 
