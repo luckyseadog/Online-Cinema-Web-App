@@ -28,10 +28,10 @@ class Configs(BaseSettings):
     pg_host_admin: str = Field(alias="POSTGRES_HOST_ADMIN", serialization_alias="DB_HOST_ADMIN")
     pg_port_admin: int = Field(alias="POSTGRES_PORT_ADMIN", serialization_alias="DB_PORT_ADMIN")
 
-    kafka_topic: str = Field(alias="KAFKA_TOPIC")
+    kafka_topic: str = Field(alias="UGC_KAFKA_TOPIC")
     kafka_boorstrap_server: list[str] | str = Field(alias="KAFKA_BOOTSTRAP_SERVER")
     kafka_auto_offset_reset: str = Field(alias="AUTO_OFFSET_RESET")
-    kafka_group_id: str = Field(alias="KAFKA_GROUP_ID")
+    kafka_group_id: str = Field(alias="UGC_KAFKA_GROUP_ID")
 
     sentry_on: bool = Field(alias="SENTRY_ON")
     sentry_dsn: str = Field(alias="SENTRY_DSN")

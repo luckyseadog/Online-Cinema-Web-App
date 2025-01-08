@@ -16,7 +16,6 @@ class FilmWork(BaseAdmin):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text(), nullable=False)
     creation_date: Mapped[DateTime] = mapped_column(Date(), nullable=True)
-    file_path: Mapped[str] = mapped_column(String(), nullable=False)
     rating: Mapped[float] = mapped_column(Double(), nullable=True)
     type: Mapped[str] = mapped_column(String(7), nullable=False)
     created: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False)

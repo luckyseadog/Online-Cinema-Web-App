@@ -6,8 +6,7 @@ from typing import NoReturn
 from uuid import UUID
 
 import sentry_sdk
-from avro.datafile import DataFileReader
-from avro.io import DatumReader
+import json
 from kafka import KafkaConsumer
 
 from core.config import configs
@@ -29,12 +28,10 @@ if configs.sentry_on:
     sentry_sdk.init(
         dsn=configs.sentry_dsn,
         traces_sample_rate=1.0,
-        profiles_sample_rate=1.0,
+        _experiments={
+            "continuous_profiling_auto_start": True,
+        },
     )
-
-
-def avro_deserializer(data: bytes) -> DataFileReader:
-    return DataFileReader(BytesIO(data), DatumReader())
 
 
 def main() -> NoReturn:
@@ -45,7 +42,7 @@ def main() -> NoReturn:
         group_id=configs.kafka_group_id,
         bootstrap_servers=configs.kafka_boorstrap_server,
         auto_offset_reset=configs.kafka_auto_offset_reset,
-        value_deserializer=avro_deserializer,
+        value_deserializer=lambda m: json.loads(m.decode('utf-8')),
     )
     while True:
         try:
