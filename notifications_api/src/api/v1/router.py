@@ -1,17 +1,15 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from src.models.entity import User
 from src.services.movies_service import MovieService, get_movie_service
-from src.services.notification_service import (
-    NotificationService,
-    get_notification_service,
-)
+from src.services.notification_service import (NotificationService,
+                                               get_notification_service)
 from src.services.rate_limiter_service import TokenBucket, get_token_bucket
-from fastapi import Request
+from src.services.validation import check_roles
 
-router = APIRouter(prefix="/notifications")
+router = APIRouter()
 
 
 @router.post('/greeting', status_code=status.HTTP_202_ACCEPTED)
@@ -20,6 +18,7 @@ async def send_greeting_notification(
     users: list[User], 
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
     token_bucket_service: Annotated[TokenBucket, Depends(get_token_bucket)],
+    check_roles: bool = Depends(check_roles),
 ):
     emails = []
     for user in users:
@@ -41,6 +40,7 @@ async def send_new_movies_notification(
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
     token_bucket_service: Annotated[TokenBucket, Depends(get_token_bucket)],
     movie_service: Annotated[MovieService, Depends(get_movie_service)],
+    check_roles: bool = Depends(check_roles),
 ):
     emails = []
     for user in users:
@@ -61,6 +61,7 @@ async def send_greeting_notification(
     users: list[User], 
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
     token_bucket_service: Annotated[TokenBucket, Depends(get_token_bucket)],
+    check_roles: bool = Depends(check_roles),
 ):
     emails = []
     for user in users:

@@ -5,11 +5,8 @@ import logging.config
 
 from kafka import KafkaConsumer
 from src.core.config import settings
-from src.models.entity import (
-    NewMoviesNotification,
-    SaleNotification,
-    WelcomeNotification,
-)
+from src.models.entity import (NewMoviesNotification, SaleNotification,
+                               WelcomeNotification)
 from src.services.notification_service import get_notification_service
 
 

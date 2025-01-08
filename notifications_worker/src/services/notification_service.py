@@ -4,11 +4,8 @@ from functools import lru_cache
 import aiohttp
 from jinja2 import Environment, FileSystemLoader
 from src.core.config import settings
-from src.models.entity import (
-    NewMoviesNotification,
-    SaleNotification,
-    WelcomeNotification,
-)
+from src.models.entity import (NewMoviesNotification, SaleNotification,
+                               WelcomeNotification)
 
 
 class InvalidParams(Exception):

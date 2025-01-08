@@ -8,8 +8,8 @@ from core.logger import LOGGING
 from db import postgres_db, redis_db
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, ORJSONResponse
-from src.middleware.token_bucket_middleware import TokenBucketMiddleware
-from src.services.token_bucket_service import get_token_bucket
+from middleware.token_bucket_middleware import TokenBucketMiddleware
+from services.token_bucket_service import get_token_bucket
 
 
 @asynccontextmanager

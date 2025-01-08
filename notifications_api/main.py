@@ -1,17 +1,16 @@
 import asyncio
 from contextlib import asynccontextmanager
 
+import sentry_sdk
 import uvicorn
 from fastapi import FastAPI, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from sentry_sdk import capture_exception
 from src.api.v1.router import router
 from src.db.redis_db import get_redis
 from src.services.rate_limiter_service import get_token_bucket
-import sentry_sdk
-from fastapi.exceptions import RequestValidationError
 from starlette.responses import JSONResponse
-from sentry_sdk import capture_exception
-from fastapi.encoders import jsonable_encoder
-
 
 sentry_sdk.init(
     dsn="https://31f851ef6701ed81a40491df6b831fbd@o4508461491552256.ingest.de.sentry.io/4508461493911632",
@@ -53,7 +52,7 @@ async def validation_exception_handler(request, exc: RequestValidationError):
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
 
-app.include_router(router, prefix='/api/v1', tags=['notifications'])
+app.include_router(router, prefix='/notifications/v1', tags=['notifications'])
 
 
 if __name__ == '__main__':
