@@ -13,5 +13,3 @@ RUN poetry install --no-root
 COPY notifications_worker .
 
 ENTRYPOINT ["python", "worker.py"]
-
-LABEL author="Yana Bubnova"
