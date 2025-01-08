@@ -9,9 +9,9 @@ logging_config.dictConfig(LOGGING)
 
 
 class Settings(BaseSettings):
-    project_name: str = 'movies'
-    redis_host: str = Field('127.0.0.1', alias='REDIS_HOST')
-    redis_port: int = Field(6379, alias='REDIS_PORT')
+    project_name: str = 'auth-service'
+    redis_host: str = Field('127.0.0.1', alias='AUTH_REDIS_HOST')
+    redis_port: int = Field(6379, alias='AUTH_REDIS_PORT')
 
     elastic_host: str = Field('127.0.0.1', alias='ELASTIC_HOST')
     elastic_port: int = Field(9200, alias='ELASTIC_PORT')

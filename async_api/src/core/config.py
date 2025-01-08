@@ -11,9 +11,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Settings(BaseSettings):
-    project_name: str = 'movies'
-    redis_host: str = Field('127.0.0.1', alias='REDIS_HOST')
-    redis_port: int = Field(6379, alias='REDIS_PORT')
+    project_name: str = 'async-api'
+    redis_host: str = Field('127.0.0.1', alias='API_REDIS_HOST')
+    redis_port: int = Field(6379, alias='API_REDIS_PORT')
 
     elastic_host: str = Field('127.0.0.1', alias='ELASTIC_HOST')
     elastic_port: int = Field(9200, alias='ELASTIC_PORT')
