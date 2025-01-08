@@ -15,14 +15,14 @@ BASE_DIRECTORY = Path()
 class Configs(BaseSettings):
     model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
 
-    project_name: str = Field(alias="PROJECT_NAME")
+    project_name: str = "ugc-service"
 
-    mongo_host: str = Field(alias="MONGO_HOST_UGC", serialization_alias="DB_HOST")
-    mongo_port: int = Field(alias="MONGO_PORT_UGC", serialization_alias="DB_PORT")
-    mongo_name: str = Field(alias="MONGO_NAME_UGC", serialization_alias="DB_NAME")
+    mongo_host: str = Field(alias="MONGO_HOST_UGC")
+    mongo_port: int = Field(alias="MONGO_PORT_UGC")
+    mongo_name: str = Field(alias="MONGO_NAME_UGC")
 
-    redis_host: str = Field(alias="REDIS_HOST")
-    redis_port: int = Field(alias="REDIS_PORT")
+    redis_host: str = Field(alias="UGC_REDIS_HOST")
+    redis_port: int = Field(alias="UGC_REDIS_PORT")
 
     jaeger_on: bool = Field(alias="JAEGER_ON")
     jaeger_host: str = Field(alias="JAEGER_HOST")
@@ -32,14 +32,7 @@ class Configs(BaseSettings):
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
     kafka_boorstrap_server: list[str] | str = Field(alias="KAFKA_BOOTSTRAP_SERVER")
-
-
-class JWTConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_file=BASE_DIRECTORY / ".env", extra="allow")
-
-    authjwt_secret_key: str = Field(alias="JWT_SECRET_KEY")
-    authjwt_token_location: set[str] = {"cookies"}
-    authjwt_cookie_csrf_protect: bool = False
+    kafka_topic: str = Field(alias="UGC_KAFKA_TOPIC_API")
 
 
 class MiddlewareConfig(BaseSettings):
@@ -51,5 +44,4 @@ class MiddlewareConfig(BaseSettings):
 
 
 configs = Configs()  # pyright: ignore[reportCallIssue]
-jwt_config = JWTConfig()  # pyright: ignore[reportCallIssue]
 middleware_config = MiddlewareConfig()  # pyright: ignore[reportCallIssue]

@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Path, Query, status
 
-from api.v1.models import FavouriteModel, JWTRequestModel
+from api.v1.models import FavouriteModel, UserModel
 from services.ugc_service import UGCService, get_ugc_service
 
 
@@ -20,11 +20,11 @@ favourites_tags_metadata = {"name": "Избранное", "description": "Упр
     tags=["Избранное"],
 )
 async def get_favourites(
-    request: JWTRequestModel,
+    user: UserModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[FavouriteModel]:
-    return await ugc_service.get_favourites(request.jwt_user.id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_favourites(user.id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
@@ -36,11 +36,11 @@ async def get_favourites(
     tags=["Избранное"],
 )
 async def add_to_favourites(
-    request: JWTRequestModel,
+    user: UserModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> FavouriteModel | None:
-    return await ugc_service.add_to_favourites(request.jwt_user.id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.add_to_favourites(user.id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.delete(
@@ -52,23 +52,8 @@ async def add_to_favourites(
     tags=["Избранное"],
 )
 async def remove_from_favourites(
-    request: JWTRequestModel,
+    user: UserModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> None:
-    await ugc_service.remove_from_favourites(request.jwt_user.id, film_id)
-
-
-@router.delete(
-    "/",
-    summary="Удаление всего избранного пользователя",
-    description="Удаление всего избранного пользователя",
-    response_description="Подтверждение удаления всего избранного пользователя",
-    responses={status.HTTP_200_OK: {}},
-    tags=["Избранное"],
-)
-async def remove_all_favourites(
-    request: JWTRequestModel,
-    ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
-) -> None:
-    await ugc_service.remove_all_favourites(request.jwt_user.id)
+    await ugc_service.remove_from_favourites(user.id, film_id)

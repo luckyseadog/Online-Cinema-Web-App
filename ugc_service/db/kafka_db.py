@@ -1,7 +1,7 @@
 from kafka import KafkaProducer
 import json
 from functools import lru_cache
-from ugc_service.core.config import configs
+from core.config import configs
 
 
 @lru_cache

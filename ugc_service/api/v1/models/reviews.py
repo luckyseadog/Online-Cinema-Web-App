@@ -9,10 +9,5 @@ class ReviewModel(BaseModel):
     film_id: UUID = Field(description="Идентификатор фильма", title="Идентификатор")
     review: str = Field(description="Рецензия фильма пользователем", title="Рецензия")
 
-
 class PostReviewModel(BaseModel):
-    review: str = Field(description="Рецензия фильма пользователем", title="Рецензия")
-
-
-class PatchReviewModel(BaseModel):
     review: str = Field(description="Рецензия фильма пользователем", title="Рецензия")

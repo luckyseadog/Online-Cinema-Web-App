@@ -4,8 +4,6 @@ from contextlib import asynccontextmanager
 from typing import Any, NoReturn
 
 import sentry_sdk
-from async_fastapi_jwt_auth.auth_jwt import AuthJWT
-from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from beanie import init_beanie
 from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.logger import logger
@@ -18,18 +16,14 @@ from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.starlette import StarletteIntegration
 
 from api.v1 import favourites, ratings, reviews
-from core.config import JWTConfig, configs, jwt_config
+from core.config import configs
 from core.jaeger_configure import configure_tracer
 from db.models import Favourite, Rating, Review
-from jwt_auth_helpers import get_jwt_user_global
 from middleware.token_bucket_middleware import TokenBucketMiddleware
 from services import redis_service
 from services.token_bucket_service import get_token_bucket
-
-
-@AuthJWT.load_config
-def get_config() -> JWTConfig:
-    return jwt_config
+from services.validation import check_roles
+from db.kafka_db import get_producer
 
 
 tags_metadata = [
@@ -41,6 +35,8 @@ tags_metadata = [
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
+    kafka_producer = get_producer()
+
     client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(configs.mongo_host, configs.mongo_port)
     await init_beanie(database=getattr(client, configs.mongo_name), document_models=[Rating, Review, Favourite])
 
@@ -52,6 +48,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, Any]:
 
     yield
 
+    kafka_producer.close()
     client.close()
     task.cancel()
     await redis_service.redis.close()
@@ -81,16 +78,16 @@ app = FastAPI(
     title=configs.project_name,
     description="Информация по пользовательскому контенту",
     version="1.0.0",
-    docs_url="/api/openapi",
-    openapi_url="/api/openapi.json",
+    docs_url="/ugc/openapi",
+    openapi_url="/ugc/openapi.json",
     openapi_tags=tags_metadata,
-    redoc_url="/api/redoc",
+    redoc_url="/ugc/redoc",
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
 
 
-@app.get("/sentry-debug")
+@app.get("ugc/sentry-debug")
 async def trigger_error() -> None:
     _ = 1 / 0
 
@@ -118,11 +115,11 @@ if configs.jaeger_on:
         return response
 
 
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONResponse:
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+# @app.exception_handler(AuthJWTException)
+# def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONResponse:
+#     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
-app.include_router(favourites.router, prefix="/api/v1/favourites", dependencies=[Depends(get_jwt_user_global)])
-app.include_router(ratings.router, prefix="/api/v1/ratings", dependencies=[Depends(get_jwt_user_global)])
-app.include_router(reviews.router, prefix="/api/v1/reviews", dependencies=[Depends(get_jwt_user_global)])
+app.include_router(favourites.router, prefix="/ugc/v1/favourites", dependencies=[Depends(check_roles)])
+app.include_router(ratings.router, prefix="/ugc/v1/ratings", dependencies=[Depends(check_roles)])
+app.include_router(reviews.router, prefix="/ugc/v1/reviews", dependencies=[Depends(check_roles)])
