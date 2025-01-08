@@ -10,7 +10,7 @@ from src.core.config import settings
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = settings.auth_secret_key.encode('utf-8')
+        self.secret_key = settings.token_secret_key.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)

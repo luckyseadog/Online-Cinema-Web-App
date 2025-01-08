@@ -10,6 +10,6 @@ COPY ["poetry.lock", "pyproject.toml", "./"]
 RUN pip install "poetry==1.8.4"
 RUN poetry install --no-root
 
-COPY notifications_api .
+COPY notifications_service .
 
 ENTRYPOINT ["python", "main.py"]

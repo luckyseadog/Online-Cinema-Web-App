@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     capacity: int = Field(default=1, alias="CAPACITY")
 
     kafka_boorstrap_server: str = Field(default="kafka-0:9092", alias="KAFKA_BOOTSTRAP_SERVER")
-    auth_secret_key: str = Field("secret", alias="AUTH_SECRET_KEY")
+    token_secret_key: str = Field("secret", alias="TOKEN_SECRET_KEY")
 
     access_token_min: int = Field(15, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
     refresh_token_weeks: int = Field(1, alias='REFRESH_TOKEN_WEEKS')
