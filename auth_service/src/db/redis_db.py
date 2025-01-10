@@ -24,7 +24,6 @@ class RedisTokenStorage:
 
         return hash_object.hexdigest()
 
-    
     async def _add_token(self, user_id: str, token_type: str, user_agent: str, token: str, time_to_exp: int):
         token_7ch = self._compute_hash(token)[:7]
         return await self._redis.setex(
@@ -103,8 +102,7 @@ class RedisTokenStorage:
         return await self._redis.delete(*keys)
 
 
-redis_session =  RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port, ssl=False))
-
+redis_session = RedisTokenStorage(Redis(host=settings.redis_host, port=settings.redis_port, ssl=False))
 redis: RedisTokenStorage | None = None
 
 # Функция понадобится при внедрении зависимостей

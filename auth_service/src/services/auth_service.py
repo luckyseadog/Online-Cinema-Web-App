@@ -90,7 +90,6 @@ class AuthService:
         await self.cache.set_user_last_logout_all_by_delete(user_id)
         await self.cache.delete_refresh_all_by_delete(user_id)
 
-
     async def refresh(self, user_id, origin, user_agent):
         user = await self.user_service.get_user(user_id)
         at = AccessTokenService()

@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, Path, Query, status
 
 from api.v1.models import FavouriteModel, UserModel
 from services.ugc_service import UGCService, get_ugc_service
-from uuid import UUID
 
 
 router = APIRouter()

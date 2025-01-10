@@ -44,13 +44,11 @@ async def test_get_all_films(test_params, aiohttp_client, es_write_data, event_l
             assert list(data.keys()) == ["detail"]
 
 
-
-
 @pytest.mark.parametrize(
     'test_params', 
     [
         {"page_size": 99, "genre": "Sport", "count": 1, "status_code": HTTPStatus.OK}, 
-        {"page_size": 99, "genre": "Biography", "count": 2,"status_code": HTTPStatus.OK},
+        {"page_size": 99, "genre": "Biography", "count": 2, "status_code": HTTPStatus.OK},
         {"page_size": 99, "genre": "NotGenre", "status_code": HTTPStatus.NOT_FOUND},
         {"page_size": 1000, "genre": "NotGenre", "status_code": HTTPStatus.UNPROCESSABLE_ENTITY},
     ],
@@ -86,7 +84,6 @@ async def test_get_all_films_with_genres(test_params, aiohttp_client, es_write_d
 
         elif resp.status == HTTPStatus.UNPROCESSABLE_ENTITY:
             assert list(data.keys()) == ["detail"]
-
 
 
 @pytest.mark.parametrize(
@@ -126,8 +123,9 @@ async def test_get_film_by_id(test_params, aiohttp_client, es_write_data, event_
 
         if resp.status == HTTPStatus.OK:
             assert data["title"] == test_params["title"]
-            assert set(data.keys()) == set(["id", "title", "imdb_rating", "description",
-                                         "genre", "actors", "writers", "directors"])
+            assert set(data.keys()) == set(
+                ["id", "title", "imdb_rating", "description", "genre", "actors", "writers", "directors"]
+            )
 
         elif resp.status == HTTPStatus.NOT_FOUND:
             assert list(data.keys()) == ["detail"]
@@ -155,11 +153,10 @@ async def test_get_all_films_cache(params, aiohttp_client, es_write_data, redis_
     async with aiohttp_client.get(
             f'http://{test_settings.service_host}:{test_settings.service_port}/api/v1/films',
             params=query_params,
-        ) as resp:
+    ) as resp:
 
         result = await redis_client.get(cache_id)
         assert result is not None
-
 
 
 @pytest.mark.parametrize(

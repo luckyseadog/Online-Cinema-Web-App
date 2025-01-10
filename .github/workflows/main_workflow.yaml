@@ -1,0 +1,100 @@
+name: main workflow
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  linters:
+    name: Code check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake
+
+      - name: Analysing the code with flake8
+        run: flake8 --config=setup.cfg $(git ls-files '*.py')
+        
+      - name: Upload HTML Report as Artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ success() }} || ${{ failure() }}
+        with:
+          name: report-${{ github.run_id }}-${{ matrix.python-version }}
+          path: report
+
+
+  # telegram_bot:
+  #   name: Telegram Bot Notification
+  #   if: ${{ success() }}
+  #   runs-on: ubuntu-latest
+  #   needs: [linters]
+  #   steps:
+  #     - name: Send Notification
+  #       uses: appleboy/telegram-action@master
+  #       with:
+  #         to: CHAT_CODE
+  #         token: SOME_TOKEN
+  #         message: |
+  #           The GitHub Actions workflow has completed!
+
+  #           PR title: ${{ github.event.pull_request.title }}
+  #           See PR: ${{ github.event.pull_request.html_url }}
+  
+
+#   push_to_registry:
+#     name: Push Docker image to Docker Hub
+#     runs-on: ubuntu-latest
+#     needs: [linters]
+#     permissions:
+#       packages: write
+#       contents: read
+#       attestations: write
+#       id-token: write
+#     steps:
+#       - name: Check out the repo
+#         uses: actions/checkout@v4
+
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+#         with:
+#           username: DOCKER_USERNAME
+#           password: DOCKER_PASSWORD
+
+#       - name: Build and push Docker image
+#         run: |
+#           docker build -t luckyseadog/test:latest test/.
+#           docker push luckyseadog/test:latest
+  
+
+#   deploy:
+#     name: Run new image on server
+#     runs-on: ubuntu-latest
+#     needs: [push_to_registry]
+#     steps:
+#     - name: SSH into Server and Deploy
+#       uses: appleboy/ssh-action@v0.1.6
+#       with:
+#         host: SERVER_HOST
+#         username: SERVER_USERNAME
+#         password: SERVER_PASSWORD
+#         script: |
+#           sudo docker compose down
+#           sudo docker pull luckyseadog/test:latest
+#           sudo docker compose up -d

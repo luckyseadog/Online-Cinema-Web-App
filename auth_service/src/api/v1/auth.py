@@ -91,10 +91,10 @@ async def login(
     await user_service.check_deleted(user_id)
 
     note = History(
-            user_id=(str(user_id)),
-            action='/login',
-            fingerprint=user_agent,
-        )
+        user_id=(str(user_id)),
+        action='/login',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note)
 
     tokens = await auth_service.login(user_creds, origin=origin, user_agent=user_agent)
@@ -171,10 +171,10 @@ async def logout_all(
     user_id = payload.sub
 
     note = History(
-            user_id=(str(user_id)),
-            action='/logout',
-            fingerprint=user_agent,
-        )
+        user_id=(str(user_id)),
+        action='/logout',
+        fingerprint=user_agent,
+    )
     await history_service.make_note(note)
 
     await auth_service.logout_all(payload.sub, user_agent)

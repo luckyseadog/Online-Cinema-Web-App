@@ -87,7 +87,6 @@ class UserService:
                 ],
             )
             
-
     async def get_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
         return [

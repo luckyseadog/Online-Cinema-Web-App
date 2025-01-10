@@ -10,11 +10,11 @@ from services.token_service import AccessTokenService, get_access_token_service
 
 
 async def validate_access_token(
-        user_agent: Annotated[Union[str, None], Header()] = None,
-        access_token: Annotated[Union[str, None], Cookie()] = None,
-        access_token_service: AccessTokenService = Depends(get_access_token_service),
-        cache: RedisTokenStorage = Depends(get_redis),
-    ):
+    user_agent: Annotated[Union[str, None], Header()] = None,
+    access_token: Annotated[Union[str, None], Cookie()] = None,
+    access_token_service: AccessTokenService = Depends(get_access_token_service),
+    cache: RedisTokenStorage = Depends(get_redis),
+):
     if access_token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

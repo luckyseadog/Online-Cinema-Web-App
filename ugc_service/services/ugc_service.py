@@ -23,9 +23,9 @@ class UGCService:
                 configs.kafka_topic, 
                 [
                     {
-                    'action': 'favourite',
-                    'user_id': str(user_id),
-                    'film_id': str(film_id),
+                        'action': 'favourite',
+                        'user_id': str(user_id),
+                        'film_id': str(film_id),
                     },
                 ]
                 

@@ -15,11 +15,11 @@ from services.user_service import UserService, get_user_service
 
 
 async def validate_access_token(
-        user_agent: Annotated[Union[str, None], Header()] = None,
-        access_token: Annotated[Union[str, None], Cookie()] = None,
-        access_token_service: AccessTokenService = Depends(get_access_token_service),
-        cache: RedisTokenStorage = Depends(get_redis_token_storage),
-    ):
+    user_agent: Annotated[Union[str, None], Header()] = None,
+    access_token: Annotated[Union[str, None], Cookie()] = None,
+    access_token_service: AccessTokenService = Depends(get_access_token_service),
+    cache: RedisTokenStorage = Depends(get_redis_token_storage),
+):
     if access_token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -74,7 +74,7 @@ async def check_role_consistency(
     user_service: UserService = Depends(get_user_service),
     access_token_service: AccessTokenService = Depends(get_access_token_service),
     payload: Annotated[AccessTokenData, Depends(validate_access_token)] = None,
-    ):
+):
     user = await user_service.get_user(payload.sub)
 
     if user.roles != payload.roles:
@@ -108,11 +108,11 @@ async def get_admin_access_token(
 
 
 async def validate_refresh_token(
-        user_agent: Annotated[Union[str, None], Header()] = None,
-        refresh_token: Annotated[Union[str, None], Cookie()] = None,
-        refresh_token_service: RefreshTokenService = Depends(get_refresh_token_service),
-        cache: RedisTokenStorage = Depends(get_redis_token_storage),
-    ):
+    user_agent: Annotated[Union[str, None], Header()] = None,
+    refresh_token: Annotated[Union[str, None], Cookie()] = None,
+    refresh_token_service: RefreshTokenService = Depends(get_refresh_token_service),
+    cache: RedisTokenStorage = Depends(get_redis_token_storage),
+):
     if refresh_token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

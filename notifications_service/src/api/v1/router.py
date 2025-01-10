@@ -56,7 +56,7 @@ async def send_new_movies_notification(
 
 
 @router.post('/sale_event', status_code=status.HTTP_202_ACCEPTED)
-async def send_greeting_notification(
+async def send_sale_event(
     request: Request, 
     users: list[User], 
     notification_service: Annotated[NotificationService, Depends(get_notification_service)],
