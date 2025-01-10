@@ -5,12 +5,12 @@ import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from functools import lru_cache
 
-from core.config import settings
+from core.config import configs
 
 
 class TokenService:
     def __init__(self) -> None:
-        self.secret_key = settings.token_secret_key.encode('utf-8')
+        self.secret_key = configs.token_secret_key.encode('utf-8')
 
     def _sign_data(self, data: str) -> str:
         hmac_obj = hmac.new(self.secret_key, data.encode('utf-8'), hashlib.sha256)
@@ -37,7 +37,7 @@ class TokenService:
 class AccessTokenService(TokenService):
     def __init__(self):
         super().__init__()
-        self.access_token_min = settings.access_token_min
+        self.access_token_min = configs.access_token_min
 
     def generate_token(self, iss: str, sub: str, roles: list[str]):
         header = json.dumps({'alg': 'HS256', 'typ': 'JWT'})
@@ -59,7 +59,7 @@ class AccessTokenService(TokenService):
 class RefreshTokenService(TokenService):
     def __init__(self):
         super().__init__()
-        self.refresh_token_weeks = settings.refresh_token_weeks
+        self.refresh_token_weeks = configs.refresh_token_weeks
 
     def generate_token(self, iss: str, sub: str):
         header = json.dumps({'alg': 'HS256', 'typ': 'JWT'})

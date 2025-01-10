@@ -21,11 +21,14 @@ class UGCService:
         try:
             self.kafka_producer.send(
                 configs.kafka_topic, 
-                {
+                [
+                    {
                     'action': 'favourite',
                     'user_id': str(user_id),
                     'film_id': str(film_id),
-                }
+                    },
+                ]
+                
             )
         except Exception as e:
             logging.error(f"Error sending Kafka message: {e}")
@@ -34,11 +37,13 @@ class UGCService:
         try:
             self.kafka_producer.send(
                 configs.kafka_topic, 
-                {
-                    'action': 'unfavourite',
-                    'user_id': str(user_id),
-                    'film_id': str(film_id),
-                }
+                [
+                    {
+                        'action': 'unfavourite',
+                        'user_id': str(user_id),
+                        'film_id': str(film_id),
+                    },
+                ]
             )
         except Exception as e:
             logging.error(f"Error sending Kafka message: {e}")
@@ -52,12 +57,14 @@ class UGCService:
         try:
             self.kafka_producer.send(
                 configs.kafka_topic, 
-                {
-                    'action': 'rate',
-                    'user_id': str(user_id),
-                    'film_id': str(film_id),
-                    'rating': rating,
-                }
+                [
+                    {
+                        'action': 'rate',
+                        'user_id': str(user_id),
+                        'film_id': str(film_id),
+                        'rating': rating,
+                    },
+                ]
             )
         except Exception as e:
             logging.error(f"Error sending Kafka message: {e}")
@@ -71,12 +78,14 @@ class UGCService:
         try:
             self.kafka_producer.send(
                 configs.kafka_topic, 
-                {
-                    'action': 'review',
-                    'user_id': str(user_id),
-                    'film_id': str(film_id),
-                    'review': review,
-                }
+                [
+                    {
+                        'action': 'review',
+                        'user_id': str(user_id),
+                        'film_id': str(film_id),
+                        'review': review,
+                    },
+                ]
             )
         except Exception as e:
             logging.error(f"Error sending Kafka message: {e}")

@@ -32,7 +32,12 @@ class Configs(BaseSettings):
     sentry_dsn: str = Field(alias="SENTRY_DSN")
 
     kafka_boorstrap_server: list[str] | str = Field(alias="KAFKA_BOOTSTRAP_SERVER")
-    kafka_topic: str = Field(alias="UGC_KAFKA_TOPIC_API")
+    kafka_topic: str = Field(alias="UGC_KAFKA_TOPIC")
+
+    access_token_min: int = Field(15, alias='ACCESS_TOKEN_EXPIRE_MINUTES')
+    refresh_token_weeks: int = Field(1, alias='REFRESH_TOKEN_WEEKS')
+
+    token_secret_key: str = Field('secret', alias='TOKEN_SECRET_KEY')
 
 
 class MiddlewareConfig(BaseSettings):

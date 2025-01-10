@@ -26,15 +26,15 @@ class UGCStorageService:
         else:
             self.mongo_db.ratings.insert_one({"_id": uuid4(), "user_id": user_id, "film_id": film_id, "rating": rating})
 
-    def _update_film_rating(self, film_id: UUID, rating: float) -> None:
-        stmt = select(FilmWork).where(FilmWork.id == film_id)
-        filmwork = self.session_admin.scalars(stmt).one()
-        filmwork.rating = update_rating(filmwork.rating, rating)
-        self.session_admin.commit()
+    # def _update_film_rating(self, film_id: UUID, rating: float) -> None:
+    #     stmt = select(FilmWork).where(FilmWork.id == film_id)
+    #     filmwork = self.session_admin.scalars(stmt).one()
+    #     filmwork.rating = update_rating(filmwork.rating, rating)
+    #     self.session_admin.commit()
 
     def add_rating(self, user_id: UUID, film_id: UUID, rating: float) -> None:
         self._add_rating(user_id, film_id, rating)
-        self._update_film_rating(film_id, rating)
+        # self._update_film_rating(film_id, rating)
 
     def add_review(self, user_id: UUID, film_id: UUID, review: str) -> None:
         if existing_document := self.mongo_db.reviews.find_one({"user_id": user_id, "film_id": film_id}):

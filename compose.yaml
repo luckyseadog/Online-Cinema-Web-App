@@ -1,6 +1,8 @@
-version: '3'
+version: '3.8'
+
 services:
   postgres:
+    container_name: postgras-async-api
     image: postgres:16
     volumes:
       - $HOME/postgresql/data:/var/lib/postgresql/data
@@ -33,13 +35,16 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:9200/_cat/health"]
-      interval: 5s
-      timeout: 10s
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
-  redis:
+  redis-api:
+    container_name: redis-api
     image: redis/redis-stack-server:latest
     volumes:
-     - redisdata:/data
+     - redis-api-data:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
@@ -55,25 +60,25 @@ services:
         condition: service_healthy
       elastic:
         condition: service_healthy
-      redis:
+      redis-api:
         condition: service_healthy
 
-  fastapi:
-    build: ./fastapi_api
+  async_api:
+    build: ./async_api
     env_file:
       - .env
     depends_on:
       elastic:
         condition: service_healthy
-      redis:
+      redis-api:
         condition: service_healthy
-    
+
   redis-auth:
     image: redis/redis-stack-server:latest
     volumes:
      - redis-auth-data:/data
     ports:
-      - "6379:6379"
+      - "6379"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
@@ -97,7 +102,7 @@ services:
       interval: 5s
       timeout: 10s
   
-  fastapi-auth:
+  auth-service:
     build: ./auth_service
     env_file:
       - .env
@@ -109,27 +114,250 @@ services:
       redis-auth:
         condition: service_healthy
 
-  nginx:
-    image: nginx:1.25.3
+  kafka-0:
+    container_name: Kafka-0
+    image: bitnami/kafka:latest
+    ports:
+      - "9094:9094"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-0:9092,EXTERNAL://127.0.0.1:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+   
+  kafka-1:
+    container_name: Kafka-1
+    image: bitnami/kafka:latest
+    ports:
+      - "9095:9095"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9095
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092,EXTERNAL://127.0.0.1:9095
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+   
+   
+  kafka-2:
+    container_name: Kafka-2
+    image: bitnami/kafka:latest
+    ports:
+      - "9096:9096"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9096
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9092,EXTERNAL://127.0.0.1:9096
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=<NONE>
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - KAFKA_CFG_OFFSETS_TOPIC_NUM_PARTITIONS=50
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_NUM_PARTITIONS=50
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=delete
+      - KAFKA_CFG_LOG_CLEANER_DELETE_RETENTION_MS=86400000
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  
+  redis-ugc:
+    image: redis/redis-stack-server:latest
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/configs:/etc/nginx/conf.d:ro
-      - ./admin/static:/static:ro
-      - ./data:/data:ro
+     - redis-ugc-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    restart: unless-stopped 
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok == 1"]
+      interval: 10s
+      retries: 3
+      timeout: 10s
+      start_period: 20s
+  
+  ugc-service:
+    build:
+      context: ./ugc_service/
+    image: ugc-service:latest
+    env_file:
+      - .env
+    pull_policy: never
+    restart: unless-stopped
+    volumes:
+      - ./ugc_service/:/app/
     depends_on:
-      - django
-      - fastapi
-      - etl
-      - fastapi-auth
+      redis-ugc:
+        condition: service_healthy
+        restart: true
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+    expose:
+      - "8000"
+
+  etl-kafka-mongo:
+    build: ./etl_kafka_to_mongo
+    image: etl-kafka-mongo:latest
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - ./etl_kafka_to_mongo/:/app
+  
+  redis-notifications:
+    image: redis:latest
+    restart: unless-stopped
+    volumes:
+      - redis-notifications-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "6379"
+
+  notifications-service:
+    build:
+      context: .
+      dockerfile: notifications_service/Dockerfile
+    env_file:
+      - .env
+    image: notifications-service:latest
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+      redis-notifications:
+        condition: service_healthy
+        restart: true
+    ports:
+      - "8000"
+
+  notifications-worker:
+    build:
+      context: .
+      dockerfile: notifications_worker/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+        restart: true
+      kafka-1:
+        condition: service_healthy
+        restart: true
+      kafka-2:
+        condition: service_healthy
+        restart: true
+      redis-notifications:
+        condition: service_healthy
+        restart: true
+  
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     ports:
       - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:r
+    restart: always
+    depends_on:
+     - ugc-service
+     - auth-service
+     - async_api
+     - notifications-worker
+     - notifications-service
 
 volumes:
   esdata:
     driver: local
-  redisdata:
+  redis-api-data:
+    driver: local
+  postgres-auth-data:
     driver: local
   redis-auth-data:
     driver: local
-  postgres-auth-data:
+  redis-ugc-data:
+    driver: local
+  mongo-data:
+    driver: local
+  redis-notifications-data:
     driver: local
