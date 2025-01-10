@@ -23,11 +23,11 @@ reviews_tags_metadata = {
     tags=["Рецензии"],
 )
 async def get_reviews(
-    user: UserModel,
+    user_id: UUID,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[ReviewModel]:
-    return await ugc_service.get_reviews(user.id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_reviews(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.get(
@@ -39,7 +39,6 @@ async def get_reviews(
     tags=["Рецензии"],
 )
 async def get_all_film_reviews(
-    user: UserModel,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID, Path(description="ID фильма")],
 ) -> list[ReviewModel]:

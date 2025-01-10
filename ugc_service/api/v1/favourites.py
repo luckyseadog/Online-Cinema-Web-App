@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Path, Query, status
 
 from api.v1.models import FavouriteModel, UserModel
 from services.ugc_service import UGCService, get_ugc_service
+from uuid import UUID
 
 
 router = APIRouter()
@@ -20,11 +21,11 @@ favourites_tags_metadata = {"name": "Избранное", "description": "Упр
     tags=["Избранное"],
 )
 async def get_favourites(
-    user: UserModel,
+    user_id: UUID,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[FavouriteModel]:
-    return await ugc_service.get_favourites(user.id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_favourites(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(

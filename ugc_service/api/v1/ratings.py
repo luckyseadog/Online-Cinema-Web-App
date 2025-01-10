@@ -23,11 +23,11 @@ ratings_tags_metadata = {
     tags=["Рейтинги"],
 )
 async def get_ratings(
-    user: UserModel,
+    user_id: UUID,
     ugc_service: Annotated[UGCService, Depends(get_ugc_service)],
     film_id: Annotated[UUID | None, Query(description="ID фильма")] = None,
 ) -> list[RatingModel]:
-    return await ugc_service.get_ratings(user.id, film_id)  # pyright: ignore[reportReturnType]
+    return await ugc_service.get_ratings(user_id, film_id)  # pyright: ignore[reportReturnType]
 
 
 @router.post(
