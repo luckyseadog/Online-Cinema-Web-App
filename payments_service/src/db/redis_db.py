@@ -5,7 +5,7 @@ from functools import lru_cache
 
 from core.settings import settings
 from redis.asyncio import Redis
-from src.core.settings import settings
+from core.settings import settings
 
 ACCESS_TOKEN_BANNED = 'banned_access'
 REFRESH_TOKEN_VALID = 'valid_refresh'
