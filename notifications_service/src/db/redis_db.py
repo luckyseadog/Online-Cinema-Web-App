@@ -48,7 +48,7 @@ class RedisTokenStorage:
         return await self._add_token(user_id, ACCESS_TOKEN_BANNED, user_agent, token, time_to_exp)
 
     async def add_valid_rtoken(self, user_id: str, token: str, user_agent: str) -> int:
-        time_to_exp = settings.access_token_min * 7 * 24 * 60 * 60
+        time_to_exp = settings.refresh_token_weeks * 7 * 24 * 60 * 60
         return await self._add_token(user_id, REFRESH_TOKEN_VALID, user_agent, token, time_to_exp)
 
     async def check_banned_atoken(self, user_id: int, user_agent: str, token: str):
