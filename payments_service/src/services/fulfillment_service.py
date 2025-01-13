@@ -45,6 +45,8 @@ class FulfillmentService:
         customer = checkout_session.customer
         customer_info = stripe.Customer.retrieve(customer)
 
+        user_id = metadata.get("user_id")
+
         # Check the Checkout Session's payment_status property
         # to determine if fulfillment should be peformed
         if checkout_session.payment_status != 'unpaid':
@@ -53,7 +55,7 @@ class FulfillmentService:
             # TODO: Record/save fulfillment status for this
             # Checkout Session
             logging.debug("============OPERATION INFO============")
-            logging.debug(f"User Internal ID: {metadata.get("user_id")}")
+            logging.debug(f"User Internal ID: {user_id}")
             logging.debug(f"Payment Intent ID: {payment_intent_id}")
 
             for item in checkout_session.line_items.data:

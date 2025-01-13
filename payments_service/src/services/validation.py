@@ -3,7 +3,7 @@ import logging
 import time
 from typing import Annotated, Union
 
-from db.redis_db import RedisTokenStorage, get_redis
+from db.redis_db import RedisTokenStorage, get_redis_token_storage
 from fastapi import Cookie, Depends, Header, HTTPException, status
 from schemas.entity_schemas import AccessTokenData
 from services.token_service import AccessTokenService, get_access_token_service
@@ -13,7 +13,7 @@ async def validate_access_token(
         user_agent: Annotated[Union[str, None], Header()] = None,
         access_token: Annotated[Union[str, None], Cookie()] = None,
         access_token_service: AccessTokenService = Depends(get_access_token_service),
-        cache: RedisTokenStorage = Depends(get_redis),
+        cache: RedisTokenStorage = Depends(get_redis_token_storage),
 ):
     if access_token is None:
         raise HTTPException(

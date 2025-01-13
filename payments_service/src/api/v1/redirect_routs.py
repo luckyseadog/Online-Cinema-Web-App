@@ -10,7 +10,7 @@ payment_tags_metadata = {"name": "", "description": ""}
     "/success_response"
 )
 async def success():
-    jinja_env = Environment(loader=FileSystemLoader("src/templates/"), autoescape=True)
+    jinja_env = Environment(loader=FileSystemLoader("templates/"), autoescape=True)
     template = jinja_env.get_template("success.html")
     html_content = template.render()
     return HTMLResponse(content=html_content, status_code=200)
@@ -20,7 +20,7 @@ async def success():
     "/cancel_response"
 )
 async def cancel():
-    jinja_env = Environment(loader=FileSystemLoader("src/templates/"), autoescape=True)
+    jinja_env = Environment(loader=FileSystemLoader("templates/"), autoescape=True)
     template = jinja_env.get_template("cancel.html")
     html_content = template.render()
     return HTMLResponse(content=html_content, status_code=200)

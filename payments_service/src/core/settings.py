@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     # Use the secret provided by Stripe CLI for local testing
     # or your webhook endpoint's secret.
     webhook_secret: str = "whsec_Fvi7mBOVEisnkTzv6Yek5HAWQKIqZMuh"
-    success_url: str = 'http://localhost:8000/pay/v1/success_response'
-    cancel_url: str = 'http://localhost:8000/pay/v1/cancel_response'
+    success_url: str = 'http://localhost:80/payments/v1/success_response'
+    cancel_url: str = 'http://localhost:80/payments/v1/cancel_response'
 
     redis_host: str = Field('redis-payments', alias='PAYMENT_REDIS_HOST')
     redis_port: int = Field(6379, alias='PAYMENT_REDIS_PORT')

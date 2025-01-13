@@ -110,3 +110,6 @@ redis: RedisTokenStorage | None = None
 @lru_cache
 def get_redis() -> Redis:
     return Redis(host=settings.redis_host, port=settings.redis_port, ssl=False)
+
+def get_redis_token_storage() -> RedisTokenStorage:
+    return redis_session

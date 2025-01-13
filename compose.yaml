@@ -107,7 +107,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8000:8000"
+      - "8000"
     depends_on:
       postgres-auth:
         condition: service_healthy
@@ -329,6 +329,35 @@ services:
       redis-notifications:
         condition: service_healthy
         restart: true
+
+  redis-payments:
+    image: redis:latest
+    restart: unless-stopped
+    volumes:
+      - redis-payments-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "6379"
+
+  payments-service:
+    build:
+      context: ./payments_service/
+    image: payments-service:latest
+    env_file:
+      - .env
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      redis-payments:
+        condition: service_healthy
+        restart: true
+    expose:
+      - "8000"
   
   nginx:
     container_name: nginx
@@ -345,6 +374,7 @@ services:
      - async_api
      - notifications-worker
      - notifications-service
+     - payments-service
 
 volumes:
   esdata:
@@ -360,4 +390,6 @@ volumes:
   mongo-data:
     driver: local
   redis-notifications-data:
+    driver: local
+  redis-payments-data:
     driver: local
