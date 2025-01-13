@@ -2,6 +2,8 @@ import logging
 from functools import lru_cache
 
 import stripe
+from core.settings import settings
+from db.redis_db import get_redis
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -9,11 +11,14 @@ logging.basicConfig(
 
 # Set your secret key. Remember to switch to your live secret key in production.
 # See your keys here: https://dashboard.stripe.com/apikeys
-stripe.api_key = 'sk_test_51Qffa2E1UjG6eS2xle6NK04Uafj9XSwY365aOSfKzTuAHhNYDtvXzbF8k3W4OZH3ptCCVLAYNtMpccYZusXkgyEo00tI79XvhV'
+stripe.api_key = settings.stripe_api_key
 
 
 class FulfillmentService:
-    def fulfill_checkout(self, session_id):
+    def __init__(self):
+        self._redis = get_redis()
+
+    async def fulfill_checkout(self, session_id, metadata):
         print("Fulfilling Checkout Session", session_id)
 
         # TODO: Make this function safe to run multiple times,
@@ -21,6 +26,9 @@ class FulfillmentService:
 
         # TODO: Make sure fulfillment hasn't already been
         # peformed for this Checkout Session
+
+        if not await self._redis.set(f'fulfill_checkout:{session_id}', "in process", nx=True):
+            return
 
         # Retrieve the Checkout Session from the API with line_items expanded
         checkout_session = stripe.checkout.Session.retrieve(
@@ -45,12 +53,18 @@ class FulfillmentService:
             # TODO: Record/save fulfillment status for this
             # Checkout Session
             logging.debug("============OPERATION INFO============")
+            logging.debug(f"User Internal ID: {metadata.get("user_id")}")
+            logging.debug(f"Payment Intent ID: {payment_intent_id}")
+
             for item in checkout_session.line_items.data:
                 logging.debug(f"Product: {item.description}, Quantity: {item.quantity}, Price: {item.amount_total / 100} {checkout_session.currency.upper()}")
 
-            logging.debug(f"Payment Intent ID: {payment_intent_id}")
             logging.debug(f"Customer Email: {customer_info.email}")
             logging.debug(f"Customer Name: {customer_info.name}")
+
+
+            self._redis.set(f'fulfill_checkout:{session_id}', "done")
+            # TODO: Make worker that checks that there is no "in process"
 
 
 

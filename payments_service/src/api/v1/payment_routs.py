@@ -1,7 +1,8 @@
 import stripe
 from core.settings import settings
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from services.validation import check_roles
 
 stripe.api_key = settings.stripe_api_key
 
@@ -16,7 +17,7 @@ payment_tags_metadata = {"name": "", "description": ""}
     response_description="",
     tags=[""],
 )
-async def pay():
+async def pay(user_id: str, check_roles: bool = Depends(check_roles)):
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[
@@ -29,6 +30,9 @@ async def pay():
             mode='subscription',
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
+            metadata={
+                'user_id': user_id,
+            },
         )
     except stripe.error.StripeError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
@@ -45,7 +49,7 @@ async def pay():
     response_description="",
     tags=[""],
 )
-async def pay(coupon: str = "B56Tx9DM"):
+async def sale(user_id: str, coupon: str = "B56Tx9DM", check_roles: bool = Depends(check_roles)):
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[
@@ -61,6 +65,9 @@ async def pay(coupon: str = "B56Tx9DM"):
             }],
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
+            metadata={
+                'user_id': user_id,
+            },
         )
     except stripe.error.StripeError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
@@ -79,7 +86,7 @@ async def pay(coupon: str = "B56Tx9DM"):
     response_description="",
     tags=[""],
 )
-async def trial():
+async def trial(user_id: str, check_roles: bool = Depends(check_roles)):
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[
@@ -95,6 +102,9 @@ async def trial():
             },
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
+            metadata={
+                'user_id': user_id,
+            },
         )
     except stripe.error.StripeError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
@@ -109,7 +119,7 @@ async def trial():
 @payment_router.post(
     "/refund"
 )
-async def refund(payment_id: str) -> HTMLResponse:
+async def refund(payment_id: str, check_roles: bool = Depends(check_roles)) -> HTMLResponse:
     try:
         stripe.Refund.create(payment_intent=payment_id)
         return HTMLResponse(status_code=200)
@@ -123,7 +133,7 @@ async def refund(payment_id: str) -> HTMLResponse:
 @payment_router.post(
     "/cancel"
 )
-async def concel_subscription(subscription_id: str):
+async def cancel_subscription(subscription_id: str, check_roles: bool = Depends(check_roles)):
     try:
         stripe.Subscription.modify(
             subscription_id,

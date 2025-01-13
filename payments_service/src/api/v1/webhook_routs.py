@@ -30,6 +30,6 @@ async def my_webhook_view(request: Request):
         event['type'] == 'checkout.session.completed'
         or event['type'] == 'checkout.session.async_payment_succeeded'
     ):
-        fulfillment_service.fulfill_checkout(event['data']['object']['id'])
+        await fulfillment_service.fulfill_checkout(event['data']['object']['id'], event['data']['object']['metadata'])
 
     return JSONResponse(content={"status": "success"}, status_code=200)

@@ -11,8 +11,8 @@ app = FastAPI(
     title='Online Cinema Payment Service',
     description='',
     version='1.0.0',
-    docs_url='/pay/openapi',
-    openapi_url='/pay/openapi.json',
+    docs_url='/payments/openapi',
+    openapi_url='/payments/openapi.json',
     default_response_class=ORJSONResponse,
 )
 
@@ -20,9 +20,9 @@ app = FastAPI(
 async def health():
     return JSONResponse({"status": "ok"})
 
-app.include_router(payment_router, prefix='/pay/v1', tags=['payment'])
-app.include_router(redirect_router, prefix='/pay/v1', tags=['redirect'])
-app.include_router(webhook_router, prefix='/pay/v1', tags=['webhook'])
+app.include_router(payment_router, prefix='/payments/v1', tags=['payment'])
+app.include_router(redirect_router, prefix='/payments/v1', tags=['redirect'])
+app.include_router(webhook_router, prefix='/payments/v1', tags=['webhook'])
 
 
 if __name__ == '__main__':
