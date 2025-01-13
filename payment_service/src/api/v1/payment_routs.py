@@ -1,19 +1,15 @@
-from core.settings import settings
-from fastapi import APIRouter, Request, status
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from jinja2 import Environment, FileSystemLoader
-from services.fulfillment_service import get_fulfillment_service
-
-router = APIRouter()
-payment_tags_metadata = {"name": "", "description": ""}
-
-
 import stripe
+from core.settings import settings
+from fastapi import APIRouter, status
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 stripe.api_key = settings.stripe_api_key
 
+payment_router = APIRouter()
+payment_tags_metadata = {"name": "", "description": ""}
 
-@router.get(
+
+@payment_router.get(
     "/subscription",
     summary="",
     description="",
@@ -34,13 +30,15 @@ async def pay():
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
         )
+    except stripe.error.StripeError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
-        return str(e)
+        return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
 
     return RedirectResponse(checkout_session.url, status_code=status.HTTP_302_FOUND)
 
 
-@router.get(
+@payment_router.get(
     "/subscription_with_sale",
     summary="",
     description="",
@@ -64,15 +62,17 @@ async def pay(coupon: str = "B56Tx9DM"):
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
         )
+    except stripe.error.StripeError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
-        return str(e)
+        return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
 
     return RedirectResponse(checkout_session.url, status_code=status.HTTP_302_FOUND)
 
 
 
 
-@router.get(
+@payment_router.get(
     "/trial",
     summary="",
     description="",
@@ -96,71 +96,41 @@ async def trial():
             success_url=settings.success_url,
             cancel_url=settings.cancel_url + '/cancel.html',
         )
+    except stripe.error.StripeError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
-        return str(e)
+        return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
 
     return RedirectResponse(checkout_session.url, status_code=status.HTTP_302_FOUND)
 
 
-@router.post("/webhook")
-async def my_webhook_view(request: Request):
-    fulfillment_service = get_fulfillment_service()
-    payload = await request.body()
-    sig_header = request.headers.get("Stripe-Signature")
-
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.webhook_secret
-        )
-
-    except ValueError:
-        return JSONResponse(content={"status": "Invalid payload"}, status_code=400)
-    except stripe.error.SignatureVerificationError:
-        return JSONResponse(content={"status": "Invalid signature"}, status_code=400)
-
-    if (
-        event['type'] == 'checkout.session.completed'
-        or event['type'] == 'checkout.session.async_payment_succeeded'
-    ):
-        fulfillment_service.fulfill_checkout(event['data']['object']['id'])
-
-    return JSONResponse(content={"status": "success"}, status_code=200)
 
 
-@router.post(
+@payment_router.post(
     "/refund"
 )
 async def refund(payment_id: str) -> HTMLResponse:
-    stripe.Refund.create(payment_intent=payment_id)
-    return HTMLResponse(status_code=200)
+    try:
+        stripe.Refund.create(payment_intent=payment_id)
+        return HTMLResponse(status_code=200)
+    except stripe.error.StripeError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
 
 
 
-@router.post(
+@payment_router.post(
     "/cancel"
 )
 async def concel_subscription(subscription_id: str):
-    stripe.Subscription.modify(
-        subscription_id,
-        cancel_at_period_end=True,
-    )
-    return HTMLResponse(status_code=200)
-
-@router.get(
-    "/success_response"
-)
-async def success():
-    jinja_env = Environment(loader=FileSystemLoader("src/templates/"), autoescape=True)
-    template = jinja_env.get_template("success.html")
-    html_content = template.render()
-    return HTMLResponse(content=html_content, status_code=200)
-
-
-@router.get(
-    "/cancel_response"
-)
-async def cancel():
-    jinja_env = Environment(loader=FileSystemLoader("src/templates/"), autoescape=True)
-    template = jinja_env.get_template("cancel.html")
-    html_content = template.render()
-    return HTMLResponse(content=html_content, status_code=200)
+    try:
+        stripe.Subscription.modify(
+            subscription_id,
+            cancel_at_period_end=True,
+        )
+        return HTMLResponse(status_code=200)
+    except stripe.error.StripeError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
