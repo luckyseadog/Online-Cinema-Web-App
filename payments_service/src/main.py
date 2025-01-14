@@ -6,6 +6,14 @@ from api.v1.redirect_routs import redirect_router
 from api.v1.webhook_routs import webhook_router
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, ORJSONResponse
+from contextlib import asynccontextmanager
+from db import redis_db
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _redis = redis_db.get_redis()
+    yield
+    await _redis.close()
 
 app = FastAPI(
     title='Online Cinema Payment Service',

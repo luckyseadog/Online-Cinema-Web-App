@@ -15,7 +15,6 @@ payment_tags_metadata = {"name": "", "description": ""}
     summary="",
     description="",
     response_description="",
-    tags=[""],
 )
 async def pay(user_id: str, check_roles: bool = Depends(check_roles)):
     try:
@@ -47,7 +46,6 @@ async def pay(user_id: str, check_roles: bool = Depends(check_roles)):
     summary="",
     description="",
     response_description="",
-    tags=[""],
 )
 async def sale(user_id: str, coupon: str = "B56Tx9DM", check_roles: bool = Depends(check_roles)):
     try:
@@ -84,7 +82,6 @@ async def sale(user_id: str, coupon: str = "B56Tx9DM", check_roles: bool = Depen
     summary="",
     description="",
     response_description="",
-    tags=[""],
 )
 async def trial(user_id: str, check_roles: bool = Depends(check_roles)):
     try:
