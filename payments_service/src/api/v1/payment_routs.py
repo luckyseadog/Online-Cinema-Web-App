@@ -75,8 +75,6 @@ async def sale(user_id: str, coupon: str = "B56Tx9DM", check_roles: bool = Depen
     return RedirectResponse(checkout_session.url, status_code=status.HTTP_302_FOUND)
 
 
-
-
 @payment_router.get(
     "/trial",
     summary="",
@@ -111,8 +109,6 @@ async def trial(user_id: str, check_roles: bool = Depends(check_roles)):
     return RedirectResponse(checkout_session.url, status_code=status.HTTP_302_FOUND)
 
 
-
-
 @payment_router.post(
     "/refund"
 )
@@ -124,7 +120,6 @@ async def refund(payment_id: str, check_roles: bool = Depends(check_roles)) -> H
         return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": "Internal Server Error", "message": str(e)})
-
 
 
 @payment_router.post(

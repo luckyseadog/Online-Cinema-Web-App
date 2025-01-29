@@ -41,7 +41,6 @@ class FulfillmentService:
         invoice = stripe.Invoice.retrieve(subscription.latest_invoice)
         payment_intent_id = invoice.payment_intent
 
-
         customer = checkout_session.customer
         customer_info = stripe.Customer.retrieve(customer)
 
@@ -64,10 +63,8 @@ class FulfillmentService:
             logging.debug(f"Customer Email: {customer_info.email}")
             logging.debug(f"Customer Name: {customer_info.name}")
 
-
             self._redis.set(f'fulfill_checkout:{session_id}', "done")
             # TODO: Make worker that checks that there is no "in process"
-
 
 
 @lru_cache
