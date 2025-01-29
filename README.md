@@ -12,6 +12,7 @@ Tech Stack:
 - Docker
 - AsyncIO
 - Nginx
+- Apache Kafka
 
 ## How to run
 ```
